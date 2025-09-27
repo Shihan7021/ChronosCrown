@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watches for Him - TimeMachine</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation (same as index.html) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">TimeMachine</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="him.html" class="nav-link active">Him</a>
+                </li>
+                <li class="nav-item">
+                    <a href="her.html" class="nav-link">Her</a>
+                </li>
+                <li class="nav-item">
+                    <a href="about.html" class="nav-link">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a href="contact.html" class="nav-link">Contact Us</a>
+                </li>
+            </ul>
+            <div class="nav-right">
+                <a href="cart.html" class="cart-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.4 5.2 16.4H17M17 13V16.4M17 16.4C15.8 16.4 14.8 17.4 14.8 18.6C14.8 19.8 15.8 20.8 17 20.8C18.2 20.8 19.2 19.8 19.2 18.6C19.2 17.4 18.2 16.4 17 16.4ZM9 18.6C9 19.8 8 20.8 6.8 20.8C5.6 20.8 4.6 19.8 4.6 18.6C4.6 17.4 5.6 16.4 6.8 16.4C8 16.4 9 17.4 9 18.6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="cart-count">0</span>
+                </a>
+                <div class="auth-buttons">
+                    <a href="login.html" class="login-btn">Login</a>
+                    <a href="register.html" class="register-btn">Register</a>
+                </div>
+            </div>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Watches for Him</h1>
+            <p>Discover our premium collection of men's watches</p>
+        </div>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Color:</label>
+                    <select id="color-filter">
+                        <option value="">All Colors</option>
+                        <option value="black">Black</option>
+                        <option value="silver">Silver</option>
+                        <option value="gold">Gold</option>
+                        <option value="blue">Blue</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Strap:</label>
+                    <select id="strap-filter">
+                        <option value="">All Straps</option>
+                        <option value="leather">Leather</option>
+                        <option value="metal">Metal</option>
+                        <option value="rubber">Rubber</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Size:</label>
+                    <select id="size-filter">
+                        <option value="">All Sizes</option>
+                        <option value="40mm">40mm</option>
+                        <option value="42mm">42mm</option>
+                        <option value="44mm">44mm</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Price:</label>
+                    <select id="price-filter">
+                        <option value="">All Prices</option>
+                        <option value="0-200">Under $200</option>
+                        <option value="200-400">$200 - $400</option>
+                        <option value="400-600">$400 - $600</option>
+                        <option value="600-1000">$600 - $1000</option>
+                    </select>
+                </div>
+                <button id="reset-filters" class="btn-outline">Reset Filters</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="products-section">
+        <div class="container">
+            <div class="products-grid" id="him-products">
+                <!-- Products loaded via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (same as index.html) -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TimeMachine</h3>
+                    <p>Premium watches for every occasion. Crafted with precision and style.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="him.html">Watches for Him</a></li>
+                        <li><a href="her.html">Watches for Her</a></li>
+                        <li><a href="new-arrivals.html">New Arrivals</a></li>
+                        <li><a href="best-sellers.html">Best Sellers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Information</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Customer Service</h4>
+                    <ul>
+                        <li><a href="shipping.html">Shipping Info</a></li>
+                        <li><a href="returns.html">Returns</a></li>
+                        <li><a href="size-guide.html">Size Guide</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 TimeMachine. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>

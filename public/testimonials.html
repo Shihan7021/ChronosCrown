@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials - TimeMachine</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation (same as index.html) -->
+    <nav class="navbar">
+        <!-- Same navigation as index.html -->
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Customer Testimonials</h1>
+            <p>See what our customers are saying about TimeMachine</p>
+        </div>
+    </section>
+
+    <!-- Testimonials Content -->
+    <section class="testimonials-content">
+        <div class="container">
+            <div class="testimonials-grid" id="all-testimonials">
+                <!-- Testimonials loaded via JavaScript -->
+            </div>
+            
+            <div class="add-testimonial">
+                <h2>Share Your Experience</h2>
+                <form id="testimonial-form">
+                    <div class="form-group">
+                        <label for="testimonial-name">Your Name</label>
+                        <input type="text" id="testimonial-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonial-email">Your Email</label>
+                        <input type="email" id="testimonial-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonial-rating">Rating</label>
+                        <select id="testimonial-rating" name="rating" required>
+                            <option value="5">★★★★★</option>
+                            <option value="4">★★★★☆</option>
+                            <option value="3">★★★☆☆</option>
+                            <option value="2">★★☆☆☆</option>
+                            <option value="1">★☆☆☆☆</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonial-message">Your Message</label>
+                        <textarea id="testimonial-message" name="message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Submit Testimonial</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (same as index.html) -->
+    <footer class="footer">
+        <!-- Same footer as index.html -->
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

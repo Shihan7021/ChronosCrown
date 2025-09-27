@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - TimeMachine</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation (same as index.html) -->
+    <nav class="navbar">
+        <!-- Same navigation as index.html -->
+    </nav>
+
+    <!-- Product Details -->
+    <section class="product-detail">
+        <div class="container">
+            <div class="product-detail-grid">
+                <div class="product-images">
+                    <div class="main-image">
+                        <img id="main-product-image" src="" alt="Product Image">
+                    </div>
+                    <div class="image-thumbnails">
+                        <!-- Thumbnails loaded via JavaScript -->
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h1 id="product-title">Product Name</h1>
+                    <p class="product-price" id="product-price">$0.00</p>
+                    <div class="product-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="review-count">(0 reviews)</span>
+                    </div>
+                    <p class="product-description" id="product-description">Product description will appear here.</p>
+                    
+                    <div class="product-options">
+                        <div class="option-group">
+                            <label>Color:</label>
+                            <div class="color-options" id="color-options">
+                                <!-- Color options loaded via JavaScript -->
+                            </div>
+                        </div>
+                        <div class="option-group">
+                            <label>Strap:</label>
+                            <select id="strap-option">
+                                <!-- Strap options loaded via JavaScript -->
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>Size:</label>
+                            <select id="size-option">
+                                <!-- Size options loaded via JavaScript -->
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label>Quantity:</label>
+                            <div class="quantity-selector">
+                                <button class="quantity-btn" id="decrease-qty">-</button>
+                                <input type="number" id="quantity" value="1" min="1">
+                                <button class="quantity-btn" id="increase-qty">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="add-to-cart-btn btn-primary" id="add-to-cart">Add to Cart</button>
+                    
+                    <div class="product-features">
+                        <h3>Features</h3>
+                        <ul id="product-features">
+                            <!-- Features loaded via JavaScript -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Reviews -->
+            <div class="product-reviews">
+                <h2>Customer Reviews</h2>
+                <div class="reviews-container" id="reviews-container">
+                    <!-- Reviews loaded via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (same as index.html) -->
+    <footer class="footer">
+        <!-- Same footer as index.html -->
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>

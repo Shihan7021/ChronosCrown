@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - TimeMachine</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation (same as index.html) -->
+    <nav class="navbar">
+        <!-- Same navigation as index.html -->
+    </nav>
+
+    <!-- Cart Content -->
+    <section class="cart-content">
+        <div class="container">
+            <h1>Shopping Cart</h1>
+            <div class="cart-grid">
+                <div class="cart-items" id="cart-items">
+                    <!-- Cart items loaded via JavaScript -->
+                    <div class="empty-cart" id="empty-cart">
+                        <p>Your cart is empty</p>
+                        <a href="him.html" class="btn-primary">Start Shopping</a>
+                    </div>
+                </div>
+                <div class="cart-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-details">
+                        <div class="summary-line">
+                            <span>Subtotal:</span>
+                            <span id="cart-subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-line">
+                            <span>Shipping:</span>
+                            <span id="cart-shipping">$0.00</span>
+                        </div>
+                        <div class="summary-line">
+                            <span>Tax:</span>
+                            <span id="cart-tax">$0.00</span>
+                        </div>
+                        <div class="summary-line total">
+                            <span>Total:</span>
+                            <span id="cart-total">$0.00</span>
+                        </div>
+                    </div>
+                    <a href="checkout.html" class="btn-primary" id="checkout-btn">Proceed to Checkout</a>
+                    <a href="him.html" class="btn-outline">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (same as index.html) -->
+    <footer class="footer">
+        <!-- Same footer as index.html -->
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+</body>
+</html>
