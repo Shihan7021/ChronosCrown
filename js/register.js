@@ -1,4 +1,4 @@
-import { register } from './auth.js';  // must point to your auth.js
+import { register } from './auth.js';
 
 const form = document.getElementById('registerForm');
 const statusEl = document.getElementById('regStatus');
@@ -11,7 +11,6 @@ form.addEventListener('submit', async (e) => {
   const password = document.getElementById('password').value;
   const passwordConfirm = document.getElementById('passwordConfirm').value;
 
-  // basic validation
   if (!displayName || !email || !password || !passwordConfirm) {
     statusEl.style.color = 'crimson';
     statusEl.textContent = 'Please fill all fields.';
@@ -25,7 +24,6 @@ form.addEventListener('submit', async (e) => {
   }
 
   try {
-    // ✅ use exported register function from auth.js
     await register(email, password, displayName);
 
     statusEl.style.color = 'green';

@@ -1,27 +1,18 @@
-// auth.js — handles registration, login, logout
+// auth.js
 import { auth, db } from './firebase.init.js';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  updatePassword
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 import { doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-/**
- * Register a new user (normal website user)
- * Automatically sets role = "user"
- */
+// Register new website user
 export async function register(email, password, displayName) {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Save in Firestore
     await setDoc(doc(db, "users", user.uid), {
       displayName,
       email,
-      role: "user"   // normal user
+      role: "user" // normal user
     });
 
     return user;
@@ -30,17 +21,14 @@ export async function register(email, password, displayName) {
   }
 }
 
-/**
- * Login user (returns user data from Firestore)
- */
+// Login user
 export async function login(email, password) {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Fetch Firestore data
     const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (!userDoc.exists()) throw new Error("User profile not found in database.");
+    if (!userDoc.exists()) throw new Error("User profile not found.");
 
     return { uid: user.uid, ...userDoc.data() };
   } catch (err) {
@@ -48,20 +36,16 @@ export async function login(email, password) {
   }
 }
 
-/**
- * Logout user
- */
+// Logout user
 export async function logout() {
   try {
     await signOut(auth);
   } catch (err) {
-    console.error("Logout error:", err);
+    console.error(err);
   }
 }
 
-/**
- * Update password for current user
- */
+// Change password
 export async function changePassword(newPassword) {
   try {
     const user = auth.currentUser;
