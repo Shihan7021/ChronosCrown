@@ -5,34 +5,45 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header>
-  <div class="logo">ChronosCrown</div>
-  <nav>
-    <ul id="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="him.html">Him</a></li>
-      <li><a href="her.html">Her</a></li>
-      <li><a href="about.html">About Us</a></li>
-      <li><a href="contact.html">Contact Us</a></li>
-      <li><a href="privacy.html">Privacy Policy</a></li>
-    </ul>
-  </nav>
-  <div class="user-controls">
-    <!-- Before login -->
-    <a id="loginLink" href="login.html">Login</a> /
-    <a id="registerLink" href="register.html">Register</a>
+  <header class="header">
+        <div class="container nav-wrap">
+            <div class="brand">
+            <div class="logo">CC</div>
+            <h1>ChronosCrown</h1>
+            </div>
 
-    <!-- After login -->
-    <div id="userMenu" class="dropdown hidden">
-      <span class="greeting" id="greetingText"></span>
-      <div class="person-icon">👤</div>
-      <div class="dropdown-content">
-        <a href="profile.html">My Profile</a>
-        <a href="#" id="logoutBtn">Logout</a>
-      </div>
-    </div>
-  </div>
-</header>
+            <nav class="navlinks">
+            <a href="index.html">Home</a>
+            <a href="him.html">Him</a>
+            <a href="her.html">Her</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" aria-current="page">Contact</a>
+            </nav>
+
+            <div style="display:flex; gap:12px; align-items:center;">
+
+            <!-- BEFORE login -->
+            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+            <a id="registerLink" href="register.html" class="btn">Register</a>
+
+            <!-- AFTER login -->
+            <div id="userMenu" class="dropdown hidden">
+                <span class="greeting" id="greetingText"></span>
+                <div class="person-icon">👤</div>
+                <div class="dropdown-content">
+                <a href="profile.html">My Profile</a>
+                <a href="#" id="logoutBtn">Logout</a>
+                </div>
+            </div>
+
+            <a href="cart.html" class="icon-btn" aria-label="Cart">
+                <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
+                <div class="badge cart-badge">0</div>
+            </a>
+
+            </div>
+        </div>
+    </header>
 
   <main class="container">
     <h2>Checkout — Address</h2>

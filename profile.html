@@ -10,14 +10,45 @@
   <script src="js/firebase-config.js"></script>
 </head>
 <body>
-  <header>
-    <div class="logo">ChronosCrown</div>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-      </ul>
-    </nav>
-  </header>
+  <header class="header">
+        <div class="container nav-wrap">
+            <div class="brand">
+            <div class="logo">CC</div>
+            <h1>ChronosCrown</h1>
+            </div>
+
+            <nav class="navlinks">
+            <a href="index.html">Home</a>
+            <a href="him.html">Him</a>
+            <a href="her.html">Her</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" aria-current="page">Contact</a>
+            </nav>
+
+            <div style="display:flex; gap:12px; align-items:center;">
+
+            <!-- BEFORE login -->
+            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+            <a id="registerLink" href="register.html" class="btn">Register</a>
+
+            <!-- AFTER login -->
+            <div id="userMenu" class="dropdown hidden">
+                <span class="greeting" id="greetingText"></span>
+                <div class="person-icon">👤</div>
+                <div class="dropdown-content">
+                <a href="profile.html">My Profile</a>
+                <a href="#" id="logoutBtn">Logout</a>
+                </div>
+            </div>
+
+            <a href="cart.html" class="icon-btn" aria-label="Cart">
+                <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
+                <div class="badge cart-badge">0</div>
+            </a>
+
+            </div>
+        </div>
+    </header>
 
   <main class="profile-page">
     <h1>My Profile</h1>
