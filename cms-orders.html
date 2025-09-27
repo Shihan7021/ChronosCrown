@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CMS Orders</title>
   <link rel="stylesheet" href="css/cms-style.css">
+  <script type="module">
+    const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser'));
+    if (!cmsUser || cmsUser.role !== 'system') {
+      alert("Access denied. Please login.");
+      window.location.href = 'cms-login.html';
+    }
+  </script>
 </head>
 <body>
   <div class="cms-header"><h2>Orders Management</h2></div>
