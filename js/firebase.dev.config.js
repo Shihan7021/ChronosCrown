@@ -4,7 +4,7 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // Your Firebase config
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyDXV8FNZ1HDdxJz_2IHuZ6sFPYzXESXLaA",
   authDomain: "chronoscrown-cfd9e.firebaseapp.com",
   projectId: "chronoscrown-cfd9e",
