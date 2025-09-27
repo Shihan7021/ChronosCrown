@@ -41,21 +41,23 @@ if (form) {
     }
 
     try {
-      // register() is implemented in your auth.js (creates user and user doc in Firestore)
-      await register(email, password, displayName);
-      statusEl.style.color = 'green';
-      statusEl.textContent = 'Account created — redirecting to home...';
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-      // small delay so user sees message, then redirect
-      setTimeout(() => {
-        // after register we redirect user to home, or to login if you prefer:
-        window.location.href = 'index.html';
-      }, 900);
-    } catch (err) {
-      console.error(err);
-      statusEl.style.color = 'crimson';
-      // show reasonable error message
-      statusEl.textContent = err?.message || 'Registration failed. Try again.';
-    }
+        await setDoc(doc(db, "users", user.uid), {
+            displayName,
+            email,
+            role: "user"   // <-- assign role here
+        });
+
+        statusEl.style.color = "green";
+        statusEl.textContent = "Account created — redirecting to home...";
+        setTimeout(() => { window.location.href = "index.html"; }, 900);
+        } catch (err) {
+        console.error(err);
+        statusEl.style.color = "crimson";
+        statusEl.textContent = err?.message || "Registration failed. Try again.";
+        }
+
   });
 }

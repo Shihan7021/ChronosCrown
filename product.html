@@ -6,7 +6,35 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header class="header"> ... </header>
+  <header>
+  <div class="logo">ChronosCrown</div>
+  <nav>
+    <ul id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="him.html">Him</a></li>
+      <li><a href="her.html">Her</a></li>
+      <li><a href="about.html">About Us</a></li>
+      <li><a href="contact.html">Contact Us</a></li>
+      <li><a href="privacy.html">Privacy Policy</a></li>
+    </ul>
+  </nav>
+  <div class="user-controls">
+    <!-- Before login -->
+    <a id="loginLink" href="login.html">Login</a> /
+    <a id="registerLink" href="register.html">Register</a>
+
+    <!-- After login -->
+    <div id="userMenu" class="dropdown hidden">
+      <span class="greeting" id="greetingText"></span>
+      <div class="person-icon">👤</div>
+      <div class="dropdown-content">
+        <a href="profile.html">My Profile</a>
+        <a href="#" id="logoutBtn">Logout</a>
+      </div>
+    </div>
+  </div>
+</header>
+
   <main class="container">
     <div id="product-detail"></div>
   </main>
