@@ -1,15 +1,18 @@
 // firebase.init.js
-// Make sure to import the dev or prod config file you want to use.
-// e.g. import { firebaseConfig } from './firebase.dev.config.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-import { firebaseConfig } from './firebase.dev.config.js'; // change to prod when needed
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
+export const firebaseConfig = {
+  apiKey: "AIzaSyDXV8FNZ1HDdxJz_2IHuZ6sFPYzXESXLaA",
+  authDomain: "chronoscrown-cfd9e.firebaseapp.com",
+  projectId: "chronoscrown-cfd9e",
+  storageBucket: "chronoscrown-cfd9e.firebasestorage.app",
+  messagingSenderId: "358791614251",
+  appId: "1:358791614251:web:c2404222f2d0fe19727f6e",
+  measurementId: "G-QY0N3226BD"
+};
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
-export default app;
