@@ -1,5 +1,9 @@
-// Firebase configuration
-const firebaseConfig = {
+// firebase-config.js
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+export const firebaseConfig = {
   apiKey: "AIzaSyDXV8FNZ1HDdxJz_2IHuZ6sFPYzXESXLaA",
   authDomain: "chronoscrown-cfd9e.firebaseapp.com",
   projectId: "chronoscrown-cfd9e",
@@ -9,7 +13,6 @@ const firebaseConfig = {
   measurementId: "G-QY0N3226BD"
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage();
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
