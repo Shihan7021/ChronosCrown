@@ -8,7 +8,28 @@
 </head>
 <body>
   <!-- header copy from index -->
-  <header class="header"> ... same markup ... </header>
+  <header class="header">
+    <div class="container nav-wrap">
+      <div class="brand">
+        <div class="logo">CC</div>
+        <h1>ChronosCrown</h1>
+      </div>
+      <nav class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="him.html">Him</a>
+        <a href="her.html">Her</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a href="login.html" class="btn secondary">Sign In</a>
+        <a href="cart.html" class="icon-btn">
+          <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
+          <div class="badge cart-badge">0</div>
+        </a>
+      </div>
+    </div>
+  </header>
 
   <main class="container">
     <h2>Her — Watches</h2>

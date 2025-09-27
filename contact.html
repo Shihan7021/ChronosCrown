@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Contact Us — ChronosCrown</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Header (animated nav) -->
+  <header class="header">
+    <div class="container nav-wrap">
+      <div class="brand">
+        <div class="logo">CC</div>
+        <h1>ChronosCrown</h1>
+      </div>
+      <nav class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="him.html">Him</a>
+        <a href="her.html">Her</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" aria-current="page">Contact</a>
+      </nav>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a href="login.html" class="btn secondary">Sign In</a>
+        <a href="cart.html" class="icon-btn" aria-label="Cart">
+          <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
+          <div class="badge cart-badge">0</div>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="container" style="padding:36px 0;">
+      <div style="display:grid; grid-template-columns:1fr 420px; gap:20px; align-items:start;">
+        <div>
+          <h2 style="color:var(--luxury-blue-2);">Get in touch</h2>
+          <p class="meta">Have a product question, need help with an order, or want to discuss partnerships? Use the form and our team will reply within 48 hours.</p>
+
+          <form id="contactForm" class="form" style="margin-top:18px;">
+            <div style="display:flex; gap:12px; margin-bottom:8px;">
+              <input name="name" class="input" placeholder="Your name" required>
+              <input name="email" class="input" placeholder="Email" type="email" required>
+            </div>
+            <div style="display:flex; gap:12px; margin-bottom:8px;">
+              <input name="phone" class="input" placeholder="Phone (optional)">
+              <input name="orderId" class="input" placeholder="Order ID (if relevant)">
+            </div>
+            <div style="margin-bottom:8px;">
+              <input name="subject" class="input" placeholder="Subject" required>
+            </div>
+            <div style="margin-bottom:12px;">
+              <textarea name="message" class="input" placeholder="Message" rows="6" required></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px; align-items:center;">
+              <button type="submit" class="btn">Send Message</button>
+              <div id="contactStatus" class="small" style="color:var(--muted)"></div>
+            </div>
+          </form>
+        </div>
+
+        <aside>
+          <div class="card">
+            <h4>Customer Care</h4>
+            <p class="small" style="margin-top:8px;">support@chronoscrown.example</p>
+            <p class="small">Mon - Fri, 9AM - 6PM (IST)</p>
+            <div style="margin-top:12px;">
+              <strong>Phone</strong>
+              <div class="small">+94 77 123 4567</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px;">
+            <h4>Returns & Warranty</h4>
+            <p class="small">Learn about our 2-year warranty and our return policy.</p>
+            <a href="privacy.html" class="small">Privacy & Policies</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="display:flex; justify-content:space-between; gap:24px;">
+      <div>
+        <h4>ChronosCrown</h4>
+        <p class="meta">Luxury watch ecommerce</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About Us</a><br>
+        <a href="privacy.html">Privacy Policy</a><br>
+        <a href="feedback.html">Feedback</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="track-order.html">Track Order</a><br>
+        <a href="404.html">404</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase init + contact handler -->
+  <script type="module" src="js/firebase.init.js"></script>
+  <script type="module" src="js/contact.js"></script>
+</body>
+</html>

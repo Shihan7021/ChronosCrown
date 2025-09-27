@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Register — ChronosCrown</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <!-- Minimal header (no animated nav per spec for login/register pages) -->
+  <header class="header" style="background:transparent;border-bottom:0;padding:14px 20px;">
+    <div class="container nav-wrap" style="justify-content:flex-start;">
+      <div class="brand">
+        <div class="logo">CC</div>
+        <h1 style="font-size:18px">ChronosCrown</h1>
+      </div>
+      <div style="margin-left:auto;">
+        <a href="index.html" class="btn secondary">Home</a>
+        <a href="login.html" class="btn" style="margin-left:8px;">Sign In</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding:48px 0;">
+    <div class="container" style="max-width:640px;">
+      <div class="form card">
+        <h2 style="margin-bottom:8px;color:var(--luxury-blue-2)">Create an account</h2>
+        <p class="small" style="margin-bottom:16px;">Register to save favorites, checkout faster, and view orders.</p>
+
+        <form id="registerForm" novalidate>
+          <div style="display:flex; gap:12px; margin-bottom:10px;">
+            <input id="displayName" class="input" placeholder="Full name" required>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-bottom:10px;">
+            <input id="email" type="email" class="input" placeholder="Email address" required>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-bottom:10px;">
+            <input id="password" type="password" class="input" placeholder="Password (min 6 chars)" required>
+            <input id="passwordConfirm" type="password" class="input" placeholder="Confirm password" required>
+          </div>
+
+          <div style="display:flex; gap:12px; align-items:center;">
+            <button type="submit" class="btn">Register</button>
+            <button type="button" id="cancelBtn" class="btn secondary">Cancel</button>
+          </div>
+
+          <div id="regStatus" class="small" style="margin-top:12px;color:var(--muted)"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer" style="position:fixed; left:0; right:0; bottom:0;">
+    <div class="container" style="display:flex; justify-content:center; padding:10px 0;">
+      <div class="small">Already have an account? <a href="login.html" style="color:#9fc6ff">Sign in</a></div>
+    </div>
+  </footer>
+
+  <!-- firebase init (must exist in js/firebase.init.js) -->
+  <script type="module" src="js/firebase.init.js"></script>
+  <!-- separate register logic -->
+  <script type="module" src="js/register.js"></script>
+</body>
+</html>
