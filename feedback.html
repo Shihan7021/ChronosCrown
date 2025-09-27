@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head> ... </head>
+<body>
+  <header class="header"> ... </header>
+  <main class="container">
+    <h2>Feedback</h2>
+    <form id="feedback" class="form">
+      <label>Order or Product ID (optional) <input name="ref" class="input"></label>
+      <label>Rating <select name="rating" class="input"><option>5</option><option>4</option>... </select></label>
+      <label>Message <textarea name="message" class="input"></textarea></label>
+      <button class="btn" type="button" id="sendFb">Send Feedback</button>
+    </form>
+  </main>
+  <footer class="footer"> ... </footer>
+
+  <script type="module">
+    import { db, auth } from './js/firebase.init.js';
+    import { addDoc, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    document.getElementById('sendFb').addEventListener('click', async ()=>{
+      const form = document.getElementById('feedback');
+      const payload = { ref: form['ref'].value, rating: Number(form['rating'].value), message: form['message'].value, createdAt: new Date().toISOString(), status: 'pending' };
+      await addDoc(collection(db,'feedbacks'), payload);
+      alert('Thanks — feedback submitted');
+      form.reset();
+    });
+  </script>
+</body>
+</html>

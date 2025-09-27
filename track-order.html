@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Track Order - ChronosCrown</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header"> ... </header>
+  <main class="container">
+    <h2>Track Order</h2>
+    <form id="trackForm" class="form">
+      <label>Tracking number <input id="trk" class="input"></label>
+      <button class="btn" type="button" id="trackBtn">Track</button>
+    </form>
+    <div id="trackResult"></div>
+  </main>
+  <footer class="footer"> ... </footer>
+
+  <script type="module">
+    document.getElementById('trackBtn').addEventListener('click', async ()=>{
+      const trk = document.getElementById('trk').value;
+      if(!trk) return alert('type tracking number');
+      // For demo: fetch order from Firestore or simulate
+      document.getElementById('trackResult').innerHTML = `<div class="form">Status for <strong>${trk}</strong>: <br>Order on the way — Estimated delivery: ${new Date(Date.now()+14*24*3600*1000).toISOString().split('T')[0]}</div>`;
+    });
+
+    // If query param exists, auto lookup
+    const q = new URLSearchParams(location.search).get('trk');
+    if(q){ document.getElementById('trk').value = q; document.getElementById('trackBtn').click(); }
+  </script>
+</body>
+</html>

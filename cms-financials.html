@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Financials</title>
+  <link rel="stylesheet" href="css/cms-style.css">
+</head>
+<body>
+  <div class="cms-header"><h2>Financial Reports</h2></div>
+  <div class="cms-sidebar">
+    <a href="cms-dashboard.html">Dashboard</a>
+    <a href="cms-products.html">Products</a>
+    <a href="cms-users.html">Users</a>
+    <a href="cms-content.html">Content</a>
+    <a href="cms-sales.html">Sales</a>
+    <a href="cms-orders.html">Orders</a>
+    <a href="cms-financials.html">Financials</a>
+  </div>
+  <div class="cms-content">
+    <h3>Order History</h3>
+    <input type="date" id="fromDate"> to <input type="date" id="toDate">
+    <button onclick="filterFinancials()">Filter</button>
+    <div id="financialReport"></div>
+  </div>
+  <script src="../firebase-config.js"></script>
+  <script src="js/cms-financials.js"></script>
+</body>
+</html>

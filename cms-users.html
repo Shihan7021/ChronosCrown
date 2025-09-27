@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Users</title>
+  <link rel="stylesheet" href="css/cms-style.css">
+</head>
+<body>
+  <div class="cms-header"><h2>System Users</h2></div>
+  <div class="cms-sidebar">
+    <a href="cms-dashboard.html">Dashboard</a>
+    <a href="cms-products.html">Products</a>
+    <a href="cms-users.html">Users</a>
+    <a href="cms-content.html">Content</a>
+    <a href="cms-sales.html">Sales</a>
+    <a href="cms-orders.html">Orders</a>
+    <a href="cms-financials.html">Financials</a>
+  </div>
+  <div class="cms-content">
+    <h3>Manage System Users</h3>
+    <form id="userForm">
+      <input type="email" id="userEmail" placeholder="User Email" required>
+      <button type="submit">Add System User</button>
+    </form>
+    <div id="userList"></div>
+  </div>
+  <script src="../firebase-config.js"></script>
+  <script src="js/cms-users.js"></script>
+</body>
+</html>

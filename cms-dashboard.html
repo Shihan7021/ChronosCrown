@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Dashboard</title>
+  <link rel="stylesheet" href="css/cms-style.css">
+</head>
+<body>
+  <div class="cms-header">
+    <h2>ChronosCrown CMS</h2>
+    <button onclick="logout()">Logout</button>
+  </div>
+  <div class="cms-sidebar">
+    <a href="cms-dashboard.html">Dashboard</a>
+    <a href="cms-products.html">Products</a>
+    <a href="cms-users.html">Users</a>
+    <a href="cms-content.html">Content</a>
+    <a href="cms-sales.html">Sales</a>
+    <a href="cms-orders.html">Orders</a>
+    <a href="cms-financials.html">Financials</a>
+  </div>
+  <div class="cms-content">
+    <h3>Overview</h3>
+    <div id="stats">
+      <p>Total Products: <span id="productCount"></span></p>
+      <p>Total Orders: <span id="orderCount"></span></p>
+      <p>Pending Orders: <span id="pendingCount"></span></p>
+    </div>
+  </div>
+  <script src="../firebase-config.js"></script>
+  <script src="js/cms-dashboard.js"></script>
+</body>
+</html>

@@ -1,40 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You - TimeMachine</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Thank you - ChronosCrown</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Navigation (same as index.html) -->
-    <nav class="navbar">
-        <!-- Same navigation as index.html -->
-    </nav>
+  <header class="header"> ... </header>
+  <main class="container">
+    <h2>Thank you for your order</h2>
+    <div id="order-summary" class="form"></div>
+  </main>
+  <footer class="footer"> ... </footer>
 
-    <!-- Thank You Content -->
-    <section class="thank-you-content">
-        <div class="container">
-            <div class="thank-you-message">
-                <h1>Thank You for Your Order!</h1>
-                <div class="success-icon">✓</div>
-                <p>Your order has been confirmed and will be shipped soon.</p>
-                <p><strong>Order ID: #TM-<span id="order-id">0000</span></strong></p>
-                <p>You will receive a confirmation email shortly.</p>
-                <div class="thank-you-actions">
-                    <a href="index.html" class="btn-primary">Continue Shopping</a>
-                    <a href="contact.html" class="btn-outline">Contact Support</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer (same as index.html) -->
-    <footer class="footer">
-        <!-- Same footer as index.html -->
-    </footer>
-
-    <script src="js/main.js"></script>
+  <script type="module">
+    import { addDays } from './js/utils.js';
+    const url = new URL(location.href);
+    const order = url.searchParams.get('order');
+    const amt = url.searchParams.get('amt');
+    const trk = url.searchParams.get('trk') || order;
+    const img = ''; // ideally load from order doc
+    const estimated = new Date(); estimated.setDate(estimated.getDate()+14);
+    document.getElementById('order-summary').innerHTML = `
+      <div>Order: <strong>${order}</strong></div>
+      <div>Tracking: <strong>${trk}</strong></div>
+      <div>Amount: <strong>$${Number(amt||0).toFixed(2)}</strong></div>
+      <div>Estimated Delivery: <strong>${estimated.toISOString().split('T')[0]}</strong></div>
+      <div style="margin-top:12px;"><a href="track-order.html?trk=${trk}" class="btn">Track your order</a></div>
+    `;
+  </script>
 </body>
 </html>

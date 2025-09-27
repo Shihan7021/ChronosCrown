@@ -1,63 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Chronos Crown</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login - ChronosCrown</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- Navigation (same as index.html) -->
-    <nav class="navbar">
-        <!-- Same navigation as index.html -->
-    </nav>
+  <main style="padding:40px;">
+    <div class="form">
+      <h3>Sign In</h3>
+      <label>Email <input id="email" class="input"></label>
+      <label>Password <input id="pass" type="password" class="input"></label>
+      <div style="margin-top:12px;">
+        <button class="btn" id="loginBtn">Login</button>
+        <a href="register.html" class="btn secondary">Register</a>
+      </div>
+    </div>
+  </main>
 
-    <!-- Login Content -->
-    <section class="auth-content">
-        <div class="container">
-            <div class="auth-form">
-                <h1>Login to Your Account</h1>
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="login-password">Password</label>
-                        <input type="password" id="login-password" name="password" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Login</button>
-                </form>
-                <p>Don't have an account? <a href="register.html">Register here</a></p>
-                <p><a href="forgot-password.html">Forgot your password?</a></p>
-                
-                <!-- CMS Login Section (hidden by default) -->
-                <div class="cms-login">
-                    <hr>
-                    <h3>CMS Access</h3>
-                    <p>Administrators can login to the CMS below:</p>
-                    <a href="cms/login.html" class="btn-outline">CMS Login</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer (same as index.html) -->
-    <footer class="footer">
-        <!-- Same footer as index.html -->
-    </footer>
-    <script src="firebaseHelper.js"></script>
-    <script src="js/firebase-config.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/products.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/cms.js"></script>
+  <script type="module">
+    import { login } from './js/auth.js';
+    document.getElementById('loginBtn').addEventListener('click', async ()=>{
+      const e = document.getElementById('email').value, p = document.getElementById('pass').value;
+      try{ await login(e,p); location.href = '/'; } catch(err){ alert(err.message); }
+    });
+  </script>
 </body>
 </html>

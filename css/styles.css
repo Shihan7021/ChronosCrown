@@ -1,0 +1,84 @@
+/* styles.css - luxury blue theme for ChronosCrown */
+/* Basic reset */
+* { box-sizing: border-box; margin:0; padding:0; }
+html,body { height:100%; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#f7f8fb; color:#0b1730; }
+
+/* Theme colors */
+:root{
+  --luxury-blue: #0e4a72;
+  --luxury-blue-2: #0b3a59;
+  --accent: #e6f3ff;
+  --muted: #6b7785;
+  --gold: #c7a24a;
+  --glass: rgba(255,255,255,0.85);
+}
+
+/* Container */
+.container { max-width:1200px; margin:0 auto; padding:20px; }
+
+/* Header / Nav */
+.header {
+  position: sticky; top: 0; z-index: 9999;
+  background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(10,10,10,0.04);
+}
+.header .nav-wrap { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; }
+.brand { display:flex; gap:12px; align-items:center; }
+.brand .logo {
+  width:48px; height:48px; border-radius:8px; background:linear-gradient(135deg,var(--luxury-blue),var(--luxury-blue-2)); display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px; box-shadow:0 6px 18px rgba(10,20,40,0.12);
+}
+.brand h1 { font-size:20px; letter-spacing:0.6px; color:var(--luxury-blue-2); }
+
+/* Animated nav */
+.navlinks { display:flex; gap:18px; align-items:center; animation: navfade 0.8s ease both; }
+.navlinks a { color:var(--luxury-blue-2); text-decoration:none; font-weight:600; padding:8px 10px; border-radius:8px; transition: all .18s ease; }
+.navlinks a:hover { background:var(--accent); transform: translateY(-3px); box-shadow: 0 8px 18px rgba(12,22,40,0.06); }
+
+/* Cart / badge */
+.icon-btn { position:relative; display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:10px; }
+.badge { position:absolute; top:-6px; right:-6px; background:var(--gold); color:#041522; min-width:18px; height:18px; border-radius:999px; font-size:12px; display:flex; align-items:center; justify-content:center; padding:0 6px; font-weight:700; }
+
+/* Hero / Parallax carousel */
+.hero {
+  position:relative; overflow:hidden; min-height:480px; display:flex; align-items:center; justify-content:center; background: linear-gradient(180deg, rgba(14,74,114,0.05), rgba(255,255,255,0));
+}
+.parallax-track { position:relative; width:100%; }
+.carousel { display:flex; gap:12px; padding:28px 10px; transform-style:preserve-3d; }
+.carousel .card {
+  min-width:320px; height:360px; border-radius:16px; background:white; box-shadow: 0 18px 40px rgba(10,20,40,0.06); padding:18px; display:flex; flex-direction:column; justify-content:space-between; transition: transform .35s ease;
+}
+.carousel .card:hover { transform: translateY(-12px) rotateX(2deg) scale(1.03); }
+.carousel .card img { max-width:100%; border-radius:10px; object-fit:cover; height:220px; }
+
+/* Featured products grid */
+.grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:20px; }
+.product-card { background:white; border-radius:12px; padding:14px; box-shadow: 0 8px 18px rgba(10,20,40,0.04); display:flex; flex-direction:column; gap:8px; }
+.price { font-size:18px; font-weight:800; color:var(--luxury-blue-2); }
+.meta { color:var(--muted); font-size:13px; }
+
+/* Filters bar */
+.filters { display:flex; gap:12px; align-items:center; padding:12px; background:rgba(10,18,30,0.02); border-radius:10px; margin:18px 0; }
+
+/* Buttons */
+.btn { border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; background:var(--luxury-blue); color:white; box-shadow: 0 8px 26px rgba(10,40,70,0.12); }
+.btn.secondary { background:transparent; color:var(--luxury-blue-2); border:1px solid rgba(10,18,30,0.06); }
+
+/* Footer */
+.footer { padding:30px 0; background:#0b1730; color:white; margin-top:40px; }
+.footer a { color:#9fc6ff; text-decoration:none; }
+
+/* Forms & pages */
+.form { background:white; padding:18px; border-radius:12px; box-shadow: 0 8px 20px rgba(10,20,40,0.04); max-width:700px; margin:24px auto; }
+.row { display:flex; gap:12px; }
+.input, textarea, select { width:100%; padding:10px 12px; border-radius:8px; border:1px solid rgba(10,20,40,0.06); }
+
+/* small screens */
+@media (max-width:900px){
+  .navlinks { display:none; }
+  .brand h1 { display:none; }
+  .carousel { padding:16px; overflow-x:auto; }
+}
+
+/* small animations */
+@keyframes navfade { from { opacity:0; transform:translateY(-10px);} to { opacity:1; transform:none; } }

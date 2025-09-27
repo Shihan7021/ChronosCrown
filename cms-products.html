@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CMS Products</title>
+  <link rel="stylesheet" href="css/cms-style.css">
+</head>
+<body>
+  <div class="cms-header"><h2>Products Management</h2></div>
+  <div class="cms-sidebar">
+    <a href="cms-dashboard.html">Dashboard</a>
+    <a href="cms-products.html">Products</a>
+    <a href="cms-users.html">Users</a>
+    <a href="cms-content.html">Content</a>
+    <a href="cms-sales.html">Sales</a>
+    <a href="cms-orders.html">Orders</a>
+    <a href="cms-financials.html">Financials</a>
+  </div>
+  <div class="cms-content">
+    <h3>Manage Products</h3>
+    <form id="productForm">
+      <input type="text" id="productName" placeholder="Product Name" required>
+      <input type="number" id="productPrice" placeholder="Price" required>
+      <input type="text" id="productStrap" placeholder="Strap Type">
+      <input type="text" id="productColor" placeholder="Color">
+      <input type="number" id="productSize" placeholder="Size">
+      <input type="file" id="productImage">
+      <button type="submit">Add Product</button>
+    </form>
+    <div id="productList"></div>
+  </div>
+  <script src="../firebase-config.js"></script>
+  <script src="js/cms-products.js"></script>
+</body>
+</html>
