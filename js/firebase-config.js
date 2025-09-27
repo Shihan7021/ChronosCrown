@@ -1,12 +1,23 @@
-// Firebase configuration (replace with your actual config)
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "your-api-key-here",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "your-sender-id",
-    appId: "your-app-id"
+  apiKey: "AIzaSyDXV8FNZ1HDdxJz_2IHuZ6sFPYzXESXLaA",
+  authDomain: "chronoscrown-cfd9e.firebaseapp.com",
+  projectId: "chronoscrown-cfd9e",
+  storageBucket: "chronoscrown-cfd9e.firebasestorage.app",
+  messagingSenderId: "358791614251",
+  appId: "1:358791614251:web:c2404222f2d0fe19727f6e",
+  measurementId: "G-QY0N3226BD"
 };
+
+// Initialize Firebase
+
 
 // Initialize Firebase
 if (typeof firebase !== 'undefined') {
