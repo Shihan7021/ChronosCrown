@@ -253,9 +253,10 @@ body {
 
 /* Align product form fields */
 #productForm { display:block !important; }
-#productForm .form-row { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px; }
-#productForm .form-group { flex:1; min-width:220px; }
-#productDesc { min-height:120px; }
+#productForm .form-row { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-bottom:16px; }
+#productForm .form-group { flex:1 1 260px; min-width:240px; }
+#productDesc { min-height:140px; }
+.toggle-row label { font-weight: 500; }
 
 /* Align product form fields */
 .form-row { display:flex; gap:16px; align-items:flex-start; }

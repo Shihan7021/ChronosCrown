@@ -184,6 +184,18 @@ productForm.addEventListener('submit', async (e) => {
   }
 });
 
+// Initial load (in case onSnapshot delays)
+(async function initialLoad(){
+  try {
+    const snap = await getDocs(collection(db, 'products'));
+    const rows = [];
+    snap.forEach(s => rows.push({ id: s.id, ...s.data() }));
+    renderProductList(rows);
+  } catch (e) {
+    console.error('initial load products', e);
+  }
+})();
+
 // Render product list live
 onSnapshot(collection(db, 'products'), snapshot => {
   const rows = [];
@@ -191,7 +203,7 @@ onSnapshot(collection(db, 'products'), snapshot => {
   renderProductList(rows);
 }, err => {
   console.error('product listen', err);
-  productList.innerHTML = '<div>No products</div>';
+  productList.innerHTML = '<div class="small muted">No products found.</div>';
 });
 
 function renderProductList(products) {
