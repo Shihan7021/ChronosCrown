@@ -116,9 +116,9 @@ function populateSelect(selectEl, optionsArray) {
 function addToCart(pid, product) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const selectedOptions = {
-        strap: productStrap.value,
-        color: productColor.value,
-        size: productSize.value
+        strap: productStrap.value || product.strap || '',
+        color: productColor.value || product.color || '',
+        size: productSize.value || product.size || ''
     };
 
     // Find if an identical item (with same options) already exists
