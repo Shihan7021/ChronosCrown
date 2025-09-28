@@ -58,15 +58,15 @@ productForm.addEventListener('submit', async (e) => {
 
   const name = document.getElementById('productName').value.trim();
   const price = Number(document.getElementById('productPrice').value) || 0;
-  const type = document.getElementById('productType')?.value || 'Him'; // default if missing
+  const type = document.getElementById('productType').value;  // new
   const strap = document.getElementById('productStrap').value;
   const color = document.getElementById('productColor').value;
   const size = document.getElementById('productSize').value;
   const description = document.getElementById('productDesc').value.trim();
   const quantity = Number(document.getElementById('productQty').value) || 0;
 
-  if (!name || !strap || !color || !size) {
-    alert('Name and all dropdowns are required');
+  if (!name || !strap || !color || !size || !type) {
+    alert('Name, type and all dropdowns are required');
     return;
   }
 
@@ -76,51 +76,34 @@ productForm.addEventListener('submit', async (e) => {
   }
 
   try {
-    // Step 1: Create Firestore product doc first
+    // Step 1: create product doc first
     const pRef = await addDoc(collection(db, 'products'), {
-      name,
-      price,
-      type,
-      strap,
-      color,
-      size,
-      description,
-      quantity,
-      images: [],
-      createdAt: serverTimestamp()
+      name, price, type, strap, color, size, description, quantity,
+      images: [], createdAt: serverTimestamp()
     });
 
-    // Step 2: Upload images to Storage
-    const urls = [];
-
-    for (const file of selectedFiles) {
-      console.log('Uploading file:', file.name, file.size, file.type);
+    // Step 2: upload images & collect URLs
+    const urls = await Promise.all(selectedFiles.map(async file => {
       const path = `products/${pRef.id}/${Date.now()}_${file.name}`;
-      const s = sref(storage, path);
+      const sRef = sref(storage, path);
+      await uploadBytes(sRef, file);
+      const url = await getDownloadURL(sRef);
+      return url;
+    }));
 
-      // Upload the file
-      const snapshot = await uploadBytes(s, file);
-
-      // Get download URL
-      const url = await getDownloadURL(snapshot.ref);
-      urls.push(url);
-    }
-
-    // Step 3: Update Firestore doc with image URLs
+    // Step 3: update product doc with image URLs
     await updateDoc(doc(db, 'products', pRef.id), { images: urls });
 
-    // Step 4: Clear form and preview
+    alert('Product saved with images!');
     productForm.reset();
     selectedFiles = [];
     renderPreview();
 
-    alert('Product saved successfully!');
   } catch (err) {
-    console.error('Upload error:', err);
+    console.error(err);
     alert('Failed to save product: ' + (err.message || err));
   }
 });
-
 
 // Render product list live
 onSnapshot(collection(db, 'products'), snapshot => {
