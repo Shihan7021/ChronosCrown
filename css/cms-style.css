@@ -292,3 +292,9 @@ body {
   .cms-wrapper { flex-direction:column; }
 }
 
+/* toast */
+.toast { position: fixed; top: 16px; right: 16px; padding: 10px 14px; border-radius: 8px; color: #fff; box-shadow: 0 8px 18px rgba(0,0,0,0.12); z-index: 9999; }
+.toast.success { background: #10b981; }
+.toast.error { background: #ef4444; }
+.hidden { display: none; }
+

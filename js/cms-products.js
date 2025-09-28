@@ -13,6 +13,8 @@ const productList = document.getElementById('productList');
 const imageInput = document.getElementById('productImages');
 const imagePreview = document.getElementById('imagePreview');
 const clearFormBtn = document.getElementById('clearFormBtn');
+const featuredInput = document.getElementById('productFeatured');
+const animatedInput = document.getElementById('productAnimated');
 
 const storage = getStorage();
 let selectedFiles = [];
@@ -85,6 +87,17 @@ function resetForm(){
   if (addBtn) addBtn.textContent = 'Save Product';
 }
 
+function showToast(msg, type='success'){
+  const el = document.getElementById('cmsToast');
+  if (!el) { alert(msg); return; }
+  el.textContent = msg;
+  el.classList.remove('hidden');
+  el.classList.toggle('error', type === 'error');
+  el.classList.toggle('success', type !== 'error');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> el.classList.add('hidden'), 2500);
+}
+
 // Submit product
 productForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -149,7 +162,7 @@ productForm.addEventListener('submit', async (e) => {
 
       // Update product doc with image URLs
       await updateDoc(doc(db, 'products', pRef.id), { images: urls });
-      alert('Product saved with images!');
+      showToast('Product saved!');
       resetForm();
     } else {
       // Update existing document by ID
@@ -172,7 +185,7 @@ productForm.addEventListener('submit', async (e) => {
         updatedAt: serverTimestamp()
       });
 
-      alert('Product updated!');
+      showToast('Product updated!');
       resetForm();
     }
 
