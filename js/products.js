@@ -5,6 +5,7 @@ import { formatCurrency } from './utils.js';
 
 // --- STATE ---
 let currentCategory = 'all';
+let currentShowDescription = true;
 // Always fetch fresh from Firestore to ensure latest flags (featured/animated) and inventory are shown
 let allProducts = [];
 
@@ -18,8 +19,9 @@ let allProducts = [];
  * @param {object} options.filters - The filter criteria.
  * @param {number} options.limit - The max number of products to show (for homepage).
  */
-export async function loadProducts({category = 'all', page = 1, filters = {}, limit = 0} = {}) {
+export async function loadProducts({category = 'all', page = 1, filters = {}, limit = 0, showDescription = true} = {}) {
     currentCategory = category;
+    currentShowDescription = showDescription;
     const rowsPerPage = Number(localStorage.getItem('rowsPerPage') || 5);
     const pageSize = rowsPerPage * 4; // 4 products per row
     const container = document.querySelector('#products-grid');
@@ -65,7 +67,7 @@ export async function loadProducts({category = 'all', page = 1, filters = {}, li
         }
 
         // --- RENDERING ---
-        renderProductGrid(container, itemsToRender);
+        renderProductGrid(container, itemsToRender, { showDescription });
 
         // Render pagination controls if not on homepage
         if (limit === 0) {
@@ -80,7 +82,7 @@ export async function loadProducts({category = 'all', page = 1, filters = {}, li
 
 // --- RENDER HELPERS ---
 
-function renderProductGrid(container, products) {
+function renderProductGrid(container, products, { showDescription }) {
     container.classList.add('grid','grid-4');
     container.innerHTML = ''; // Clear loading message
     if (products.length === 0) {
@@ -93,6 +95,7 @@ function renderProductGrid(container, products) {
         const card = document.createElement('a');
         card.className = 'product-card';
         card.href = `product.html?id=${prod.id}`;
+        const descriptionHTML = showDescription ? `<p class="description">${prod.description ? prod.description.substring(0, 50) + '...' : ''}</p>` : '';
         card.innerHTML = `
             <div class="product-card-image">
                 <img src="${mainImage}" alt="${prod.name}" onerror="this.onerror=null;this.src='https://placehold.co/120x120/EFEFEF/A9A9A9?text=No+Image';">
@@ -101,7 +104,7 @@ function renderProductGrid(container, products) {
             <div class="product-card-info">
                 <h3>${prod.name}</h3>
                 <p class="meta">${prod.brand || 'ChronosCrown'}</p>
-                <p class="description">${prod.description ? prod.description.substring(0, 50) + '...' : ''}</p>
+                ${descriptionHTML}
                 <div class="product-card-footer">
                     <div class="price">${formatCurrency(prod.price)}</div>
                     <button class="btn secondary" ${prod.quantity <= 0 ? 'disabled' : ''}>View</button>
@@ -135,5 +138,5 @@ function renderPagination(container, currentPage, totalItems, pageSize, filters)
     container.appendChild(pager);
 
     // Expose changePage function to global scope for the inline onclick handler
-    window.changePage = (p) => loadProducts({ category: currentCategory, page: p, filters });
+    window.changePage = (p) => loadProducts({ category: currentCategory, page: p, filters, showDescription: currentShowDescription });
 }

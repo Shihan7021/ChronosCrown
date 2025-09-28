@@ -132,7 +132,7 @@
 
     rowsSel.addEventListener('change', (e)=> {
       localStorage.setItem('rowsPerPage', e.target.value);
-      loadProducts({category:'Him', page:1});
+      loadProducts({category:'Him', page:1, showDescription:false});
     });
 
     document.getElementById('applyFilters').addEventListener('click', ()=>{
@@ -143,10 +143,10 @@
         color: document.getElementById('colorFilter').value,
         size: document.getElementById('sizeFilter').value
       };
-      loadProducts({category:'Him', page:1, filters});
+      loadProducts({category:'Him', page:1, filters, showDescription:false});
     });
 
-    loadProducts({category:'Him', page:1});
+    loadProducts({category:'Him', page:1, showDescription:false});
   </script>
   <script type="module" src="js/main-auth.js"></script>
 </body>
