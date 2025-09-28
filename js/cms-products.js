@@ -13,11 +13,12 @@ const productList = document.getElementById('productList');
 const imageInput = document.getElementById('productImages');
 const imagePreview = document.getElementById('imagePreview');
 const clearFormBtn = document.getElementById('clearFormBtn');
-const featuredInput = document.getElementById('productFeatured');
-const animatedInput = document.getElementById('productAnimated');
 
 const storage = getStorage();
 let selectedFiles = [];
+let editProductId = null; // current editing product id
+let existingImageUrls = []; // from DB for edit
+let keptImageUrls = []; // urls user decided to keep
 
 // Preview images
 imageInput.addEventListener('change', (e) => {
@@ -27,6 +28,21 @@ imageInput.addEventListener('change', (e) => {
 
 function renderPreview() {
   imagePreview.innerHTML = '';
+
+  // Existing images (for edit)
+  keptImageUrls.forEach((url, idx) => {
+    const div = document.createElement('div');
+    div.className = 'preview-card';
+    div.innerHTML = `
+      <img src="${url}" alt="existing-${idx}">
+      <div class="preview-actions">
+        <button class="btn small" data-rem-ex="${idx}">Remove</button>
+      </div>
+    `;
+    imagePreview.appendChild(div);
+  });
+
+  // New selected files
   selectedFiles.forEach((file, idx) => {
     const url = URL.createObjectURL(file);
     const div = document.createElement('div');
@@ -46,11 +62,28 @@ function renderPreview() {
     imageInput.value = ''; // reset input
     renderPreview();
   }));
+
+  imagePreview.querySelectorAll('[data-rem-ex]').forEach(btn => btn.addEventListener('click', (e) => {
+    const idx = Number(e.currentTarget.dataset.remEx);
+    keptImageUrls.splice(idx, 1);
+    renderPreview();
+  }));
 }
 
 clearFormBtn.addEventListener('click', () => {
+  resetForm();
+});
+
+function resetForm(){
   productForm.reset();
   selectedFiles = [];
+  existingImageUrls = [];
+  keptImageUrls = [];
+  editProductId = null;
+  imagePreview.innerHTML = '';
+  const addBtn = document.getElementById('addProductBtn');
+  if (addBtn) addBtn.textContent = 'Save Product';
+}
   imagePreview.innerHTML = '';
 });
 
@@ -74,49 +107,76 @@ productForm.addEventListener('submit', async (e) => {
     return;
   }
 
-  if (selectedFiles.length < 1) {
+  // Ensure at least one image will exist
+  if (!editProductId && selectedFiles.length < 1) {
+    alert('At least one image is required');
+    return;
+  }
+  if (editProductId && (keptImageUrls.length + selectedFiles.length) < 1) {
     alert('At least one image is required');
     return;
   }
 
   try {
-    // Enforce limits before creating if user marked
-    let canFeature = true, canAnimate = true;
-    if (markFeatured) {
-      const qf = query(collection(db, 'products'), where('featured', '==', true));
-      const snapF = await getDocs(qf);
-      if (snapF.size >= 9) { canFeature = false; alert('You can mark up to 9 products as Featured.'); }
+    if (!editProductId) {
+      // Enforce limits before creating if user marked
+      let canFeature = true, canAnimate = true;
+      if (markFeatured) {
+        const qf = query(collection(db, 'products'), where('featured', '==', true));
+        const snapF = await getDocs(qf);
+        if (snapF.size >= 9) { canFeature = false; alert('You can mark up to 9 products as Featured.'); }
+      }
+      if (markAnimated) {
+        const qa = query(collection(db, 'products'), where('animated', '==', true));
+        const snapA = await getDocs(qa);
+        if (snapA.size >= 3) { canAnimate = false; alert('You can mark up to 3 products as Animated.'); }
+      }
+
+      // Create product doc first
+      const pRef = await addDoc(collection(db, 'products'), {
+        name, price, type, strap, color, size, description, quantity,
+        featured: canFeature && markFeatured ? true : false,
+        animated: canAnimate && markAnimated ? true : false,
+        images: [], createdAt: serverTimestamp()
+      });
+
+      // Upload images & collect URLs
+      const urls = await Promise.all(selectedFiles.map(async file => {
+        const path = `products/${pRef.id}/${Date.now()}_${file.name}`;
+        const sRef = sref(storage, path);
+        await uploadBytes(sRef, file);
+        const url = await getDownloadURL(sRef);
+        return url;
+      }));
+
+      // Update product doc with image URLs
+      await updateDoc(doc(db, 'products', pRef.id), { images: urls });
+      alert('Product saved with images!');
+      resetForm();
+    } else {
+      // Update existing document by ID
+      const id = editProductId;
+      // upload any new files
+      const newUrls = await Promise.all(selectedFiles.map(async file => {
+        const path = `products/${id}/${Date.now()}_${file.name}`;
+        const sRef = sref(storage, path);
+        await uploadBytes(sRef, file);
+        const url = await getDownloadURL(sRef);
+        return url;
+      }));
+      const finalImages = [...keptImageUrls, ...newUrls];
+
+      await updateDoc(doc(db, 'products', id), {
+        name, price, type, strap, color, size, description, quantity,
+        featured: markFeatured,
+        animated: markAnimated,
+        images: finalImages,
+        updatedAt: serverTimestamp()
+      });
+
+      alert('Product updated!');
+      resetForm();
     }
-    if (markAnimated) {
-      const qa = query(collection(db, 'products'), where('animated', '==', true));
-      const snapA = await getDocs(qa);
-      if (snapA.size >= 3) { canAnimate = false; alert('You can mark up to 3 products as Animated.'); }
-    }
-
-    // Step 1: create product doc first
-    const pRef = await addDoc(collection(db, 'products'), {
-      name, price, type, strap, color, size, description, quantity,
-      featured: canFeature && markFeatured ? true : false,
-      animated: canAnimate && markAnimated ? true : false,
-      images: [], createdAt: serverTimestamp()
-    });
-
-    // Step 2: upload images & collect URLs
-    const urls = await Promise.all(selectedFiles.map(async file => {
-      const path = `products/${pRef.id}/${Date.now()}_${file.name}`;
-      const sRef = sref(storage, path);
-      await uploadBytes(sRef, file);
-      const url = await getDownloadURL(sRef);
-      return url;
-    }));
-
-    // Step 3: update product doc with image URLs
-    await updateDoc(doc(db, 'products', pRef.id), { images: urls });
-
-    alert('Product saved with images!');
-    productForm.reset();
-    selectedFiles = [];
-    renderPreview();
 
   } catch (err) {
     console.error(err);
@@ -219,15 +279,32 @@ function renderProductList(products) {
   // Attach edit handlers
   productList.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', async (e) => {
     const id = e.currentTarget.dataset.edit;
-    const { getDoc, doc, updateDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js");
+    const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js");
     const pSnap = await getDoc(doc(db, 'products', id));
     if (!pSnap.exists()) { alert('Not found'); return; }
     const p = pSnap.data();
-    const newPrice = prompt('New price', p.price || 0);
-    if (newPrice === null) return;
-    const newQty = prompt('New quantity (internal)', p.quantity || 0);
-    if (newQty === null) return;
-    await updateDoc(doc(db, 'products', id), { price: Number(newPrice), quantity: Number(newQty), updatedAt: serverTimestamp() });
-    alert('Saved');
+
+    // Fill form fields
+    document.getElementById('productName').value = p.name || '';
+    document.getElementById('productPrice').value = p.price || 0;
+    document.getElementById('productType').value = p.type || '';
+    document.getElementById('productStrap').value = p.strap || '';
+    document.getElementById('productColor').value = p.color || '';
+    document.getElementById('productSize').value = p.size || '';
+    document.getElementById('productDesc').value = p.description || '';
+    document.getElementById('productQty').value = p.quantity || 0;
+    if (featuredInput) featuredInput.checked = !!p.featured;
+    if (animatedInput) animatedInput.checked = !!p.animated;
+
+    // Images
+    editProductId = id;
+    existingImageUrls = Array.isArray(p.images) ? p.images : [];
+    keptImageUrls = [...existingImageUrls];
+    selectedFiles = [];
+    renderPreview();
+
+    const addBtn = document.getElementById('addProductBtn');
+    if (addBtn) addBtn.textContent = 'Update Product';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }));
 }
