@@ -209,8 +209,8 @@ body {
   background: #b91c1c;
 }
 
-/* Form Fields */
-.cms-content form {
+/* Form Fields (generic forms) */
+.cms-content form:not(#productForm) {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
@@ -251,12 +251,27 @@ body {
 .preview-card img { width:86px; height:86px; object-fit:cover; border-radius:4px; display:block; margin:0 auto 6px; }
 .preview-actions { display:flex; justify-content:center; gap:6px; }
 
+/* Align product form fields */
+#productForm { display:block !important; }
+#productForm .form-row { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-bottom:12px; }
+#productForm .form-group { flex:1; min-width:220px; }
+#productDesc { min-height:120px; }
+
+/* Align product form fields */
+.form-row { display:flex; gap:16px; align-items:flex-start; }
+.form-group { flex:1; min-width:220px; }
+#productDesc { min-height:100px; }
+
 /* refined product-list / product-card */
-.product-list { display:grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap:16px; margin-top:12px; }
-.product-card { background:#fff; border-radius:8px; padding:12px; box-shadow:0 2px 6px rgba(2,6,23,0.06); display:flex; align-items:flex-start; gap:12px; }
+.product-list { display:grid; grid-template-columns: 1fr; gap:12px; margin-top:12px; }
+.product-card { position:relative; background:#fff; border-radius:8px; padding:12px; box-shadow:0 2px 6px rgba(2,6,23,0.06); display:flex; align-items:flex-start; gap:12px; }
 .product-thumb img { width:120px; height:96px; object-fit:cover; border-radius:6px; }
-.product-info { flex:1; }
-.product-actions { display:flex; gap:8px; align-items:flex-start; }
+.product-info { flex:1; text-align:left; }
+.product-actions { position:absolute; top:8px; right:8px; display:flex; gap:6px; }
+.icon-btn { background:transparent; border:0; cursor:pointer; font-size:18px; line-height:1; padding:4px; border-radius:6px; }
+.icon-btn:hover { background:#f1f5f9; }
+.icon-btn { background:transparent; border:0; cursor:pointer; font-size:18px; line-height:1; padding:4px; border-radius:6px; }
+.icon-btn:hover { background:#f1f5f9; }
 
 /* small buttons */
 .btn.small { padding:6px 8px; font-size:13px; border-radius:6px; }

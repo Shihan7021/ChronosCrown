@@ -216,17 +216,17 @@ function renderProductList(products) {
         <div class="product-thumb">${img}</div>
         <div class="product-info">
           <h4>${p.name} (${p.type || '-'})</h4>
-          <div class="meta">Price: $${Number(p.price).toFixed(2)}</div>
+          <div class="meta">Price: Rs.${Number(p.price).toFixed(2)}</div>
           <div class="meta">Strap: ${p.strap} • Color: ${p.color} • Size: ${p.size}</div>
           <p class="small muted">${(p.description||'')}</p>
-          <div class="toggle-row">
+          <div class="toggle-row" style="margin-top:6px; display:flex; gap:10px;">
             <label><input type="checkbox" data-feature="${p.id}" ${featuredChecked}> Featured</label>
             <label><input type="checkbox" data-animated="${p.id}" ${animatedChecked}> Animated</label>
           </div>
         </div>
         <div class="product-actions">
-          ${canEdit ? `<button class="btn small" data-edit="${p.id}">Edit</button>` : ''}
-          ${canDelete ? `<button class="btn small btn-danger" data-del="${p.id}">Delete</button>` : ''}
+          ${canEdit ? `<button class="icon-btn" title="Edit" data-edit="${p.id}">✏️</button>` : ''}
+          ${canDelete ? `<button class="icon-btn" title="Delete" data-del="${p.id}">🗑️</button>` : ''}
         </div>
       </div>
     `;
