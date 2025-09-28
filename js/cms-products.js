@@ -1,13 +1,13 @@
 // cms-products.js
-import { db } from '../js/firebase-config.js';
+import { db, auth } from '../js/firebase-config.js';
 import {
-  collection, addDoc, doc, updateDoc, onSnapshot, deleteDoc, serverTimestamp
+  collection, addDoc, doc, setDoc, getDocs, onSnapshot, deleteDoc, updateDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import {
   getStorage, ref as sref, uploadBytes, getDownloadURL
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
 
-// DOM Elements
+// DOM elements
 const productForm = document.getElementById('productForm');
 const productList = document.getElementById('productList');
 const imageInput = document.getElementById('productImages');
@@ -17,7 +17,7 @@ const clearFormBtn = document.getElementById('clearFormBtn');
 const storage = getStorage();
 let selectedFiles = [];
 
-// Image preview
+// Preview images
 imageInput.addEventListener('change', (e) => {
   selectedFiles = Array.from(e.target.files);
   renderPreview();
@@ -29,23 +29,23 @@ function renderPreview() {
     const url = URL.createObjectURL(file);
     const div = document.createElement('div');
     div.className = 'preview-card';
-    div.innerHTML = `<img src="${url}" alt="${file.name}">
-                     <div class="preview-actions">
-                       <button class="btn small" data-rem="${idx}">Remove</button>
-                     </div>`;
+    div.innerHTML = `
+      <img src="${url}" alt="${file.name}">
+      <div class="preview-actions">
+        <button class="btn small" data-rem="${idx}">Remove</button>
+      </div>
+    `;
     imagePreview.appendChild(div);
   });
 
-  // Remove handler
   imagePreview.querySelectorAll('[data-rem]').forEach(btn => btn.addEventListener('click', (e) => {
     const idx = Number(e.currentTarget.dataset.rem);
     selectedFiles.splice(idx, 1);
-    imageInput.value = '';
+    imageInput.value = ''; // reset input
     renderPreview();
   }));
 }
 
-// Clear form
 clearFormBtn.addEventListener('click', () => {
   productForm.reset();
   selectedFiles = [];
@@ -58,7 +58,7 @@ productForm.addEventListener('submit', async (e) => {
 
   const name = document.getElementById('productName').value.trim();
   const price = Number(document.getElementById('productPrice').value) || 0;
-  const type = document.getElementById('productType').value;
+  const type = document.getElementById('productType').value;  // new
   const strap = document.getElementById('productStrap').value;
   const color = document.getElementById('productColor').value;
   const size = document.getElementById('productSize').value;
@@ -66,7 +66,7 @@ productForm.addEventListener('submit', async (e) => {
   const quantity = Number(document.getElementById('productQty').value) || 0;
 
   if (!name || !strap || !color || !size || !type) {
-    alert('Please fill all required fields including Type');
+    alert('Name, type and all dropdowns are required');
     return;
   }
 
@@ -76,26 +76,25 @@ productForm.addEventListener('submit', async (e) => {
   }
 
   try {
-    // Create product doc first to get ID
+    // Step 1: create product doc first
     const pRef = await addDoc(collection(db, 'products'), {
       name, price, type, strap, color, size, description, quantity,
       images: [], createdAt: serverTimestamp()
     });
 
-    // Upload images
-    const urls = [];
-    for (const file of selectedFiles) {
+    // Step 2: upload images & collect URLs
+    const urls = await Promise.all(selectedFiles.map(async file => {
       const path = `products/${pRef.id}/${Date.now()}_${file.name}`;
-      const storageRef = sref(storage, path);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      urls.push(url);
-    }
+      const sRef = sref(storage, path);
+      await uploadBytes(sRef, file);
+      const url = await getDownloadURL(sRef);
+      return url;
+    }));
 
-    // Update Firestore with image URLs
+    // Step 3: update product doc with image URLs
     await updateDoc(doc(db, 'products', pRef.id), { images: urls });
 
-    alert('Product saved successfully');
+    alert('Product saved with images!');
     productForm.reset();
     selectedFiles = [];
     renderPreview();
@@ -106,7 +105,7 @@ productForm.addEventListener('submit', async (e) => {
   }
 });
 
-// Render live products list
+// Render product list live
 onSnapshot(collection(db, 'products'), snapshot => {
   const rows = [];
   snapshot.forEach(s => rows.push({ id: s.id, ...s.data() }));
@@ -130,13 +129,13 @@ function renderProductList(products) {
   products.forEach(p => {
     const card = document.createElement('div');
     card.className = 'product-card';
-    const img = (p.images && p.images.length) ? `<img src="${p.images[0]}" alt="${p.name}">` : `<div class="no-image">No image</div>`;
+    const img = (p.images && p.images[0]) ? `<img src="${p.images[0]}" alt="${p.name}">` : `<div class="no-image">No image</div>`;
     card.innerHTML = `
       <div class="product-card-inner">
         <div class="product-thumb">${img}</div>
         <div class="product-info">
-          <h4>${p.name}</h4>
-          <div class="meta">Type: ${p.type} • Price: $${Number(p.price).toFixed(2)}</div>
+          <h4>${p.name} (${p.type || '-'})</h4>
+          <div class="meta">Price: $${Number(p.price).toFixed(2)}</div>
           <div class="meta">Strap: ${p.strap} • Color: ${p.color} • Size: ${p.size}</div>
           <p class="small muted">${(p.description||'')}</p>
         </div>
@@ -149,7 +148,7 @@ function renderProductList(products) {
     productList.appendChild(card);
   });
 
-  // Delete handler
+  // Attach delete handlers
   productList.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async (e) => {
     const id = e.currentTarget.dataset.del;
     if (!confirm('Delete product?')) return;
@@ -162,10 +161,11 @@ function renderProductList(products) {
     }
   }));
 
-  // Edit handler (quick edit for price & quantity)
+  // Attach edit handlers
   productList.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', async (e) => {
     const id = e.currentTarget.dataset.edit;
-    const pSnap = await (await import("https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js")).getDoc((await import("https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js")).doc(db, 'products', id));
+    const { getDoc, doc, updateDoc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js");
+    const pSnap = await getDoc(doc(db, 'products', id));
     if (!pSnap.exists()) { alert('Not found'); return; }
     const p = pSnap.data();
     const newPrice = prompt('New price', p.price || 0);
