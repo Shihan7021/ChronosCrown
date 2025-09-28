@@ -66,8 +66,10 @@ async function loadCart() {
 
 // Cart operations
 function updateBadge() {
+  const count = cart.reduce((sum, i)=> sum + i.qty, 0);
+  localStorage.setItem('cart_count', String(count));
   const badge = document.querySelector('.cart-badge');
-  if (badge) badge.textContent = cart.reduce((sum, i)=> sum + i.qty, 0);
+  if (badge) badge.textContent = count;
 }
 
 window.increaseQty = (pid) => {
@@ -82,9 +84,30 @@ window.decreaseQty = (pid) => {
   saveCart();
 };
 
+const confirmModal = {
+  el: document.getElementById('confirmModal'),
+  ok: document.getElementById('confirmOk'),
+  cancel: document.getElementById('confirmCancel'),
+  open(onConfirm){
+    this.el.classList.remove('hidden');
+    const close = ()=> this.el.classList.add('hidden');
+    const onOk = ()=>{ onConfirm(); cleanup(); };
+    const onCancel = ()=> cleanup();
+    const cleanup = ()=>{
+      this.ok.removeEventListener('click', onOk);
+      this.cancel.removeEventListener('click', onCancel);
+      close();
+    };
+    this.ok.addEventListener('click', onOk);
+    this.cancel.addEventListener('click', onCancel);
+  }
+};
+
 window.removeFromCart = (pid) => {
-  cart = cart.filter(i => i.productId !== pid);
-  saveCart();
+  confirmModal.open(()=>{
+    cart = cart.filter(i => i.productId !== pid);
+    saveCart();
+  });
 };
 
 function saveCart() {

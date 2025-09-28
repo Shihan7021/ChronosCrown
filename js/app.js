@@ -8,9 +8,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 function initHeader(){
   // update cart badge if present from local storage until auth loads
-  const count = localStorage.getItem('cart_count') || '0';
-  const badge = document.querySelector('.cart-badge');
-  if(badge) badge.textContent = count;
+  const setBadge = ()=>{
+    const count = localStorage.getItem('cart_count') || '0';
+    const badge = document.querySelector('.cart-badge');
+    if(badge) badge.textContent = count;
+  };
+  setBadge();
+  window.addEventListener('storage', (e)=>{
+    if (e.key === 'cart' || e.key === 'cart_count') setBadge();
+  });
+
   // simple sign out attach
   const signoutBtn = document.querySelector('.signout-btn');
   if(signoutBtn) signoutBtn.addEventListener('click', async ()=>{

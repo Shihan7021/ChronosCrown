@@ -69,6 +69,12 @@ html,body { height:100%; font-family: 'Inter', system-ui, -apple-system, 'Segoe 
 /* Buttons */
 .btn { border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; background:var(--luxury-blue); color:white; box-shadow: 0 8px 26px rgba(10,40,70,0.12); }
 .btn.secondary { background:transparent; color:var(--luxury-blue-2); border:1px solid rgba(10,18,30,0.06); }
+.btn.danger, .btn.btn-danger { background:#dc2626; color:#fff; }
+
+/* Modal */
+.modal { position: fixed; inset:0; background: rgba(4,10,20,0.45); display:flex; align-items:center; justify-content:center; z-index: 10000; }
+.modal.hidden { display:none; }
+.modal-dialog { background:#fff; color:#0b1730; width: min(520px, 92%); border-radius:12px; padding:16px; box-shadow: 0 18px 48px rgba(0,0,0,0.2); }
 
 /* Remove underline/color change for product links */
 .grid a, .featured-carousel a, .carousel a, a.product-card, .product-card a { text-decoration: none; color: inherit; }

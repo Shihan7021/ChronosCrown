@@ -49,7 +49,20 @@
     <h2>Your Cart</h2>
     <div id="cart-list"></div>
   </main>
-  <footer class="footer">
+
+  <!-- Confirm removal modal -->
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-dialog">
+      <h3 id="confirmTitle" style="margin-bottom:8px;">Remove item?</h3>
+      <p class="meta">Are you sure you want to remove this item from your cart?</p>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+        <button id="confirmCancel" class="btn secondary" type="button">Cancel</button>
+        <button id="confirmOk" class="btn btn-danger" type="button">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer"> ... </footer>
     <div class="container footer-columns">
       <div class="footer-col footer-brand">
         <div class="logo">CC</div>
