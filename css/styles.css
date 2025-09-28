@@ -2,6 +2,8 @@
 /* Basic reset */
 * { box-sizing: border-box; margin:0; padding:0; }
 html,body { height:100%; font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#f7f8fb; color:#0b1730; }
+body { min-height:100vh; display:flex; flex-direction:column; }
+main { flex:1 0 auto; }
 
 /* Theme colors */
 :root{
