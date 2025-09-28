@@ -69,8 +69,9 @@ main { flex:1 0 auto; }
 .filters { display:flex; gap:12px; align-items:center; padding:12px; background:rgba(10,18,30,0.02); border-radius:10px; margin:18px 0; }
 
 /* Buttons */
-.btn { border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; background:var(--luxury-blue); color:white; box-shadow: 0 8px 26px rgba(10,40,70,0.12); }
-.btn.secondary { background:transparent; color:var(--luxury-blue-2); border:1px solid rgba(10,18,30,0.06); }
+.btn { border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; background:var(--luxury-blue); color:white; box-shadow: 0 8px 26px rgba(10,40,70,0.12); text-decoration:none; display:inline-block; }
+.btn.secondary { background:transparent; color:var(--luxury-blue-2); border:1px solid rgba(10,18,30,0.06); text-decoration:none; }
+.btn:hover, .btn.secondary:hover { text-decoration:none; }
 .btn.danger, .btn.btn-danger { background:#dc2626; color:#fff; }
 
 /* Modal */
