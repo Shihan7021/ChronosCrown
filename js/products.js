@@ -5,7 +5,8 @@ import { formatCurrency } from './utils.js';
 
 // --- STATE ---
 let currentCategory = 'all';
-let allProducts = []; // Cache products to avoid re-fetching on client-side filter changes
+// Always fetch fresh from Firestore to ensure latest flags (featured/animated) and inventory are shown
+let allProducts = [];
 
 // --- CORE FUNCTION ---
 
@@ -30,13 +31,12 @@ export async function loadProducts({category = 'all', page = 1, filters = {}, li
     container.innerHTML = '<div>Loading products...</div>';
 
     try {
-        // Fetch products only if the cache is empty
-        if (allProducts.length === 0) {
-            const querySnapshot = await getDocs(collection(db, 'products'));
-            querySnapshot.forEach(doc => {
-                allProducts.push({ id: doc.id, ...doc.data() });
-            });
-        }
+        // Always fetch fresh
+        allProducts = [];
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        querySnapshot.forEach(doc => {
+            allProducts.push({ id: doc.id, ...doc.data() });
+        });
 
         // --- FILTERING ---
         const filtered = allProducts.filter(p => {
@@ -49,7 +49,7 @@ export async function loadProducts({category = 'all', page = 1, filters = {}, li
             if (filters.priceMax && p.price > filters.priceMax) return false;
             if (filters.strap && p.strap !== filters.strap) return false;
             if (filters.color && p.color !== filters.color) return false;
-            if (filters.size && p.size !== String(filters.size)) return false;
+            if (filters.size && String(p.size) !== String(filters.size)) return false;
             return true;
         });
         
