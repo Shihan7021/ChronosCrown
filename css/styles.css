@@ -100,6 +100,15 @@ html,body { height:100%; font-family: 'Inter', system-ui, -apple-system, 'Segoe 
   .carousel { padding:16px; overflow-x:auto; }
 }
 
+/* Checkout address layout */
+.checkout-address { display:grid; grid-template-columns: 1.2fr 1fr; gap:24px; align-items:start; }
+.address-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap:12px; margin-top:12px; }
+.address-card { background:white; border:1px solid rgba(10,20,40,0.06); border-radius:12px; padding:12px; box-shadow: 0 6px 16px rgba(10,20,40,0.04); display:flex; gap:10px; align-items:flex-start; }
+.address-card.selectable { cursor:pointer; }
+.address-card input[type="radio"] { margin-top:4px; }
+.address-card .addr { line-height:1.4; }
+.address-card.new-address { box-shadow: 0 10px 24px rgba(10,20,40,0.06); }
+
 /* small animations */
 @keyframes navfade { from { opacity:0; transform:translateY(-10px);} to { opacity:1; transform:none; } }
 

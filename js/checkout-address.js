@@ -31,18 +31,16 @@ async function loadAddresses(user) {
   snap.forEach(docSnap => {
     const addr = docSnap.data();
     const id = docSnap.id;
-    const div = document.createElement('div');
-    div.className = 'address-card';
-    div.innerHTML = `
-      <label style="display:flex; gap:8px; align-items:center;">
-        <input type="radio" name="selAddress" value="${id}">
-        <span>${addr.name}, ${addr.line1}, ${addr.city}, ${addr.state || ''} ${addr.zip || ''}, ${addr.country}</span>
-      </label>
+    const card = document.createElement('label');
+    card.className = 'address-card selectable';
+    card.innerHTML = `
+      <input type=\"radio\" name=\"selAddress\" value=\"${id}\" style=\"accent-color: var(--luxury-blue);\">
+      <div class=\"addr\"><strong>${addr.name}</strong><br>${addr.line1}<br>${addr.city}, ${addr.state || ''} ${addr.zip || ''}<br>${addr.country}</div>
     `;
-    div.querySelector('input').addEventListener('change', e => {
+    card.querySelector('input').addEventListener('change', e => {
       selectedAddressId = e.target.value;
     });
-    savedContainer.appendChild(div);
+    savedContainer.appendChild(card);
   });
 }
 
@@ -59,9 +57,10 @@ form.addEventListener('submit', async (e)=>{
     country: document.getElementById('country').value,
     createdAt: new Date()
   };
-  await addDoc(collection(db, 'users', user.uid, 'addresses'), address);
-  form.reset();
-  loadAddresses(user);
+  const docRef = await addDoc(collection(db, 'users', user.uid, 'addresses'), address);
+  // proceed immediately with new address
+  sessionStorage.setItem('selectedAddressId', docRef.id);
+  window.location.href = 'checkout-payment.html';
 });
 
 nextBtn.addEventListener('click', ()=>{

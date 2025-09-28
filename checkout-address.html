@@ -43,26 +43,71 @@
     </div>
   </header>
 
-  <main class="container">
-    <h2>Select Shipping Address</h2>
+  <main class="container checkout-address">
+    <div>
+      <h2>Shipping Address</h2>
+      <p class="meta">Select a saved address or add a new one.</p>
 
-    <div id="savedAddresses" class="saved-addresses"></div>
+      <div id="savedAddresses" class="address-grid"></div>
 
-    <h3>Add New Address</h3>
-    <form id="addressForm" class="form">
-      <label>Name <input type="text" id="fullName" placeholder="Full Name" required></label>
-      <label>Address line 1 <input type="text" id="street" placeholder="Street Address" required></label>
-      <label>City <input type="text" id="city" placeholder="City" required></label>
-      <label>State <input type="text" id="state" placeholder="State" required></label>
-      <label>ZIP <input type="text" id="zip" placeholder="ZIP / Postal Code" required></label>
-      <label>Country <input type="text" id="country" placeholder="Country" required></label>
-      <button type="submit" class="btn primary" style="margin-top:8px;">Add Address</button>
-    </form>
+      <button id="nextToPayment" class="btn primary" style="margin-top:16px;">Next: Payment</button>
+    </div>
 
-    <button id="nextToPayment" class="btn primary" style="margin-top:16px;">Next: Payment</button>
+    <div>
+      <div class="address-card new-address">
+        <h3>Add New Address</h3>
+        <form id="addressForm">
+          <div class="row">
+            <label style="flex:1;">Name
+              <input type="text" id="fullName" placeholder="Full Name" required class="input">
+            </label>
+          </div>
+          <label>Address line 1
+            <input type="text" id="street" placeholder="Street Address" required class="input">
+          </label>
+          <div class="row">
+            <label style="flex:1;">City
+              <input type="text" id="city" placeholder="City" required class="input">
+            </label>
+            <label style="flex:1;">State
+              <input type="text" id="state" placeholder="State" required class="input">
+            </label>
+          </div>
+          <div class="row">
+            <label style="flex:1;">ZIP
+              <input type="text" id="zip" placeholder="ZIP / Postal Code" required class="input">
+            </label>
+            <label style="flex:1;">Country
+              <input type="text" id="country" placeholder="Country" required class="input">
+            </label>
+          </div>
+
+          <button type="submit" class="btn primary" style="margin-top:8px; width:100%;">Add Address & Continue</button>
+        </form>
+      </div>
+    </div>
   </main>
 
-  <footer class="footer"> ... </footer>
+  <footer class="footer">
+    <div class="container" style="display:flex; justify-content:space-between; gap:24px;">
+      <div>
+        <h4>ChronosCrown</h4>
+        <p class="meta">Luxury watch ecommerce</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About Us</a><br>
+        <a href="privacy.html">Privacy Policy</a><br>
+        <a href="contact.html">Contact Us</a><br>
+        <a href="feedback.html">Feedback</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="track-order.html">Track Order</a><br>
+        <a href="404.html">404</a>
+      </div>
+    </div>
+  </footer>
 
   <script type="module" src="js/firebase.init.js"></script>
   <script type="module" src="js/checkout-address.js"></script>
