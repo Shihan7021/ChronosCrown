@@ -102,19 +102,20 @@ if(!orderId){
     summaryDiv.innerHTML = "<p>Order not found.</p>";
   } else {
     const order = orderSnap.data();
-    const amt = order.cart.reduce((sum,p)=> sum + (p.price||0)*(p.qty||1),0);
-    const estDate = order.estimatedDelivery ? order.estimatedDelivery.toDate().toISOString().split('T')[0] : 'N/A';
+    const items = Array.isArray(order.items) ? order.items : (Array.isArray(order.cart) ? order.cart.map(c=>({price:c.price, qty:c.qty})) : []);
+    const amt = typeof order.total === 'number' ? order.total : items.reduce((sum,p)=> sum + (Number(p.price)||0)*(Number(p.qty)||1),0);
+    const estDate = order.estimatedDelivery && order.estimatedDelivery.toDate ? order.estimatedDelivery.toDate().toISOString().split('T')[0] : 'N/A';
     summaryDiv.innerHTML = `
       <div>Order: <strong>${orderId}</strong></div>
-      <div>Tracking: <strong>${order.trackingNumber || trk}</strong></div>
+      <div>Tracking: <strong>${order.trackingNumber || trk || '-'}</strong></div>
       <div>Amount: <strong>${formatCurrency(Number(amt || 0))}</strong></div>
       <div>Estimated Delivery: <strong>${estDate}</strong></div>
-      <div style="margin-top:12px; display:flex; gap:10px;">
-        <a href="track-order.html?trk=${order.trackingNumber || trk}" class="btn">Track your order</a>
-        <a href="all-products.html" class="btn secondary">Buy more</a>
+      <div style=\"margin-top:12px;\">
+        <a href=\"track-order.html?trk=${order.trackingNumber || trk || ''}\" class=\"btn\">Track your order</a>
       </div>
     `;
   }
+}
 }
 </script>
 

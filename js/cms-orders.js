@@ -7,6 +7,8 @@ const ordersTable = document.getElementById('ordersTable');
 onSnapshot(collection(db, 'orders'), snap => {
   const rows = [];
   snap.forEach(s => rows.push({ id: s.id, ...s.data() }));
+  // sort newest first
+  rows.sort((a,b)=> (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
   renderOrders(rows);
 }, err => {
   console.error('orders listen', err);

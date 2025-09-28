@@ -24,7 +24,13 @@ onSnapshot(collection(db, 'users'), snap => {
 onSnapshot(collection(db, 'orders'), snap => {
   const orders = [];
   let totalSales = 0;
-  snap.forEach(d => { const o = d.data(); orders.push({ id: d.id, ...o }); totalSales += Number(o.total || 0); });
+  snap.forEach(d => {
+    const o = d.data();
+    orders.push({ id: d.id, ...o });
+    if (typeof o.total === 'number') totalSales += o.total;
+    else if (Array.isArray(o.items)) totalSales += o.items.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.qty)||1), 0);
+    else if (Array.isArray(o.cart)) totalSales += o.cart.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.qty)||1), 0);
+  });
   totalOrdersEl.textContent = orders.length || 0;
   totalSalesEl.textContent = formatCurrency(totalSales);
 
