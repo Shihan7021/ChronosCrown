@@ -49,12 +49,17 @@ html,body { height:100%; font-family: 'Inter', system-ui, -apple-system, 'Segoe 
   min-width:320px; height:360px; border-radius:16px; background:white; box-shadow: 0 18px 40px rgba(10,20,40,0.06); padding:18px; display:flex; flex-direction:column; justify-content:space-between; transition: transform .35s ease;
 }
 .carousel .card:hover { transform: translateY(-12px) rotateX(2deg) scale(1.03); }
-.carousel .card img { max-width:100%; border-radius:10px; object-fit:cover; height:220px; }
+.carousel .card img { width:100%; height:220px; border-radius:10px; object-fit:cover; }
+.carousel .card.blank { border: 1px dashed rgba(10,20,40,0.12); box-shadow:none; }
 
 /* Featured products grid */
 .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:18px; margin-top:20px; }
 .grid-4 { grid-template-columns: repeat(4, minmax(220px,1fr)); }
-.product-card { background:white; border-radius:12px; padding:14px; box-shadow: 0 8px 18px rgba(10,20,40,0.04); display:flex; flex-direction:column; gap:8px; }
+/* Fix product box size to match parallax cards */
+.product-card { background:white; border-radius:12px; padding:14px; box-shadow: 0 8px 18px rgba(10,20,40,0.04); display:flex; flex-direction:column; gap:8px; height:360px; }
+.product-card-image { width:100%; height:220px; overflow:hidden; border-radius:10px; }
+.product-card-image img { width:100%; height:100%; object-fit:cover; display:block; }
+.product-card-info { display:flex; flex-direction:column; justify-content:space-between; flex:1; }
 .price { font-size:18px; font-weight:800; color:var(--luxury-blue-2); }
 .meta { color:var(--muted); font-size:13px; }
 
@@ -87,7 +92,8 @@ html,body { height:100%; font-family: 'Inter', system-ui, -apple-system, 'Segoe 
 /* Featured carousel */
 .featured-carousel { overflow:hidden; width:100%; }
 .featured-slides-wrap { display:flex; transition: transform .6s ease; }
-.featured-slide { min-width:100%; display:grid; grid-template-columns: repeat(3, minmax(220px,1fr)); gap:18px; padding:6px 0; }
+/* Use same card dimensions as parallax */
+.featured-slide { min-width:100%; display:grid; grid-template-columns: repeat(3, minmax(320px,1fr)); gap:12px; padding:6px 0; }
 .carousel-dots { display:flex; gap:8px; justify-content:center; margin-top:8px; }
 .carousel-dots .dot { width:10px; height:10px; border-radius:50%; background:#cdd7e3; border:0; cursor:pointer; }
 .carousel-dots .dot.active { background: var(--luxury-blue); }

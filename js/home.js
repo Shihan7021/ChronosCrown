@@ -17,8 +17,15 @@ function createProductCard(p) {
   return a;
 }
 
+function createBlankCard() {
+  const div = document.createElement('div');
+  div.className = 'card blank';
+  div.innerHTML = `<div class="meta">&nbsp;</div>`;
+  return div;
+}
+
 async function loadAnimatedProducts() {
-  const container = document.getElementById('animated-products');
+  const container = document.getElementById('hero-carousel');
   if (!container) return;
   container.innerHTML = '';
   try {
@@ -26,8 +33,10 @@ async function loadAnimatedProducts() {
     const snap = await getDocs(q);
     const prods = [];
     snap.forEach(doc => prods.push({ id: doc.id, ...doc.data() }));
-    const top3 = prods.slice(0, 3);
-    top3.forEach(p => container.appendChild(createProductCard(p)));
+    for (let i = 0; i < 3; i++) {
+      if (prods[i]) container.appendChild(createProductCard(prods[i]));
+      else container.appendChild(createBlankCard());
+    }
   } catch (err) {
     console.error('animated products', err);
   }
@@ -56,21 +65,7 @@ async function loadFeaturedProducts() {
       const slide = document.createElement('div');
       slide.className = 'featured-slide';
       group.forEach(p => {
-        const card = document.createElement('a');
-        card.className = 'product-card';
-        card.href = `product.html?id=${p.id}`;
-        const img = (p.images && p.images[0]) ? p.images[0] : 'https://placehold.co/220x160/EFEFEF/A9A9A9?text=No+Image';
-        slide.innerHTML += `
-          <a class="product-card" href="product.html?id=${p.id}">
-            <div class="product-card-image">
-              <img src="${img}" alt="${p.name}">
-            </div>
-            <div class="product-card-info">
-              <h3>${p.name}</h3>
-              <p class="meta">${p.type || ''} • ${p.strap || ''}</p>
-            </div>
-          </a>
-        `;
+        slide.appendChild(createProductCard(p));
       });
       slidesWrap.appendChild(slide);
 
