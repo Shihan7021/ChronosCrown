@@ -45,6 +45,14 @@ async function loadProductDetails() {
         productStock.textContent = product.quantity > 0 ? "In Stock" : "Out of Stock";
         productStock.className = product.quantity > 0 ? 'in-stock' : 'out-of-stock';
 
+        // Render attributes summary
+        const info = document.getElementById('product-detail-info');
+        const attrs = document.createElement('div');
+        attrs.className = 'meta';
+        attrs.style.margin = '8px 0';
+        attrs.innerHTML = `Type: <strong>${product.type || '-'}</strong> • Strap: <strong>${product.strap || '-'}</strong> • Color: <strong>${product.color || '-'}</strong> • Size: <strong>${product.size || '-'}</strong>`;
+        info.insertBefore(attrs, info.querySelector('.payments'));
+
 
         // Disable buttons if out of stock
         if (product.quantity <= 0) {
@@ -140,7 +148,7 @@ function addToCart(pid, product) {
 
 function buyNow(pid, product) {
     addToCart(pid, product); // Ensure item is in the cart
-    window.location.href = 'cart.html'; // Redirect to cart to begin checkout
+    window.location.href = 'checkout-address.html'; // Go directly to address selection
 }
 
 function updateCartBadge(count) {

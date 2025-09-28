@@ -1,48 +1,55 @@
-import { auth, db } from './firebase-config.js';
+import { auth, db } from './firebase.init.js';
 import { getDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 window.addEventListener('DOMContentLoaded', () => {
-  const headerContainer = document.querySelector('.header div[style*="display:flex"]');
-  if (!headerContainer) return;
+  const loginLink = document.getElementById('loginLink');
+  const registerLink = document.getElementById('registerLink');
+  const userMenu = document.getElementById('userMenu');
+  const greetingText = document.getElementById('greetingText');
+  const logoutBtn = document.getElementById('logoutBtn');
 
-  const updateHeader = async (user) => {
-    if (user) {
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      const userData = userDoc.exists() ? userDoc.data() : { displayName: 'User' };
+  function showLoggedIn(name) {
+    if (greetingText) greetingText.textContent = `Hi, ${name || 'User'}`;
+    if (loginLink) loginLink.classList.add('hidden');
+    if (registerLink) registerLink.classList.add('hidden');
+    if (userMenu) userMenu.classList.remove('hidden');
+  }
+  function showLoggedOut() {
+    if (loginLink) loginLink.classList.remove('hidden');
+    if (registerLink) registerLink.classList.remove('hidden');
+    if (userMenu) userMenu.classList.add('hidden');
+  }
 
-      headerContainer.innerHTML = `
-        <div class="greeting">Hi, ${userData.displayName}</div>
-        <div class="person-icon" style="position:relative; cursor:pointer;">
-          <img src="/assets/icons/person.svg" alt="Profile" style="height:22px;">
-          <div class="dropdown" style="display:none; position:absolute; right:0; background:white; border:1px solid #ccc; padding:8px;">
-            <a href="my-profile.html">My Profile</a><br>
-            <a href="#" id="logoutBtn">Logout</a>
-          </div>
-        </div>
-      `;
-
-      const personIcon = document.querySelector('.person-icon');
-      const dropdown = personIcon.querySelector('.dropdown');
-      personIcon.addEventListener('click', () => {
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-      });
-
-      document.getElementById('logoutBtn').addEventListener('click', async () => {
-        await auth.signOut();
-        window.location.reload();
-      });
-    } else {
-      // No user logged in: show original buttons
-      headerContainer.innerHTML = `
-        <a href="login.html" class="btn secondary">Sign In</a>
-        <a href="cart.html" class="icon-btn" aria-label="Cart">
-          <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
-          <div class="badge cart-badge">0</div>
-        </a>
-      `;
-    }
-  };
+  // Instant render from cache to avoid flicker
+  const cachedName = localStorage.getItem('userDisplayName');
+  if (cachedName) {
+    showLoggedIn(cachedName);
+  }
 
   // Listen to auth state changes
-  auth.onAuthStateChanged(updateHeader);
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const userData = userDoc.exists() ? userDoc.data() : { displayName: 'User' };
+        localStorage.setItem('userDisplayName', userData.displayName || 'User');
+        showLoggedIn(userData.displayName);
+      } catch(e){
+        console.warn('Failed to load user profile', e);
+        showLoggedIn(cachedName || 'User');
+      }
+      // attach logout if present
+      const btn = document.getElementById('logoutBtn');
+      if (btn) btn.addEventListener('click', async (e)=>{
+        e.preventDefault();
+        await auth.signOut();
+        localStorage.removeItem('userDisplayName');
+        showLoggedOut();
+        window.location.href = 'index.html';
+      });
+    } else {
+      localStorage.removeItem('userDisplayName');
+      showLoggedOut();
+    }
+  });
 });

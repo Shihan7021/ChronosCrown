@@ -19,7 +19,8 @@ let allProducts = []; // Cache products to avoid re-fetching on client-side filt
  */
 export async function loadProducts({category = 'all', page = 1, filters = {}, limit = 0} = {}) {
     currentCategory = category;
-    const pageSize = Number(localStorage.getItem('pageSize') || 20);
+    const rowsPerPage = Number(localStorage.getItem('rowsPerPage') || 5);
+    const pageSize = rowsPerPage * 4; // 4 products per row
     const container = document.querySelector('#products-grid');
 
     if (!container) {
@@ -40,13 +41,15 @@ export async function loadProducts({category = 'all', page = 1, filters = {}, li
         // --- FILTERING ---
         const filtered = allProducts.filter(p => {
             // Category filter
-            if (category !== 'all' && p.gender && p.gender.toLowerCase() !== category.toLowerCase()) return false;
+            if (category !== 'all') {
+                if (!p.type || p.type.toLowerCase() !== category.toLowerCase()) return false;
+            }
             // Attribute filters
             if (filters.priceMin && p.price < filters.priceMin) return false;
             if (filters.priceMax && p.price > filters.priceMax) return false;
             if (filters.strap && p.strap !== filters.strap) return false;
             if (filters.color && p.color !== filters.color) return false;
-            if (filters.size && p.size !== Number(filters.size)) return false;
+            if (filters.size && p.size !== String(filters.size)) return false;
             return true;
         });
         
@@ -78,6 +81,7 @@ export async function loadProducts({category = 'all', page = 1, filters = {}, li
 // --- RENDER HELPERS ---
 
 function renderProductGrid(container, products) {
+    container.classList.add('grid','grid-4');
     container.innerHTML = ''; // Clear loading message
     if (products.length === 0) {
         container.innerHTML = '<div>No products found matching your criteria.</div>';

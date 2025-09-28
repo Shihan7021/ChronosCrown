@@ -1,7 +1,7 @@
 // cms-products.js
 import { db, auth } from '../js/firebase-config.js';
 import {
-  collection, addDoc, doc, setDoc, getDocs, onSnapshot, deleteDoc, updateDoc, serverTimestamp
+  collection, addDoc, doc, setDoc, getDocs, onSnapshot, deleteDoc, updateDoc, serverTimestamp, query, where
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import {
   getStorage, ref as sref, uploadBytes, getDownloadURL
@@ -13,6 +13,8 @@ const productList = document.getElementById('productList');
 const imageInput = document.getElementById('productImages');
 const imagePreview = document.getElementById('imagePreview');
 const clearFormBtn = document.getElementById('clearFormBtn');
+const featuredInput = document.getElementById('productFeatured');
+const animatedInput = document.getElementById('productAnimated');
 
 const storage = getStorage();
 let selectedFiles = [];
@@ -64,6 +66,8 @@ productForm.addEventListener('submit', async (e) => {
   const size = document.getElementById('productSize').value;
   const description = document.getElementById('productDesc').value.trim();
   const quantity = Number(document.getElementById('productQty').value) || 0;
+  const markFeatured = !!featuredInput?.checked;
+  const markAnimated = !!animatedInput?.checked;
 
   if (!name || !strap || !color || !size || !type) {
     alert('Name, type and all dropdowns are required');
@@ -76,9 +80,24 @@ productForm.addEventListener('submit', async (e) => {
   }
 
   try {
+    // Enforce limits before creating if user marked
+    let canFeature = true, canAnimate = true;
+    if (markFeatured) {
+      const qf = query(collection(db, 'products'), where('featured', '==', true));
+      const snapF = await getDocs(qf);
+      if (snapF.size >= 9) { canFeature = false; alert('You can mark up to 9 products as Featured.'); }
+    }
+    if (markAnimated) {
+      const qa = query(collection(db, 'products'), where('animated', '==', true));
+      const snapA = await getDocs(qa);
+      if (snapA.size >= 3) { canAnimate = false; alert('You can mark up to 3 products as Animated.'); }
+    }
+
     // Step 1: create product doc first
     const pRef = await addDoc(collection(db, 'products'), {
       name, price, type, strap, color, size, description, quantity,
+      featured: canFeature && markFeatured ? true : false,
+      animated: canAnimate && markAnimated ? true : false,
       images: [], createdAt: serverTimestamp()
     });
 
@@ -130,6 +149,8 @@ function renderProductList(products) {
     const card = document.createElement('div');
     card.className = 'product-card';
     const img = (p.images && p.images[0]) ? `<img src="${p.images[0]}" alt="${p.name}">` : `<div class="no-image">No image</div>`;
+    const featuredChecked = p.featured ? 'checked' : '';
+    const animatedChecked = p.animated ? 'checked' : '';
     card.innerHTML = `
       <div class="product-card-inner">
         <div class="product-thumb">${img}</div>
@@ -138,6 +159,10 @@ function renderProductList(products) {
           <div class="meta">Price: $${Number(p.price).toFixed(2)}</div>
           <div class="meta">Strap: ${p.strap} • Color: ${p.color} • Size: ${p.size}</div>
           <p class="small muted">${(p.description||'')}</p>
+          <div class="toggle-row">
+            <label><input type="checkbox" data-feature="${p.id}" ${featuredChecked}> Featured</label>
+            <label><input type="checkbox" data-animated="${p.id}" ${animatedChecked}> Animated</label>
+          </div>
         </div>
         <div class="product-actions">
           ${canEdit ? `<button class="btn small" data-edit="${p.id}">Edit</button>` : ''}
@@ -147,6 +172,36 @@ function renderProductList(products) {
     `;
     productList.appendChild(card);
   });
+
+  // Attach feature/animated toggle handlers with limits
+  productList.querySelectorAll('[data-feature]').forEach(el => el.addEventListener('change', async (e)=>{
+    const id = e.currentTarget.dataset.feature;
+    const checked = e.currentTarget.checked;
+    try {
+      if (checked) {
+        const qf = query(collection(db, 'products'), where('featured','==',true));
+        const snap = await getDocs(qf);
+        // exclude current if already featured
+        const already = (await getDocs(query(collection(db,'products'), where('__name__','==',id))));
+        const was = false; // we don't need exact prev here; UI had it
+        if (snap.size >= 9) { alert('Maximum 9 featured products allowed.'); e.currentTarget.checked = false; return; }
+      }
+      await updateDoc(doc(db,'products',id), { featured: checked });
+    } catch(err){ console.error(err); alert('Failed to update: '+(err.message||err)); e.currentTarget.checked = !checked; }
+  }));
+
+  productList.querySelectorAll('[data-animated]').forEach(el => el.addEventListener('change', async (e)=>{
+    const id = e.currentTarget.dataset.animated;
+    const checked = e.currentTarget.checked;
+    try {
+      if (checked) {
+        const qa = query(collection(db, 'products'), where('animated','==',true));
+        const snap = await getDocs(qa);
+        if (snap.size >= 3) { alert('Maximum 3 animated products allowed.'); e.currentTarget.checked = false; return; }
+      }
+      await updateDoc(doc(db,'products',id), { animated: checked });
+    } catch(err){ console.error(err); alert('Failed to update: '+(err.message||err)); e.currentTarget.checked = !checked; }
+  }));
 
   // Attach delete handlers
   productList.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async (e) => {

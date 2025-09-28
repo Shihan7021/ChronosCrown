@@ -49,10 +49,14 @@
   <main class="container">
     <h2>Her — Watches</h2>
 
-    <div class="filters">
-      <label>Show per page:
-        <select id="pageSize">
-          <option>20</option><option>50</option><option>100</option>
+    <div class="filters" style="position:sticky; top:64px; z-index:10;">
+      <label>Rows per page:
+        <select id="rowsPerPage">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
         </select>
       </label>
       <label>Price:
@@ -64,7 +68,9 @@
           <option value="">All</option>
           <option value="Leather">Leather</option>
           <option value="Metal">Metal</option>
-          <option value="Rubber">Rubber</option>
+          <option value="Silicone">Silicone</option>
+          <option value="NATO">NATO</option>
+          <option value="Mesh">Mesh</option>
         </select>
       </label>
       <label>Color:
@@ -74,30 +80,58 @@
           <option value="Brown">Brown</option>
           <option value="Silver">Silver</option>
           <option value="Gold">Gold</option>
+          <option value="Blue">Blue</option>
         </select>
       </label>
       <label>Size:
         <select id="sizeFilter">
           <option value="">All</option>
-          <option value="36">36mm</option>
-          <option value="40">40mm</option>
-          <option value="44">44mm</option>
+          <option value="34mm">34mm</option>
+          <option value="36mm">36mm</option>
+          <option value="38mm">38mm</option>
+          <option value="40mm">40mm</option>
+          <option value="42mm">42mm</option>
+          <option value="44mm">44mm</option>
         </select>
       </label>
       <button class="btn" id="applyFilters">Apply</button>
     </div>
 
-    <div id="products-grid"></div>
+    <div id="products-grid" class="grid grid-4"></div>
   </main>
 
-  <footer class="footer"> ... </footer>
+  <footer class="footer">
+    <div class="container" style="display:flex; justify-content:space-between; gap:24px;">
+      <div>
+        <h4>ChronosCrown</h4>
+        <p class="meta">Luxury watch ecommerce</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About Us</a><br>
+        <a href="privacy.html">Privacy Policy</a><br>
+        <a href="contact.html">Contact Us</a><br>
+        <a href="feedback.html">Feedback</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="track-order.html">Track Order</a><br>
+        <a href="404.html">404</a>
+      </div>
+    </div>
+  </footer>
 
   <script type="module" src="js/firebase.init.js"></script>
   <script type="module">
     import { loadProducts } from './js/products.js';
 
-    document.getElementById('pageSize').addEventListener('change', (e)=> {
-      localStorage.setItem('pageSize', e.target.value);
+    // Initialize rows selection from storage
+    const rowsSel = document.getElementById('rowsPerPage');
+    const savedRows = Number(localStorage.getItem('rowsPerPage') || 3);
+    rowsSel.value = String(savedRows);
+
+    rowsSel.addEventListener('change', (e)=> {
+      localStorage.setItem('rowsPerPage', e.target.value);
       loadProducts({category:'Her', page:1});
     });
 

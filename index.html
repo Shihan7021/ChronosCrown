@@ -91,11 +91,18 @@
                 </div>
               </div>
             </div>
+
+            <!-- Animated products from DB (3 cards) -->
+            <div class="carousel" id="animated-products"></div>
           </div>
         </div>
 
-        <h3 style="margin-top:22px;">Featured Products</h3>
-        <div id="products-grid"></div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-top:22px;">
+          <h3>Featured</h3>
+          <a href="all-products.html" class="btn secondary">See All</a>
+        </div>
+        <div id="featured-carousel" class="featured-carousel"></div>
+        <div id="featured-dots" class="carousel-dots"></div>
 
       </div>
     </section>
@@ -129,10 +136,7 @@
 
   <script type="module" src="js/firebase.init.js"></script>
   <script type="module" src="js/app.js"></script>
-  <script type="module">
-    import { loadProducts } from './js/products.js';
-    loadProducts({category:'all', page:1});
-  </script>
+  <script type="module" src="js/home.js"></script>
   <script type="module" src="js/main-auth.js"></script>
 
 </body>

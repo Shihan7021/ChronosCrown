@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>All Products - ChronosCrown</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container nav-wrap">
+      <div class="brand">
+        <div class="logo">CC</div>
+        <h1>ChronosCrown</h1>
+      </div>
+      <nav class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="him.html">Him</a>
+        <a href="her.html">Her</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+        <a id="registerLink" href="register.html" class="btn">Register</a>
+        <div id="userMenu" class="dropdown hidden">
+          <span class="greeting" id="greetingText"></span>
+          <div class="person-icon">👤</div>
+          <div class="dropdown-content">
+            <a href="profile.html">My Profile</a>
+            <a href="#" id="logoutBtn">Logout</a>
+          </div>
+        </div>
+        <a href="cart.html" class="icon-btn" aria-label="Cart">
+          <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
+          <div class="badge cart-badge">0</div>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>All Products</h2>
+
+    <div class="filters" style="position:sticky; top:64px; z-index:10;">
+      <label>Type:
+        <select id="typeFilter">
+          <option value="all" selected>All</option>
+          <option value="Him">Him</option>
+          <option value="Her">Her</option>
+        </select>
+      </label>
+      <label>Price:
+        <input type="number" id="priceMin" placeholder="min" style="width:90px;">
+        <input type="number" id="priceMax" placeholder="max" style="width:90px;">
+      </label>
+      <label>Strap Type:
+        <select id="strapFilter">
+          <option value="">All</option>
+          <option value="Leather">Leather</option>
+          <option value="Metal">Metal</option>
+          <option value="Silicone">Silicone</option>
+          <option value="NATO">NATO</option>
+          <option value="Mesh">Mesh</option>
+        </select>
+      </label>
+      <label>Color:
+        <select id="colorFilter">
+          <option value="">All</option>
+          <option value="Black">Black</option>
+          <option value="Brown">Brown</option>
+          <option value="Silver">Silver</option>
+          <option value="Gold">Gold</option>
+          <option value="Blue">Blue</option>
+        </select>
+      </label>
+      <button class="btn" id="applyFilters">Apply</button>
+    </div>
+
+    <div id="products-grid" class="grid grid-4"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="display:flex; justify-content:space-between; gap:24px;">
+      <div>
+        <h4>ChronosCrown</h4>
+        <p class="meta">Luxury watch ecommerce</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About Us</a><br>
+        <a href="privacy.html">Privacy Policy</a><br>
+        <a href="contact.html">Contact Us</a><br>
+        <a href="feedback.html">Feedback</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="track-order.html">Track Order</a><br>
+        <a href="404.html">404</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/firebase.init.js"></script>
+  <script type="module">
+    import { loadProducts } from './js/products.js';
+
+    function doLoad() {
+      const category = document.getElementById('typeFilter').value || 'all';
+      const filters = {
+        priceMin: Number(document.getElementById('priceMin').value||0),
+        priceMax: Number(document.getElementById('priceMax').value||999999),
+        strap: document.getElementById('strapFilter').value,
+        color: document.getElementById('colorFilter').value,
+      };
+      loadProducts({ category, page: 1, filters });
+    }
+
+    document.getElementById('applyFilters').addEventListener('click', doLoad);
+    document.getElementById('typeFilter').addEventListener('change', doLoad);
+
+    // initial
+    doLoad();
+  </script>
+  <script type="module" src="js/main-auth.js"></script>
+</body>
+</html>

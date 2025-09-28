@@ -68,10 +68,11 @@ if(!orderId){
     summaryDiv.innerHTML = `
       <div>Order: <strong>${orderId}</strong></div>
       <div>Tracking: <strong>${order.trackingNumber || trk}</strong></div>
-      <div>Amount: <strong>$${amt.toFixed(2)}</strong></div>
+      <div>Amount: <strong>Rs.${amt.toFixed(2)}</strong></div>
       <div>Estimated Delivery: <strong>${estDate}</strong></div>
-      <div style="margin-top:12px;">
+      <div style="margin-top:12px; display:flex; gap:10px;">
         <a href="track-order.html?trk=${order.trackingNumber || trk}" class="btn">Track your order</a>
+        <a href="all-products.html" class="btn secondary">Buy more</a>
       </div>
     `;
   }

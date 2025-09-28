@@ -25,9 +25,10 @@ form.addEventListener('submit', async (e) => {
 
   try {
     await register(email, password, displayName);
+    localStorage.setItem('userDisplayName', displayName);
     statusEl.style.color = 'green';
     statusEl.textContent = 'Account created successfully! Redirecting...';
-    setTimeout(() => window.location.href = 'index.html', 1000);
+    setTimeout(() => window.location.href = 'index.html', 800);
   } catch (err) {
     console.error(err);
     statusEl.style.color = 'crimson';

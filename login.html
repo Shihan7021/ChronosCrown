@@ -21,7 +21,7 @@
     import { login } from './js/auth.js';
     document.getElementById('loginBtn').addEventListener('click', async ()=>{
       const e = document.getElementById('email').value, p = document.getElementById('pass').value;
-      try{ await login(e,p); location.href = '/'; } catch(err){ alert(err.message); }
+      try{ const profile = await login(e,p); localStorage.setItem('userDisplayName', profile.displayName || 'User'); location.href = 'index.html'; } catch(err){ alert(err.message); }
     });
   </script>
 </body>

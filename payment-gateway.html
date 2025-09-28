@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Secure Payment Gateway</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <main class="container" style="text-align:center; padding:40px;">
+    <h2>Secure Payment</h2>
+    <p id="summary">Preparing...</p>
+    <button id="completeBtn" class="btn primary" style="margin-top:16px;">Complete Payment</button>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const order = params.get('order');
+    const amt = params.get('amt');
+    document.getElementById('summary').textContent = `Pay Rs.${Number(amt||0).toFixed(2)} for order ${order}`;
+    document.getElementById('completeBtn').addEventListener('click', ()=>{
+      // simulate success
+      localStorage.removeItem('cart');
+      localStorage.removeItem('cart_count');
+      window.location.href = `thankyou.html?order=${order}`;
+    });
+  </script>
+</body>
+</html>
