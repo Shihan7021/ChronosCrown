@@ -75,8 +75,19 @@ html,body { height:100%; font-family: 'Inter', system-ui, -apple-system, 'Segoe 
 .product-card h3, .product-card .price { text-decoration: none; }
 
 /* Footer */
-.footer { padding:30px 0; background:#0b1730; color:white; margin-top:40px; }
-.footer a { color:#9fc6ff; text-decoration:none; }
+.footer { padding:36px 0 0 0; background: linear-gradient(180deg, #0b1730, #091226); color:white; margin-top:40px; border-top: 1px solid rgba(255,255,255,0.06); }
+.footer a { color:#c6dcff; text-decoration:none; display:block; margin:6px 0; }
+.footer a:hover { color:#fff; }
+.footer-columns { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:24px; align-items:flex-start; }
+.footer-col h4 { margin-bottom:8px; color:#e8f1ff; }
+.footer-brand .logo { width:40px; height:40px; border-radius:8px; background:linear-gradient(135deg,var(--luxury-blue),var(--luxury-blue-2)); display:flex; align-items:center; justify-content:center; font-weight:700; }
+.socials { display:flex; gap:10px; margin-top:8px; }
+.socials a { font-size:18px; display:inline-flex; }
+.newsletter { display:flex; gap:8px; margin-top:8px; }
+.newsletter input { flex:1; padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#fff; }
+.newsletter input::placeholder { color:#c7d2fe; }
+.footer-bottom { margin-top:16px; padding:12px 0 20px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; gap:12px; font-size:13px; color:#9fb4d9; }
+@media(max-width:700px){ .footer-bottom { flex-direction:column; align-items:flex-start; } }
 
 /* Forms & pages */
 .form { background:white; padding:18px; border-radius:12px; box-shadow: 0 8px 20px rgba(10,20,40,0.04); max-width:700px; margin:24px auto; }
