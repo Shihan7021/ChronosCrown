@@ -1,24 +1,38 @@
 // cms-orders.js
-import { db } from './firebase-config.js';
+import { auth, db } from './firebase-config.js';
 import { collection, onSnapshot, doc, updateDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const ordersTable = document.getElementById('ordersTable');
 
-// Initial load to avoid blank screen in case snapshot is delayed
-(async function initialLoad(){
-  try{
-    const snap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt','desc')));
-    const rows = [];
-    snap.forEach(s => rows.push({ id: s.id, ...s.data() }));
-    renderOrders(rows);
-  }catch(e){ console.error('initial orders load', e); }
-})();
+// Wait for auth so Firestore rules get request.auth
+auth.onAuthStateChanged(async (user) => {
+  if (!user) {
+    ordersTable.innerHTML = '<tr><td colspan="7">Please login to view orders.</td></tr>';
+    return;
+  }
+  // Initial load to avoid blank screen in case snapshot is delayed
+  (async function initialLoad(){
+    try{
+      const snap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt','desc')));
+      const rows = [];
+      snap.forEach(s => rows.push({ id: s.id, ...s.data() }));
+      renderOrders(rows);
+    }catch(e){ console.error('initial orders load', e); ordersTable.innerHTML = '<tr><td colspan="7">Insufficient permissions to read orders.</td></tr>'; }
+  })();
 
-// Live updates
-onSnapshot(query(collection(db, 'orders'), orderBy('createdAt','desc')), snap => {
-  const rows = [];
-  snap.forEach(s => rows.push({ id: s.id, ...s.data() }));
-  renderOrders(rows);
+  // Live updates
+  onSnapshot(query(collection(db, 'orders'), orderBy('createdAt','desc')),
+    snap => {
+      const rows = [];
+      snap.forEach(s => rows.push({ id: s.id, ...s.data() }));
+      renderOrders(rows);
+    },
+    err => {
+      console.error('orders listen', err);
+      ordersTable.innerHTML = '<tr><td colspan="7">Insufficient permissions to read orders.</td></tr>';
+    }
+  );
+});
 }, err => {
   console.error('orders listen', err);
   ordersTable.innerHTML = '<tr><td colspan="5">Error loading orders</td></tr>';
