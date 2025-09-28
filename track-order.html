@@ -1,73 +1,103 @@
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Track Order - ChronosCrown</title>
-  <link rel="stylesheet" href="css/styles.css">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Track Order - ChronosCrown</title>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header class="header">
-        <div class="container nav-wrap">
-            <div class="brand">
-            <div class="logo">CC</div>
-            <h1>ChronosCrown</h1>
-            </div>
-
-            <nav class="navlinks">
-            <a href="index.html">Home</a>
-            <a href="him.html">Him</a>
-            <a href="her.html">Her</a>
-            <a href="about.html">About</a>
-            <a href="contact.html" aria-current="page">Contact</a>
-            </nav>
-
-            <div style="display:flex; gap:12px; align-items:center;">
-
-            <!-- BEFORE login -->
-            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
-            <a id="registerLink" href="register.html" class="btn">Register</a>
-
-            <!-- AFTER login -->
-            <div id="userMenu" class="dropdown hidden">
-                <span class="greeting" id="greetingText"></span>
-                <div class="person-icon">👤</div>
-                <div class="dropdown-content">
-                <a href="profile.html">My Profile</a>
-                <a href="#" id="logoutBtn">Logout</a>
-                </div>
-            </div>
-
-            <a href="cart.html" class="icon-btn" aria-label="Cart">
-                <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
-                <div class="badge cart-badge">0</div>
-            </a>
-
-            </div>
+<header class="header">
+  <div class="container nav-wrap">
+    <div class="brand">
+      <div class="logo">CC</div>
+      <h1>ChronosCrown</h1>
+    </div>
+    <nav class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="him.html">Him</a>
+      <a href="her.html">Her</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+      <a id="registerLink" href="register.html" class="btn">Register</a>
+      <div id="userMenu" class="dropdown hidden">
+        <span class="greeting" id="greetingText"></span>
+        <div class="person-icon">👤</div>
+        <div class="dropdown-content">
+          <a href="profile.html">My Profile</a>
+          <a href="#" id="logoutBtn">Logout</a>
         </div>
-    </header>
+      </div>
+      <a href="cart.html" class="icon-btn" aria-label="Cart">
+        <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
+        <div class="badge cart-badge">0</div>
+      </a>
+    </div>
+  </div>
+</header>
 
-  <main class="container">
-    <h2>Track Order</h2>
-    <form id="trackForm" class="form">
-      <label>Tracking number <input id="trk" class="input"></label>
-      <button class="btn" type="button" id="trackBtn">Track</button>
-    </form>
-    <div id="trackResult"></div>
-  </main>
-  <footer class="footer"> ... </footer>
+<main class="container">
+  <h2>Track Order</h2>
+  <form id="trackForm" class="form">
+    <label>Tracking number <input id="trk" class="input"></label>
+    <button class="btn" type="button" id="trackBtn">Track</button>
+  </form>
+  <div id="trackResult"></div>
+</main>
+<footer class="footer"> ... </footer>
 
-  <script type="module">
-    document.getElementById('trackBtn').addEventListener('click', async ()=>{
-      const trk = document.getElementById('trk').value;
-      if(!trk) return alert('type tracking number');
-      // For demo: fetch order from Firestore or simulate
-      document.getElementById('trackResult').innerHTML = `<div class="form">Status for <strong>${trk}</strong>: <br>Order on the way — Estimated delivery: ${new Date(Date.now()+14*24*3600*1000).toISOString().split('T')[0]}</div>`;
+<script type="module">
+import { db } from './js/firebase.init.js';
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const trackBtn = document.getElementById('trackBtn');
+const trkInput = document.getElementById('trk');
+const resultDiv = document.getElementById('trackResult');
+
+async function lookupOrder(trk){
+  resultDiv.innerHTML = "Searching...";
+  const ordersRef = collection(db,'orders');
+  const q = query(ordersRef, where("trackingNumber","==",trk));
+  const snapshot = await getDocs(q);
+  if(snapshot.empty){
+    resultDiv.innerHTML = `<p>No order found for <strong>${trk}</strong>.</p>`;
+  } else {
+    snapshot.forEach(docSnap => {
+      const order = docSnap.data();
+      const estDate = order.estimatedDelivery ? order.estimatedDelivery.toDate().toISOString().split('T')[0] : 'N/A';
+      resultDiv.innerHTML = `
+        <div class="form">
+          <p>Order ID: <strong>${docSnap.id}</strong></p>
+          <p>Status: <strong>${order.status}</strong></p>
+          <p>Estimated Delivery: <strong>${estDate}</strong></p>
+          <p>Payment Method: <strong>${order.paymentMethod}</strong></p>
+          <p>Items:</p>
+          <ul>
+            ${order.cart.map(p=>`<li>${p.name || p.productId} x ${p.qty || 1}</li>`).join('')}
+          </ul>
+        </div>
+      `;
     });
+  }
+}
 
-    // If query param exists, auto lookup
-    const q = new URLSearchParams(location.search).get('trk');
-    if(q){ document.getElementById('trk').value = q; document.getElementById('trackBtn').click(); }
-  </script>
-  <script type="module" src="js/main-auth.js"></script>
+trackBtn.addEventListener('click', ()=> {
+  const trk = trkInput.value.trim();
+  if(!trk) return alert("Enter tracking number");
+  lookupOrder(trk);
+});
 
+// If query param exists, auto lookup
+const urlTrk = new URLSearchParams(location.search).get('trk');
+if(urlTrk){
+  trkInput.value = urlTrk;
+  lookupOrder(urlTrk);
+}
+</script>
+
+<script type="module" src="js/main-auth.js"></script>
 </body>
 </html>

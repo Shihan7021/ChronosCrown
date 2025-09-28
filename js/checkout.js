@@ -1,66 +1,134 @@
-// checkout.js - address selection + payment step + order creation
+// checkout.js
 import { db, auth } from './firebase.init.js';
-import { collection, addDoc, setDoc, doc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { uid, addDays } from './utils.js';
+import { collection, doc, addDoc, setDoc, getDocs, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-document.addEventListener('DOMContentLoaded', initCheckout);
+// DOM elements
+const savedAddressesDiv = document.getElementById('saved-addresses');
+const addressForm = document.getElementById('address-form');
+const nextToPaymentBtn = document.getElementById('toPayment');
 
-async function initCheckout(){
-  // address page has id 'address-form' and button with id 'toPayment'
-  const quick = new URLSearchParams(location.search).get('quick');
-  const savedAddressesContainer = document.getElementById('saved-addresses');
-  if(savedAddressesContainer && auth.currentUser){
-    // load addresses
-    const res = await fetchAddresses(); // implement actual firestore query in your env
-    savedAddressesContainer.innerHTML = res.map(a=>`<div class="address-card"><input type="radio" name="addr" value="${a.id}"> ${a.line1}, ${a.city}</div>`).join('');
+let selectedAddressId = null;
+
+// Load user's saved addresses
+async function loadAddresses() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please login first");
+    window.location.href = 'login.html';
+    return;
   }
-  const toPayment = document.getElementById('toPayment');
-  if(toPayment) toPayment.addEventListener('click', ()=>{
-    // store chosen address in local storage for payment page
-    const form = document.getElementById('address-form');
-    const data = { name: form['name'].value, line1: form['line1'].value, city: form['city'].value, country: form['country'].value };
-    localStorage.setItem('checkout_address', JSON.stringify(data));
-    // proceed to payment
-    location.href = 'checkout-payment.html' + (quick ? '?quick=1' : '');
+
+  savedAddressesDiv.innerHTML = '';
+  const addressesRef = collection(db, 'users', user.uid, 'addresses');
+  const snapshot = await getDocs(addressesRef);
+
+  if (snapshot.empty) {
+    savedAddressesDiv.innerHTML = '<p>No saved addresses.</p>';
+    return;
+  }
+
+  snapshot.forEach(docSnap => {
+    const addr = docSnap.data();
+    const div = document.createElement('div');
+    div.className = 'address-card';
+    div.innerHTML = `
+      <input type="radio" name="selectedAddress" value="${docSnap.id}" id="addr-${docSnap.id}">
+      <label for="addr-${docSnap.id}">
+        ${addr.name}, ${addr.line1}, ${addr.city}, ${addr.state || ''}, ${addr.zip || ''}, ${addr.country}
+      </label>
+    `;
+    savedAddressesDiv.appendChild(div);
   });
 
-  // On payment page, when user clicks "Pay", we simulate IPG redirect
-  const payBtn = document.getElementById('payNow');
-  if(payBtn) payBtn.addEventListener('click', async ()=>{
-    // create an order doc locally in firestore with status pending (server validation recommended)
-    const orderId = uid();
-    const address = JSON.parse(localStorage.getItem('checkout_address')||'{}');
-    const quickCheckout = JSON.parse(localStorage.getItem('checkout_quick')||'null');
-    let items = [];
-    if(quickCheckout){
-      items = [{ productId: quickCheckout.productId, qty: quickCheckout.qty, price: quickCheckout.price }];
-    } else {
-      const cart = JSON.parse(localStorage.getItem('cart')||'[]');
-      items = cart.map(c=> ({ productId: c.productId, qty: c.qty, price: c.price || 0 }) );
-    }
-    const total = items.reduce((s,i)=> s + (i.price||0)*i.qty, 0);
-    // in production, create order via secure cloud function to prevent price tampering
-    const orderDoc = {
-      orderId, items, total, address, status: 'pending_payment', createdAt: new Date().toISOString(),
-      estimatedDelivery: addDays(new Date(), 14)
-    };
-    // save to Firestore
-    const userId = auth.currentUser?.uid || 'guest';
-    await setDoc(doc(db, 'orders', orderId), { ...orderDoc, userId });
-    // simulate IPG - in real case redirect to IPG and on return validate
-    simulateIPG(orderId, total);
+  document.querySelectorAll('input[name="selectedAddress"]').forEach(radio => {
+    radio.addEventListener('change', e => {
+      selectedAddressId = e.target.value;
+    });
   });
 }
 
-function simulateIPG(orderId, amount){
-  // Simulate an external payment gateway redirect and callback (for the demo)
-  // In real integration, redirect to gateway, which will return transaction id & signature -> verify server-side.
-  const tracking = orderId;
-  // set order as paid (in real app, do server-side verification)
-  setTimeout(()=>{
-    // update order status to paid (for demo)
-    fetch('/__order_paid_simulator__?orderId='+orderId);
-    // redirect to thank you with params
-    location.href = `thankyou.html?order=${orderId}&amt=${amount}&trk=${tracking}`;
-  }, 1200);
-}
+// Add new address
+addressForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const newAddr = {
+    name: addressForm.name.value,
+    line1: addressForm.line1.value,
+    city: addressForm.city.value,
+    state: addressForm.state?.value || '',
+    zip: addressForm.zip?.value || '',
+    country: addressForm.country.value,
+    createdAt: new Date()
+  };
+
+  await addDoc(collection(db, 'users', user.uid, 'addresses'), newAddr);
+  addressForm.reset();
+  loadAddresses();
+});
+
+// Proceed to payment / place order
+nextToPaymentBtn.addEventListener('click', async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    alert("Please login first.");
+    window.location.href = 'login.html';
+    return;
+  }
+
+  if (!selectedAddressId) {
+    alert("Please select an address or add a new one.");
+    return;
+  }
+
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  if (cart.length === 0) {
+    alert("Your cart is empty.");
+    return;
+  }
+
+  // Ask user to select payment method
+  const paymentMethod = prompt("Enter payment method: ipg (card) or cod (cash)").toLowerCase();
+  if (!['ipg', 'cod'].includes(paymentMethod)) {
+    alert("Invalid payment method.");
+    return;
+  }
+
+  // Generate unique order ID and tracking number
+  const orderId = 'ORD' + Date.now();
+  const trk = 'TRK' + Date.now() + Math.floor(Math.random() * 1000);
+
+  // Save order in Firestore
+  await setDoc(doc(db, 'orders', orderId), {
+    userId: user.uid,
+    addressId: selectedAddressId,
+    cart,
+    paymentMethod,
+    status: 'Order Accepted',
+    trackingNumber: trk,
+    createdAt: serverTimestamp(),
+    estimatedDelivery: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // 14 days
+  });
+
+  // Clear cart
+  localStorage.removeItem('cart');
+  localStorage.removeItem('cart_count');
+
+  // Store last order info for thank-you page
+  sessionStorage.setItem('lastOrderId', orderId);
+  sessionStorage.setItem('lastOrderTrk', trk);
+
+  // Redirect to Thank You page with query params
+  const queryParams = new URLSearchParams({
+    order: orderId,
+    trk: trk,
+    amt: cart.reduce((sum, p) => sum + (p.price || 0) * (p.qty || 1), 0)
+  });
+  window.location.href = `thank-you.html?${queryParams.toString()}`;
+});
+
+// Initialize
+auth.onAuthStateChanged(() => {
+  loadAddresses();
+});

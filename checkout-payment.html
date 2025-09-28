@@ -1,75 +1,75 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Checkout - Payment</title>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checkout — Payment</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header class="header">
-        <div class="container nav-wrap">
-            <div class="brand">
-            <div class="logo">CC</div>
-            <h1>ChronosCrown</h1>
-            </div>
-
-            <nav class="navlinks">
-            <a href="index.html">Home</a>
-            <a href="him.html">Him</a>
-            <a href="her.html">Her</a>
-            <a href="about.html">About</a>
-            <a href="contact.html" aria-current="page">Contact</a>
-            </nav>
-
-            <div style="display:flex; gap:12px; align-items:center;">
-
-            <!-- BEFORE login -->
-            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
-            <a id="registerLink" href="register.html" class="btn">Register</a>
-
-            <!-- AFTER login -->
-            <div id="userMenu" class="dropdown hidden">
-                <span class="greeting" id="greetingText"></span>
-                <div class="person-icon">👤</div>
-                <div class="dropdown-content">
-                <a href="profile.html">My Profile</a>
-                <a href="#" id="logoutBtn">Logout</a>
-                </div>
-            </div>
-
-            <a href="cart.html" class="icon-btn" aria-label="Cart">
-                <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
-                <div class="badge cart-badge">0</div>
-            </a>
-
-            </div>
-        </div>
-    </header>
-
-  <main class="container">
-    <h2>Payment</h2>
-    <div class="form">
-      <div><strong>Amount:</strong> <span id="amount">$0.00</span></div>
-      <div style="margin-top:10px;">Select payment method:</div>
-      <div style="margin-top:10px;">
-        <label><input type="radio" name="pm" value="card" checked> Card</label>
-        <label style="margin-left:12px;"><input type="radio" name="pm" value="bank"> Bank</label>
+    <div class="container nav-wrap">
+      <div class="brand">
+        <div class="logo">CC</div>
+        <h1>ChronosCrown</h1>
       </div>
-      <div style="margin-top:20px;">
-        <button class="btn" id="payNow">Pay Now</button>
+
+      <nav class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="him.html">Him</a>
+        <a href="her.html">Her</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div style="display:flex; gap:12px; align-items:center;">
+        <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+        <a id="registerLink" href="register.html" class="btn">Register</a>
+
+        <div id="userMenu" class="dropdown hidden">
+          <span class="greeting" id="greetingText"></span>
+          <div class="person-icon">👤</div>
+          <div class="dropdown-content">
+            <a href="profile.html">My Profile</a>
+            <a href="#" id="logoutBtn">Logout</a>
+          </div>
+        </div>
+
+        <a href="cart.html" class="icon-btn" aria-label="Cart">
+          <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
+          <div class="badge cart-badge">0</div>
+        </a>
       </div>
     </div>
+  </header>
+
+  <main class="container">
+    <h2>Checkout — Payment</h2>
+
+    <div id="shipping-address" class="checkout-section">
+      <h3>Shipping Address</h3>
+      <div id="addressDisplay"></div>
+    </div>
+
+    <div id="order-summary" class="checkout-section">
+      <h3>Order Summary</h3>
+      <div id="cartItems"></div>
+      <div id="totalAmount" style="margin-top:12px; font-weight:bold;"></div>
+    </div>
+
+    <div id="payment-method" class="checkout-section">
+      <h3>Select Payment Method</h3>
+      <label><input type="radio" name="payment" value="ipg" checked> Credit / Debit Card (IPG)</label>
+      <label><input type="radio" name="payment" value="cod"> Cash on Delivery</label>
+    </div>
+
+    <button id="payNowBtn" class="btn primary" style="margin-top:16px;">Pay Now</button>
   </main>
+
   <footer class="footer"> ... </footer>
 
   <script type="module" src="js/firebase.init.js"></script>
-  <script type="module" src="js/checkout.js"></script>
-  <script>
-    // read amount from localStorage or quick checkout
-    const quick = JSON.parse(localStorage.getItem('checkout_quick')||'null');
-    const amt = quick ? quick.price : 0;
-    document.getElementById('amount').textContent = (amt ? '$'+ amt.toFixed(2) : 'Calculated at payment');
-  </script>
+  <script type="module" src="js/checkout-payment.js"></script>
   <script type="module" src="js/main-auth.js"></script>
-
 </body>
 </html>

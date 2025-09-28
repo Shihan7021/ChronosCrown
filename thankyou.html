@@ -1,73 +1,83 @@
 <!doctype html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Thank you - ChronosCrown</title>
-  <link rel="stylesheet" href="css/styles.css">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thank you - ChronosCrown</title>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header class="header">
-        <div class="container nav-wrap">
-            <div class="brand">
-            <div class="logo">CC</div>
-            <h1>ChronosCrown</h1>
-            </div>
-
-            <nav class="navlinks">
-            <a href="index.html">Home</a>
-            <a href="him.html">Him</a>
-            <a href="her.html">Her</a>
-            <a href="about.html">About</a>
-            <a href="contact.html" aria-current="page">Contact</a>
-            </nav>
-
-            <div style="display:flex; gap:12px; align-items:center;">
-
-            <!-- BEFORE login -->
-            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
-            <a id="registerLink" href="register.html" class="btn">Register</a>
-
-            <!-- AFTER login -->
-            <div id="userMenu" class="dropdown hidden">
-                <span class="greeting" id="greetingText"></span>
-                <div class="person-icon">👤</div>
-                <div class="dropdown-content">
-                <a href="profile.html">My Profile</a>
-                <a href="#" id="logoutBtn">Logout</a>
-                </div>
-            </div>
-
-            <a href="cart.html" class="icon-btn" aria-label="Cart">
-                <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
-                <div class="badge cart-badge">0</div>
-            </a>
-
-            </div>
+<header class="header">
+  <div class="container nav-wrap">
+    <div class="brand">
+      <div class="logo">CC</div>
+      <h1>ChronosCrown</h1>
+    </div>
+    <nav class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="him.html">Him</a>
+      <a href="her.html">Her</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <a id="loginLink" href="login.html" class="btn secondary" hidden >Sign In</a>
+      <a id="registerLink" href="register.html" class="btn" hidden>Register</a>
+      <div id="userMenu" class="dropdown hidden">
+        <span class="greeting" id="greetingText"></span>
+        <div class="person-icon">👤</div>
+        <div class="dropdown-content">
+          <a href="profile.html">My Profile</a>
+          <a href="#" id="logoutBtn">Logout</a>
         </div>
-    </header>
+      </div>
+      <a href="cart.html" class="icon-btn" aria-label="Cart">
+        <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
+        <div class="badge cart-badge">0</div>
+      </a>
+    </div>
+  </div>
+</header>
 
-  <main class="container">
-    <h2>Thank you for your order</h2>
-    <div id="order-summary" class="form"></div>
-  </main>
-  <footer class="footer"> ... </footer>
+<main class="container">
+  <h2>Thank you for your order</h2>
+  <div id="order-summary" class="form">Loading order details...</div>
+</main>
+<footer class="footer"> ... </footer>
 
-  <script type="module">
-    import { addDays } from './js/utils.js';
-    const url = new URL(location.href);
-    const order = url.searchParams.get('order');
-    const amt = url.searchParams.get('amt');
-    const trk = url.searchParams.get('trk') || order;
-    const img = ''; // ideally load from order doc
-    const estimated = new Date(); estimated.setDate(estimated.getDate()+14);
-    document.getElementById('order-summary').innerHTML = `
-      <div>Order: <strong>${order}</strong></div>
-      <div>Tracking: <strong>${trk}</strong></div>
-      <div>Amount: <strong>$${Number(amt||0).toFixed(2)}</strong></div>
-      <div>Estimated Delivery: <strong>${estimated.toISOString().split('T')[0]}</strong></div>
-      <div style="margin-top:12px;"><a href="track-order.html?trk=${trk}" class="btn">Track your order</a></div>
+<script type="module">
+import { db } from './js/firebase.init.js';
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const urlParams = new URLSearchParams(location.search);
+const orderId = urlParams.get('order') || sessionStorage.getItem('lastOrderId');
+const trk = urlParams.get('trk') || sessionStorage.getItem('lastOrderTrk');
+
+const summaryDiv = document.getElementById('order-summary');
+if(!orderId){
+  summaryDiv.innerHTML = "<p>No order found.</p>";
+} else {
+  const orderRef = doc(db, 'orders', orderId);
+  const orderSnap = await getDoc(orderRef);
+  if(!orderSnap.exists()){
+    summaryDiv.innerHTML = "<p>Order not found.</p>";
+  } else {
+    const order = orderSnap.data();
+    const amt = order.cart.reduce((sum,p)=> sum + (p.price||0)*(p.qty||1),0);
+    const estDate = order.estimatedDelivery ? order.estimatedDelivery.toDate().toISOString().split('T')[0] : 'N/A';
+    summaryDiv.innerHTML = `
+      <div>Order: <strong>${orderId}</strong></div>
+      <div>Tracking: <strong>${order.trackingNumber || trk}</strong></div>
+      <div>Amount: <strong>$${amt.toFixed(2)}</strong></div>
+      <div>Estimated Delivery: <strong>${estDate}</strong></div>
+      <div style="margin-top:12px;">
+        <a href="track-order.html?trk=${order.trackingNumber || trk}" class="btn">Track your order</a>
+      </div>
     `;
-  </script>
-  <script type="module" src="js/main-auth.js"></script>
+  }
+}
+</script>
 
+<script type="module" src="js/main-auth.js"></script>
 </body>
 </html>

@@ -1,81 +1,124 @@
-// product-details.js
-import { db, auth } from './firebase.init.js';
-import { doc, getDoc, updateDoc, collection, addDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { formatCurrency } from './utils.js';
+import { db } from './firebase.init.js';
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const params = new URLSearchParams(window.location.search);
-const id = params.get('id');
+// Get product ID from URL
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id');
 
-async function init(){
-  if(!id) return document.body.innerHTML = '<h2>Product not found</h2>';
-  const docSnap = await getDoc(doc(db, 'products', id));
-  if(!docSnap.exists()) return document.body.innerHTML = '<h2>Product not found</h2>';
-  const p = { id: docSnap.id, ...docSnap.data() };
-  render(p);
-}
+// DOM elements
+const imagesCarousel = document.getElementById("imagesCarousel");
+const productName = document.getElementById("productName");
+const productDescription = document.getElementById("productDescription");
+const productPrice = document.getElementById("productPrice");
+const productStrap = document.getElementById("productStrap");
+const productColor = document.getElementById("productColor");
+const productSize = document.getElementById("productSize");
+const productStock = document.getElementById("productStock");
+const addToCartBtn = document.getElementById("addToCartBtn");
+const buyNowBtn = document.getElementById("buyNowBtn");
 
-function render(p){
-  document.title = p.name + ' - ChronosCrown';
-  const container = document.querySelector('#product-detail');
-  container.innerHTML = `
-    <div style="display:flex; gap:20px; align-items:flex-start;">
-      <div style="min-width:420px;">
-        <div style="position:relative;">
-          <img src="${p.image||'/assets/placeholder.png'}" style="width:420px;height:420px;object-fit:cover;border-radius:12px;">
-          ${p.stock<=0?`<div style="position:absolute; left:12px; top:12px; background:rgba(0,0,0,0.6); color:white; padding:8px 12px; border-radius:6px; font-weight:800;">OUT OF STOCK</div>`:''}
-        </div>
-      </div>
-      <div style="flex:1;">
-        <h2>${p.name}</h2>
-        <div class="meta">${p.brand || ''} • ${p.model || ''}</div>
-        <div style="margin-top:12px;" class="price">${formatCurrency(p.price)}</div>
-        <p style="margin-top:12px;">${p.description || 'No description provided.'}</p>
-        <div style="margin-top:14px; display:flex; gap:8px;">
-          <button class="btn" id="buyNow">Buy Now</button>
-          <button class="btn secondary" id="addCart">Add to Cart</button>
-          <button class="btn secondary" id="favBtn">♡ Favorite</button>
-        </div>
-        <div style="margin-top:12px;">
-          <strong>Accepted payments:</strong>
-          <div style="margin-top:8px;">
-            <img src="/assets/payment-icons/visa.svg" alt="visa" style="height:28px;margin-right:8px;">
-            <img src="/assets/payment-icons/mastercard.svg" alt="mc" style="height:28px;margin-right:8px;">
-            <img src="/assets/payment-icons/pay.svg" alt="pay" style="height:28px;">
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
+// Load product data
+async function loadProductDetails() {
+  try {
+    const docRef = doc(db, "products", productId);
+    const docSnap = await getDoc(docRef);
 
-  document.getElementById('buyNow').addEventListener('click', ()=>{
-    if(p.stock<=0){ alert('Sorry this product is out of stock.'); return; }
-    // store quick checkout payload
-    localStorage.setItem('checkout_quick', JSON.stringify({ productId:p.id, qty:1, price:p.price }));
-    location.href = 'checkout-address.html?quick=1';
-  });
-
-  document.getElementById('addCart').addEventListener('click', ()=>{
-    // reuse simple cart
-    const cart = JSON.parse(localStorage.getItem('cart')||'[]');
-    cart.push({ productId: p.id, qty:1 });
-    localStorage.setItem('cart', JSON.stringify(cart));
-    localStorage.setItem('cart_count', cart.length);
-    const badge = document.querySelector('.cart-badge');
-    if(badge) badge.textContent = cart.length;
-    // If logged in, add to user's cart collection
-    if(auth.currentUser){
-      const userCartRef = collection(db, 'users', auth.currentUser.uid, 'cart');
-      addDoc(userCartRef, { productId: p.id, qty:1, addedAt: new Date().toISOString() });
+    if (!docSnap.exists()) {
+      alert("Product not found");
+      return;
     }
-    alert('Added to cart');
-  });
 
-  document.getElementById('favBtn').addEventListener('click', async ()=>{
-    if(!auth.currentUser){ alert('Log in to save favorites'); return; }
-    const favRef = doc(db, 'users', auth.currentUser.uid, 'favorites', p.id);
-    await setDoc(favRef, { productId: p.id, addedAt: new Date().toISOString() });
-    alert('Saved to favorites');
+    const product = docSnap.data();
+
+    // Set basic info
+    productName.textContent = product.name;
+    productDescription.textContent = product.description || '';
+    productPrice.textContent = product.price;
+    productStock.textContent = product.quantity > 0 ? "In Stock" : "Out of Stock";
+
+    // Disable buttons if out of stock
+    if (product.quantity <= 0) {
+      addToCartBtn.disabled = true;
+      buyNowBtn.disabled = true;
+    }
+
+    // Build images carousel
+    imagesCarousel.innerHTML = '';
+    if (product.images && product.images.length) {
+      product.images.forEach((img, idx) => {
+        const imgEl = document.createElement('img');
+        imgEl.src = img;
+        imgEl.alt = `${product.name} image ${idx+1}`;
+        imgEl.style.width = '200px';
+        imgEl.style.height = '200px';
+        imgEl.style.objectFit = 'cover';
+        imgEl.style.marginRight = '8px';
+        imagesCarousel.appendChild(imgEl);
+      });
+    } else {
+      imagesCarousel.innerHTML = '<img src="assets/no-image.png" alt="No image available" style="width:200px;height:200px;">';
+    }
+
+    // Populate dropdowns
+    populateSelect(productStrap, product.straps || []);
+    populateSelect(productColor, product.colors || []);
+    populateSelect(productSize, product.sizes || []);
+
+    // Add to cart / Buy now
+    addToCartBtn.onclick = () => addToCart(productId);
+    buyNowBtn.onclick = () => buyNow(productId);
+
+  } catch (err) {
+    console.error("Error loading product:", err);
+    alert("Failed to load product details.");
+  }
+}
+
+// Populate select element
+function populateSelect(selectEl, optionsArray) {
+  selectEl.innerHTML = '';
+  optionsArray.forEach(opt => {
+    const option = document.createElement('option');
+    option.value = opt;
+    option.textContent = opt;
+    selectEl.appendChild(option);
   });
 }
 
-init();
+// Cart functions
+function addToCart(pid) {
+  const cart = JSON.parse(localStorage.getItem('cart')||'[]');
+  
+  const selectedOptions = {
+    strap: productStrap.value,
+    color: productColor.value,
+    size: productSize.value
+  };
+
+  const existing = cart.find(item =>
+    item.productId === pid &&
+    item.strap === selectedOptions.strap &&
+    item.color === selectedOptions.color &&
+    item.size === selectedOptions.size
+  );
+
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ productId: pid, qty: 1, ...selectedOptions });
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem('cart_count', cart.length);
+  const badge = document.querySelector('.cart-badge');
+  if(badge) badge.textContent = cart.length;
+  alert('Added to cart');
+}
+
+function buyNow(pid) {
+  addToCart(pid); // ensure it's in cart
+  window.location.href = 'checkout-address.html';
+}
+
+// Initialize
+loadProductDetails();

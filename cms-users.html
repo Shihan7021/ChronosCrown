@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CMS Users</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CMS — Users</title>
   <link rel="stylesheet" href="css/cms-style.css">
   <script type="module">
-    const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser'));
-    if (!cmsUser || cmsUser.role !== 'system') {
-      alert("Access denied. Please login.");
-      window.location.href = 'cms-login.html';
+    // immediate guard
+    const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
+    if (!cmsUser || cmsUser.role !== 'Admin') {
+      alert('Access denied. Only Admins can access Users management.');
+      window.location.href = 'cms-dashboard.html';
     }
   </script>
 </head>
 <body>
-  <div class="cms-header"><h2>Users Management</h2></div>
+  <div class="cms-header"><h2>System Users</h2></div>
 
   <div class="cms-wrapper">
     <div class="cms-sidebar">
@@ -29,36 +30,102 @@
 
     <div class="cms-content">
       <h3>Manage System Users</h3>
-      <form id="userForm">
-        <input type="email" id="userEmail" placeholder="User Email" required>
-        <select id="userRole" required>
-          <option value="">Select Role</option>
-          <option value="system">System</option>
-          <option value="user">User</option>
-        </select>
-        <button type="submit" class="btn">Add User</button>
-      </form>
+
+      <div class="form-card">
+        <form id="userAddForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="uEmail">Email</label>
+              <input id="uEmail" type="email" placeholder="user@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="uRole">Role</label>
+              <select id="uRole" required>
+                <option value="">Select role</option>
+                <option value="Admin">Admin</option>
+                <option value="Manager">Manager</option>
+                <option value="Associate">Associate</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div style="flex:1">
+              <label for="uDisplayName">Display name</label>
+              <input id="uDisplayName" type="text" placeholder="Full name">
+            </div>
+          </div>
+
+          <div class="form-row" style="align-items:center;">
+            <button class="btn" type="submit">Create invite (FireStore)</button>
+            <div class="small muted" style="margin-left:12px;">
+              Note: creating a CMS user here creates a Firestore invite record. To create the actual Firebase Auth user you must run a Cloud Function (Admin SDK) or create the account in Firebase Console. This prevents the admin from being signed-out.
+            </div>
+          </div>
+        </form>
+      </div>
 
       <div class="table-card">
         <h4>System Users</h4>
         <table class="styled-table">
           <thead>
             <tr>
-              <th>User ID</th>
+              <th>UID/DocID</th>
               <th>Email</th>
+              <th>Name</th>
               <th>Role</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody id="usersTable">
-            <tr><td colspan="4">No users found</td></tr>
+            <tr><td colspan="5">Loading...</td></tr>
           </tbody>
         </table>
       </div>
+
+      <!-- Detail / edit panel -->
+      <div id="userDetailCard" class="form-card" style="display:none; margin-top:18px;">
+        <h4>User Detail</h4>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Doc ID</label>
+            <input id="detailId" readonly>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input id="detailEmail" readonly>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Display Name</label>
+            <input id="detailName">
+          </div>
+          <div class="form-group">
+            <label>Role</label>
+            <select id="detailRole">
+              <option value="Admin">Admin</option>
+              <option value="Manager">Manager</option>
+              <option value="Associate">Associate</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <button id="saveUserBtn" class="btn">Save</button>
+          <button id="resetPwdBtn" class="btn" style="background:#f59e0b">Request Password Reset</button>
+          <button id="deleteUserBtn" class="btn btn-danger">Delete User</button>
+        </div>
+
+        <div class="small muted" style="margin-top:8px;">
+          Reset and creation of actual Auth accounts must be handled server-side (Cloud Function) or in Firebase Console. Buttons here toggle fields in Firestore to signal a server process.
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <script src="js/firebase-config.js"></script>
-  <script src="js/cms-users.js"></script>
+  <script type="module" src="../js/firebase-config.js"></script>
+  <script type="module" src="js/cms-users.js"></script>
 </body>
 </html>

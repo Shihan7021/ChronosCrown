@@ -1,59 +1,95 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Product - ChronosCrown</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header class="header">
-        <div class="container nav-wrap">
-            <div class="brand">
-            <div class="logo">CC</div>
-            <h1>ChronosCrown</h1>
-            </div>
+    <div class="container nav-wrap">
+      <div class="brand">
+        <div class="logo">CC</div>
+        <h1>ChronosCrown</h1>
+      </div>
 
-            <nav class="navlinks">
-            <a href="index.html">Home</a>
-            <a href="him.html">Him</a>
-            <a href="her.html">Her</a>
-            <a href="about.html">About</a>
-            <a href="contact.html" aria-current="page">Contact</a>
-            </nav>
+      <nav class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="him.html">Him</a>
+        <a href="her.html">Her</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" >Contact</a>
+      </nav>
 
-            <div style="display:flex; gap:12px; align-items:center;">
+      <div style="display:flex; gap:12px; align-items:center;">
+        <!-- BEFORE login -->
+        <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+        <a id="registerLink" href="register.html" class="btn">Register</a>
 
-            <!-- BEFORE login -->
-            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
-            <a id="registerLink" href="register.html" class="btn">Register</a>
-
-            <!-- AFTER login -->
-            <div id="userMenu" class="dropdown hidden">
-                <span class="greeting" id="greetingText"></span>
-                <div class="person-icon">👤</div>
-                <div class="dropdown-content">
-                <a href="profile.html">My Profile</a>
-                <a href="#" id="logoutBtn">Logout</a>
-                </div>
-            </div>
-
-            <a href="cart.html" class="icon-btn" aria-label="Cart">
-                <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
-                <div class="badge cart-badge">0</div>
-            </a>
-
-            </div>
+        <!-- AFTER login -->
+        <div id="userMenu" class="dropdown hidden">
+          <span class="greeting" id="greetingText"></span>
+          <div class="person-icon">👤</div>
+          <div class="dropdown-content">
+            <a href="profile.html">My Profile</a>
+            <a href="#" id="logoutBtn">Logout</a>
+          </div>
         </div>
-    </header>
 
-  <main class="container">
-    <div id="product-detail"></div>
+        <a href="cart.html" class="icon-btn" aria-label="Cart">
+          <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
+          <div class="badge cart-badge">0</div>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container product-details">
+    <div id="imagesCarousel" style="display:flex; overflow-x:auto; gap:8px; margin-bottom:16px;"></div>
+
+    <div id="product-detail-info">
+      <h2 id="productName"></h2>
+      <p id="productDescription"></p>
+
+      <p>Price: $<span id="productPrice"></span></p>
+
+      <label>Strap:
+        <select id="productStrap">
+          <!-- Options populated by JS -->
+        </select>
+      </label>
+
+      <label>Color:
+        <select id="productColor">
+          <!-- Options populated by JS -->
+        </select>
+      </label>
+
+      <label>Size:
+        <select id="productSize">
+          <!-- Options populated by JS -->
+        </select>
+      </label>
+
+      <p>Status: <span id="productStock"></span></p>
+
+      <div class="payments">
+        <p>We accept:</p>
+        <img src="assets/payments/visa.png" alt="Visa">
+        <img src="assets/payments/mastercard.png" alt="Mastercard">
+        <img src="assets/payments/paypal.png" alt="PayPal">
+      </div>
+
+      <button id="addToCartBtn" class="btn">Add to Cart</button>
+      <button id="buyNowBtn" class="btn primary">Buy Now</button>
+    </div>
   </main>
+
   <footer class="footer"> ... </footer>
 
   <script type="module" src="js/firebase.init.js"></script>
   <script type="module" src="js/product-details.js"></script>
   <script type="module" src="js/main-auth.js"></script>
-
 </body>
 </html>

@@ -11,46 +11,44 @@
   <header class="header">
         <div class="container nav-wrap">
             <div class="brand">
-            <div class="logo">CC</div>
-            <h1>ChronosCrown</h1>
+              <div class="logo">CC</div>
+              <h1>ChronosCrown</h1>
             </div>
 
             <nav class="navlinks">
-            <a href="index.html">Home</a>
-            <a href="him.html">Him</a>
-            <a href="her.html">Her</a>
-            <a href="about.html">About</a>
-            <a href="contact.html" aria-current="page">Contact</a>
+              <a href="index.html">Home</a>
+              <a href="him.html" aria-current="page">Him</a>
+              <a href="her.html">Her</a>
+              <a href="about.html">About</a>
+              <a href="contact.html">Contact</a>
             </nav>
 
             <div style="display:flex; gap:12px; align-items:center;">
+              <!-- BEFORE login -->
+              <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+              <a id="registerLink" href="register.html" class="btn">Register</a>
 
-            <!-- BEFORE login -->
-            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
-            <a id="registerLink" href="register.html" class="btn">Register</a>
+              <!-- AFTER login -->
+              <div id="userMenu" class="dropdown hidden">
+                  <span class="greeting" id="greetingText"></span>
+                  <div class="person-icon">👤</div>
+                  <div class="dropdown-content">
+                    <a href="profile.html">My Profile</a>
+                    <a href="#" id="logoutBtn">Logout</a>
+                  </div>
+              </div>
 
-            <!-- AFTER login -->
-            <div id="userMenu" class="dropdown hidden">
-                <span class="greeting" id="greetingText"></span>
-                <div class="person-icon">👤</div>
-                <div class="dropdown-content">
-                <a href="profile.html">My Profile</a>
-                <a href="#" id="logoutBtn">Logout</a>
-                </div>
-            </div>
-
-            <a href="cart.html" class="icon-btn" aria-label="Cart">
-                <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
-                <div class="badge cart-badge">0</div>
-            </a>
-
+              <a href="cart.html" class="icon-btn" aria-label="Cart">
+                  <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
+                  <div class="badge cart-badge">0</div>
+              </a>
             </div>
         </div>
-    </header>
-
+  </header>
 
   <main class="container">
     <h2>Him — Watches</h2>
+
     <div class="filters">
       <label>Show per page:
         <select id="pageSize">
@@ -60,6 +58,31 @@
       <label>Price:
         <input type="number" id="priceMin" placeholder="min" style="width:90px;">
         <input type="number" id="priceMax" placeholder="max" style="width:90px;">
+      </label>
+      <label>Strap:
+        <select id="strapFilter">
+          <option value="">All</option>
+          <option value="Leather">Leather</option>
+          <option value="Metal">Metal</option>
+          <option value="Rubber">Rubber</option>
+        </select>
+      </label>
+      <label>Color:
+        <select id="colorFilter">
+          <option value="">All</option>
+          <option value="Black">Black</option>
+          <option value="Brown">Brown</option>
+          <option value="Silver">Silver</option>
+          <option value="Gold">Gold</option>
+        </select>
+      </label>
+      <label>Size:
+        <select id="sizeFilter">
+          <option value="">All</option>
+          <option value="36">36mm</option>
+          <option value="40">40mm</option>
+          <option value="44">44mm</option>
+        </select>
       </label>
       <button class="btn" id="applyFilters">Apply</button>
     </div>
@@ -72,17 +95,25 @@
   <script type="module" src="js/firebase.init.js"></script>
   <script type="module">
     import { loadProducts } from './js/products.js';
+
     document.getElementById('pageSize').addEventListener('change', (e)=> {
       localStorage.setItem('pageSize', e.target.value);
       loadProducts({category:'Him', page:1});
     });
+
     document.getElementById('applyFilters').addEventListener('click', ()=>{
-      const filters = { priceMin: Number(document.getElementById('priceMin').value||0), priceMax: Number(document.getElementById('priceMax').value||999999) };
+      const filters = {
+        priceMin: Number(document.getElementById('priceMin').value||0),
+        priceMax: Number(document.getElementById('priceMax').value||999999),
+        strap: document.getElementById('strapFilter').value,
+        color: document.getElementById('colorFilter').value,
+        size: document.getElementById('sizeFilter').value
+      };
       loadProducts({category:'Him', page:1, filters});
     });
+
     loadProducts({category:'Him', page:1});
   </script>
   <script type="module" src="js/main-auth.js"></script>
-
 </body>
 </html>

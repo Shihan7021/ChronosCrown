@@ -1,68 +1,71 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Checkout - Address</title>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checkout — Address</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header class="header">
-        <div class="container nav-wrap">
-            <div class="brand">
-            <div class="logo">CC</div>
-            <h1>ChronosCrown</h1>
-            </div>
+    <div class="container nav-wrap">
+      <div class="brand">
+        <div class="logo">CC</div>
+        <h1>ChronosCrown</h1>
+      </div>
 
-            <nav class="navlinks">
-            <a href="index.html">Home</a>
-            <a href="him.html">Him</a>
-            <a href="her.html">Her</a>
-            <a href="about.html">About</a>
-            <a href="contact.html" aria-current="page">Contact</a>
-            </nav>
+      <nav class="navlinks">
+        <a href="index.html">Home</a>
+        <a href="him.html">Him</a>
+        <a href="her.html">Her</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
-            <div style="display:flex; gap:12px; align-items:center;">
+      <div style="display:flex; gap:12px; align-items:center;">
+        <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+        <a id="registerLink" href="register.html" class="btn">Register</a>
 
-            <!-- BEFORE login -->
-            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
-            <a id="registerLink" href="register.html" class="btn">Register</a>
-
-            <!-- AFTER login -->
-            <div id="userMenu" class="dropdown hidden">
-                <span class="greeting" id="greetingText"></span>
-                <div class="person-icon">👤</div>
-                <div class="dropdown-content">
-                <a href="profile.html">My Profile</a>
-                <a href="#" id="logoutBtn">Logout</a>
-                </div>
-            </div>
-
-            <a href="cart.html" class="icon-btn" aria-label="Cart">
-                <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
-                <div class="badge cart-badge">0</div>
-            </a>
-
-            </div>
+        <div id="userMenu" class="dropdown hidden">
+          <span class="greeting" id="greetingText"></span>
+          <div class="person-icon">👤</div>
+          <div class="dropdown-content">
+            <a href="profile.html">My Profile</a>
+            <a href="#" id="logoutBtn">Logout</a>
+          </div>
         </div>
-    </header>
+
+        <a href="cart.html" class="icon-btn" aria-label="Cart">
+          <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
+          <div class="badge cart-badge">0</div>
+        </a>
+      </div>
+    </div>
+  </header>
 
   <main class="container">
-    <h2>Checkout — Address</h2>
-    <div id="saved-addresses"></div>
-    <form id="address-form" class="form">
-      <label>Name <input name="name" class="input"></label>
-      <label>Address line 1 <input name="line1" class="input"></label>
-      <label>City <input name="city" class="input"></label>
-      <label>Country <input name="country" class="input"></label>
-      <div style="margin-top:12px;">
-        <button class="btn" id="toPayment" type="button">Next: Payment</button>
-      </div>
+    <h2>Select Shipping Address</h2>
+
+    <div id="savedAddresses" class="saved-addresses"></div>
+
+    <h3>Add New Address</h3>
+    <form id="addressForm" class="form">
+      <label>Name <input type="text" id="fullName" placeholder="Full Name" required></label>
+      <label>Address line 1 <input type="text" id="street" placeholder="Street Address" required></label>
+      <label>City <input type="text" id="city" placeholder="City" required></label>
+      <label>State <input type="text" id="state" placeholder="State" required></label>
+      <label>ZIP <input type="text" id="zip" placeholder="ZIP / Postal Code" required></label>
+      <label>Country <input type="text" id="country" placeholder="Country" required></label>
+      <button type="submit" class="btn primary" style="margin-top:8px;">Add Address</button>
     </form>
+
+    <button id="nextToPayment" class="btn primary" style="margin-top:16px;">Next: Payment</button>
   </main>
+
   <footer class="footer"> ... </footer>
 
   <script type="module" src="js/firebase.init.js"></script>
-  <script type="module" src="js/checkout.js"></script>
+  <script type="module" src="js/checkout-address.js"></script>
   <script type="module" src="js/main-auth.js"></script>
-
 </body>
 </html>

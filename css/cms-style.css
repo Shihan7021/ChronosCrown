@@ -237,3 +237,41 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* role badges */
+.role-badge { padding:6px 8px; border-radius:6px; color:#fff; font-weight:600; font-size:13px; display:inline-block; }
+.role-admin { background:#0ea5a8; }      /* teal */
+.role-manager { background:#2563eb; }    /* blue */
+.role-associate { background:#6b7280; }  /* gray */
+
+/* product preview */
+.image-preview { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+.preview-card { width:100px; border:1px solid #e6eef9; border-radius:6px; padding:6px; text-align:center; background:#fff; }
+.preview-card img { width:86px; height:86px; object-fit:cover; border-radius:4px; display:block; margin:0 auto 6px; }
+.preview-actions { display:flex; justify-content:center; gap:6px; }
+
+/* refined product-list / product-card */
+.product-list { display:grid; grid-template-columns: repeat(auto-fill, minmax(340px,1fr)); gap:16px; margin-top:12px; }
+.product-card { background:#fff; border-radius:8px; padding:12px; box-shadow:0 2px 6px rgba(2,6,23,0.06); display:flex; align-items:flex-start; gap:12px; }
+.product-thumb img { width:120px; height:96px; object-fit:cover; border-radius:6px; }
+.product-info { flex:1; }
+.product-actions { display:flex; gap:8px; align-items:flex-start; }
+
+/* small buttons */
+.btn.small { padding:6px 8px; font-size:13px; border-radius:6px; }
+
+/* mono style for ids */
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace; font-size:13px; color:#334155; }
+
+/* muted text */
+.muted { color:#64748b; }
+
+/* disabled action (used by role restrictions) */
+.disabled { opacity:0.45; pointer-events:none; }
+
+/* responsive tweaks */
+@media(max-width:900px) {
+  .cms-sidebar { display:none; }
+  .cms-wrapper { flex-direction:column; }
+}
+

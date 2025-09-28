@@ -1,45 +1,99 @@
-// cart.js - shows cart and writes to DB if logged
-import { db, auth } from './firebase.init.js';
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+// cart.js
+import { db } from './firebase.init.js';
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { formatCurrency } from './utils.js';
 
-document.addEventListener('DOMContentLoaded', ()=> renderCart());
+const cartList = document.getElementById("cart-list");
 
-function renderCart(){
-  const cart = JSON.parse(localStorage.getItem('cart')||'[]');
-  const container = document.querySelector('#cart-list');
-  if(!container) return;
-  if(cart.length===0) { container.innerHTML = '<div>Your cart is empty</div>'; return; }
-  container.innerHTML = '';
-  cart.forEach(async (item, idx)=>{
-    // for demo, fetch product details quickly via Firestore
-    const pSnap = await (await fetchProduct(item.productId));
-    const price = pSnap.price || 0;
-    const row = document.createElement('div'); row.className='product-card';
-    row.innerHTML = `<div style="display:flex; gap:12px;"><img src="${pSnap.image||'/assets/placeholder.png'}" style="width:120px;height:120px;object-fit:cover;border-radius:8px;">
-      <div style="flex:1;">
-        <h4>${pSnap.name}</h4>
-        <div class="meta">${pSnap.brand || ''}</div>
-        <div style="margin-top:6px;">${formatCurrency(price)}</div>
-      </div>
-      <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-end;">
-        <button class="btn" onclick="gotoCheckout()">Checkout</button>
-      </div>
-    </div>`;
-    container.appendChild(row);
-  });
-}
+// Load cart from localStorage
+let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-async function fetchProduct(id){
-  const res = await fetch('/__product_proxy__?id='+id); // placeholder - users should replace with client fetch or include getDoc call
-  try{
-    const json = await res.json();
-    return json;
-  }catch(e){
-    return { name:'Product', price:0, image:'/assets/placeholder.png' };
+async function loadCart() {
+  cartList.innerHTML = '';
+
+  if (cart.length === 0) {
+    cartList.innerHTML = '<p>Your cart is empty.</p>';
+    updateBadge();
+    return;
   }
+
+  let total = 0;
+
+  for (const item of cart) {
+    const docRef = doc(db, 'products', item.productId);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) continue;
+
+    const product = docSnap.data();
+
+    // Calculate total
+    total += product.price * item.qty;
+
+    // Display product in cart
+    const cartItem = document.createElement('div');
+    cartItem.className = 'cart-item';
+    cartItem.innerHTML = `
+      <img src="${(product.images && product.images.length) ? product.images[0] : '/assets/placeholder.png'}" alt="${product.name}" style="width:100px;height:100px;object-fit:cover;">
+      <div class="cart-info">
+        <h3>${product.name}</h3>
+        <p>${product.description ? product.description.substring(0,50)+'...' : ''}</p>
+        <p>Price: ${formatCurrency(product.price)}</p>
+        <p>Qty: ${item.qty}</p>
+        <div class="cart-actions">
+          <button class="btn" onclick="increaseQty('${item.productId}')">+</button>
+          <button class="btn secondary" onclick="decreaseQty('${item.productId}')">-</button>
+          <button class="btn danger" onclick="removeFromCart('${item.productId}')">Remove</button>
+        </div>
+      </div>
+    `;
+    cartList.appendChild(cartItem);
+  }
+
+  const totalDiv = document.createElement('div');
+  totalDiv.className = 'cart-total';
+  totalDiv.innerHTML = `<h3>Total: ${formatCurrency(total)}</h3>
+                        <button class="btn primary" onclick="checkout()">Proceed to Checkout</button>`;
+  cartList.appendChild(totalDiv);
+
+  updateBadge();
 }
 
-window.gotoCheckout = function(){
+// Cart operations
+function updateBadge() {
+  const badge = document.querySelector('.cart-badge');
+  if (badge) badge.textContent = cart.reduce((sum, i)=> sum + i.qty, 0);
+}
+
+window.increaseQty = (pid) => {
+  const item = cart.find(i => i.productId === pid);
+  if(item) item.qty +=1;
+  saveCart();
+};
+
+window.decreaseQty = (pid) => {
+  const item = cart.find(i => i.productId === pid);
+  if(item && item.qty >1) item.qty -=1;
+  saveCart();
+};
+
+window.removeFromCart = (pid) => {
+  cart = cart.filter(i => i.productId !== pid);
+  saveCart();
+};
+
+function saveCart() {
+  localStorage.setItem('cart', JSON.stringify(cart));
+  loadCart();
+}
+
+// Proceed to checkout
+function checkout() {
+  if(cart.length === 0) {
+    alert('Cart is empty.');
+    return;
+  }
   window.location.href = 'checkout-address.html';
 }
+
+// Initialize
+loadCart();
