@@ -1,14 +1,23 @@
 // cms-orders.js
 import { db } from './firebase-config.js';
-import { collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { collection, onSnapshot, doc, updateDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const ordersTable = document.getElementById('ordersTable');
 
-onSnapshot(collection(db, 'orders'), snap => {
+// Initial load to avoid blank screen in case snapshot is delayed
+(async function initialLoad(){
+  try{
+    const snap = await getDocs(query(collection(db, 'orders'), orderBy('createdAt','desc')));
+    const rows = [];
+    snap.forEach(s => rows.push({ id: s.id, ...s.data() }));
+    renderOrders(rows);
+  }catch(e){ console.error('initial orders load', e); }
+})();
+
+// Live updates
+onSnapshot(query(collection(db, 'orders'), orderBy('createdAt','desc')), snap => {
   const rows = [];
   snap.forEach(s => rows.push({ id: s.id, ...s.data() }));
-  // sort newest first
-  rows.sort((a,b)=> (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
   renderOrders(rows);
 }, err => {
   console.error('orders listen', err);
