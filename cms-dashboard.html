@@ -14,28 +14,69 @@
   </script>
 </head>
 <body>
+  <!-- Header -->
   <div class="cms-header">
-    <h2>ChronosCrown CMS</h2>
-    <button onclick="logout()">Logout</button>
+    <h2>Dashboard</h2>
   </div>
-  <div class="cms-sidebar">
-    <a href="cms-dashboard.html">Dashboard</a>
-    <a href="cms-products.html">Products</a>
-    <a href="cms-users.html">Users</a>
-    <a href="cms-content.html">Content</a>
-    <a href="cms-sales.html">Sales</a>
-    <a href="cms-orders.html">Orders</a>
-    <a href="cms-financials.html">Financials</a>
-  </div>
-  <div class="cms-content">
-    <h3>Overview</h3>
-    <div id="stats">
-      <p>Total Products: <span id="productCount"></span></p>
-      <p>Total Orders: <span id="orderCount"></span></p>
-      <p>Pending Orders: <span id="pendingCount"></span></p>
+
+  <div class="cms-wrapper">
+    <!-- Sidebar -->
+    <div class="cms-sidebar">
+      <a href="cms-dashboard.html" class="active">Dashboard</a>
+      <a href="cms-products.html">Products</a>
+      <a href="cms-users.html">Users</a>
+      <a href="cms-content.html">Content</a>
+      <a href="cms-sales.html">Sales</a>
+      <a href="cms-orders.html">Orders</a>
+      <a href="cms-financials.html">Financials</a>
+    </div>
+
+    <!-- Content -->
+    <div class="cms-content">
+      <h3>Welcome to the Admin Dashboard</h3>
+      <p>Here’s a quick overview of your store’s performance.</p>
+
+      <!-- Dashboard Stats -->
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h4>Total Products</h4>
+          <p id="totalProducts">0</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>Total Orders</h4>
+          <p id="totalOrders">0</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>Total Sales ($)</h4>
+          <p id="totalSales">0</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>Registered Users</h4>
+          <p id="totalUsers">0</p>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="table-card">
+        <h4>Recent Orders</h4>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total ($)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recentOrders">
+            <tr><td colspan="4">No recent orders</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-  <script src="../firebase-config.js"></script>
+
+  <script src="js/firebase-config.js"></script>
   <script src="js/cms-dashboard.js"></script>
 </body>
 </html>

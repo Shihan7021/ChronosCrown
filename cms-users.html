@@ -14,25 +14,51 @@
   </script>
 </head>
 <body>
-  <div class="cms-header"><h2>System Users</h2></div>
-  <div class="cms-sidebar">
-    <a href="cms-dashboard.html">Dashboard</a>
-    <a href="cms-products.html">Products</a>
-    <a href="cms-users.html">Users</a>
-    <a href="cms-content.html">Content</a>
-    <a href="cms-sales.html">Sales</a>
-    <a href="cms-orders.html">Orders</a>
-    <a href="cms-financials.html">Financials</a>
+  <div class="cms-header"><h2>Users Management</h2></div>
+
+  <div class="cms-wrapper">
+    <div class="cms-sidebar">
+      <a href="cms-dashboard.html">Dashboard</a>
+      <a href="cms-products.html">Products</a>
+      <a href="cms-users.html" class="active">Users</a>
+      <a href="cms-content.html">Content</a>
+      <a href="cms-sales.html">Sales</a>
+      <a href="cms-orders.html">Orders</a>
+      <a href="cms-financials.html">Financials</a>
+    </div>
+
+    <div class="cms-content">
+      <h3>Manage System Users</h3>
+      <form id="userForm">
+        <input type="email" id="userEmail" placeholder="User Email" required>
+        <select id="userRole" required>
+          <option value="">Select Role</option>
+          <option value="system">System</option>
+          <option value="user">User</option>
+        </select>
+        <button type="submit" class="btn">Add User</button>
+      </form>
+
+      <div class="table-card">
+        <h4>System Users</h4>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTable">
+            <tr><td colspan="4">No users found</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-  <div class="cms-content">
-    <h3>Manage System Users</h3>
-    <form id="userForm">
-      <input type="email" id="userEmail" placeholder="User Email" required>
-      <button type="submit">Add System User</button>
-    </form>
-    <div id="userList"></div>
-  </div>
-  <script src="../firebase-config.js"></script>
+
+  <script src="js/firebase-config.js"></script>
   <script src="js/cms-users.js"></script>
 </body>
 </html>

@@ -15,21 +15,48 @@
 </head>
 <body>
   <div class="cms-header"><h2>Content Management</h2></div>
-  <div class="cms-sidebar">
-    <a href="cms-dashboard.html">Dashboard</a>
-    <a href="cms-products.html">Products</a>
-    <a href="cms-users.html">Users</a>
-    <a href="cms-content.html">Content</a>
-    <a href="cms-sales.html">Sales</a>
-    <a href="cms-orders.html">Orders</a>
-    <a href="cms-financials.html">Financials</a>
+
+  <div class="cms-wrapper">
+    <div class="cms-sidebar">
+      <a href="cms-dashboard.html">Dashboard</a>
+      <a href="cms-products.html">Products</a>
+      <a href="cms-users.html">Users</a>
+      <a href="cms-content.html" class="active">Content</a>
+      <a href="cms-sales.html">Sales</a>
+      <a href="cms-orders.html">Orders</a>
+      <a href="cms-financials.html">Financials</a>
+    </div>
+
+    <div class="cms-content">
+      <h3>Manage Content</h3>
+      <form id="contentForm">
+        <input type="text" id="contentTitle" placeholder="Content Title" required>
+        <select id="contentStatus" required>
+          <option value="active">Active</option>
+          <option value="draft">Draft</option>
+        </select>
+        <button type="submit" class="btn">Add Content</button>
+      </form>
+
+      <div class="table-card">
+        <h4>Content List</h4>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Content ID</th>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="contentTable">
+            <tr><td colspan="4">No content available</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-  <div class="cms-content">
-    <h3>Feature Products</h3>
-    <div id="featureList"></div>
-    <h3>Feedback Management</h3>
-    <div id="feedbackList"></div>
-  </div>
+
   <script src="js/firebase-config.js"></script>
   <script src="js/cms-content.js"></script>
 </body>

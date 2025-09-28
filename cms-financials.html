@@ -14,23 +14,42 @@
   </script>
 </head>
 <body>
-  <div class="cms-header"><h2>Financial Reports</h2></div>
-  <div class="cms-sidebar">
-    <a href="cms-dashboard.html">Dashboard</a>
-    <a href="cms-products.html">Products</a>
-    <a href="cms-users.html">Users</a>
-    <a href="cms-content.html">Content</a>
-    <a href="cms-sales.html">Sales</a>
-    <a href="cms-orders.html">Orders</a>
-    <a href="cms-financials.html">Financials</a>
+  <div class="cms-header"><h2>Financials</h2></div>
+
+  <div class="cms-wrapper">
+    <div class="cms-sidebar">
+      <a href="cms-dashboard.html">Dashboard</a>
+      <a href="cms-products.html">Products</a>
+      <a href="cms-users.html">Users</a>
+      <a href="cms-content.html">Content</a>
+      <a href="cms-sales.html">Sales</a>
+      <a href="cms-orders.html">Orders</a>
+      <a href="cms-financials.html" class="active">Financials</a>
+    </div>
+
+    <div class="cms-content">
+      <h3>Transaction History</h3>
+
+      <div class="table-card">
+        <h4>Financial Records</h4>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="financialsTable">
+            <tr><td colspan="4">No records found</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-  <div class="cms-content">
-    <h3>Order History</h3>
-    <input type="date" id="fromDate"> to <input type="date" id="toDate">
-    <button onclick="filterFinancials()">Filter</button>
-    <div id="financialReport"></div>
-  </div>
-  <script src="../firebase-config.js"></script>
+
+  <script src="js/firebase-config.js"></script>
   <script src="js/cms-financials.js"></script>
 </body>
 </html>
