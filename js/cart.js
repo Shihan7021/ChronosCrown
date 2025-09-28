@@ -52,8 +52,14 @@ async function loadCart() {
   const totalDiv = document.createElement('div');
   totalDiv.className = 'cart-total';
   totalDiv.innerHTML = `<h3>Total: ${formatCurrency(total)}</h3>
-                        <button class="btn primary" onclick="checkout()">Proceed to Checkout</button>`;
+                        <button class="btn primary" id="proceedCheckoutBtn" type="button">Proceed to Checkout</button>`;
   cartList.appendChild(totalDiv);
+
+  // Attach click handler without relying on inline onclick
+  const proceedBtn = document.getElementById('proceedCheckoutBtn');
+  if (proceedBtn) {
+    proceedBtn.addEventListener('click', checkout);
+  }
 
   updateBadge();
 }
