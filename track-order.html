@@ -89,7 +89,7 @@
 
 <script type="module">
 import { db } from './js/firebase.init.js';
-import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const trackBtn = document.getElementById('trackBtn');
 const trkInput = document.getElementById('trk');
@@ -106,15 +106,17 @@ async function lookupOrder(trk){
     snapshot.forEach(docSnap => {
       const order = docSnap.data();
       const estDate = order.estimatedDelivery ? order.estimatedDelivery.toDate().toISOString().split('T')[0] : 'N/A';
+      const items = Array.isArray(order.items) ? order.items : (Array.isArray(order.cart) ? order.cart.map(c=>({name:c.name, productId:c.productId, qty:c.qty})) : []);
       resultDiv.innerHTML = `
         <div class="form">
           <p>Order ID: <strong>${docSnap.id}</strong></p>
+          <p>Tracking: <strong>${order.trackingNumber || '-'}</strong></p>
           <p>Status: <strong>${order.status}</strong></p>
           <p>Estimated Delivery: <strong>${estDate}</strong></p>
           <p>Payment Method: <strong>${order.paymentMethod}</strong></p>
           <p>Items:</p>
           <ul>
-            ${order.cart.map(p=>`<li>${p.name || p.productId} x ${p.qty || 1}</li>`).join('')}
+            ${items.map(p=>`<li>${p.name || p.productId} × ${p.qty || 1}</li>`).join('')}
           </ul>
         </div>
       `;
