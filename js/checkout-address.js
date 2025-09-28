@@ -48,19 +48,20 @@ async function loadAddresses(user) {
   }
   arr.forEach(addr => {
     const id = addr.id;
-    const card = document.createElement('label');
+    const card = document.createElement('div');
     card.className = 'address-card selectable';
+    const mobileSpan = addr.mobile ? ' <span class="meta">(' + addr.mobile + ')</span>' : '';
     card.innerHTML = `
-      <input type=\"radio\" name=\"selAddress\" value=\"${id}\" style=\"accent-color: var(--luxury-blue);\">
-      <div class=\"addr\">
-        <strong>${addr.name}</strong>${addr.mobile ? ` <span class=\"meta\">(${addr.mobile})</span>` : ''}<br>
-        ${addr.line1}<br>
-        ${addr.city}, ${addr.state || ''} ${addr.zip || ''}<br>
-        ${addr.country}
-        <div style=\"margin-top:6px;\"><button class=\"btn small\" data-edit=\"${id}\" type=\"button\">Edit</button></div>
+      <input type="radio" name="selAddress" value="${id}" style="accent-color: var(--luxury-blue); margin-right:8px;">
+      <div class="addr">
+        <strong>${addr.name || ''}</strong>${mobileSpan}<br>
+        ${addr.line1 || ''}<br>
+        ${addr.city || ''}, ${addr.state || ''} ${addr.zip || ''}<br>
+        ${addr.country || ''}
+        <div style="margin-top:6px;"><button class="btn small" data-edit="${id}" type="button">Edit</button></div>
       </div>
     `;
-    const radio = card.querySelector('input');
+    const radio = card.querySelector('input[type="radio"]');
     if (selectedAddressId && selectedAddressId === id) {
       radio.checked = true;
     }
@@ -71,19 +72,26 @@ async function loadAddresses(user) {
     });
     // Edit button
     const editBtn = card.querySelector('[data-edit]');
-    editBtn.addEventListener('click', (e)=>{
-      e.preventDefault();
-      e.stopPropagation();
-      // load into form
-      document.getElementById('fullName').value = addr.name || '';
-      document.getElementById('mobile').value = addr.mobile || '';
-      document.getElementById('street').value = addr.line1 || '';
-      document.getElementById('city').value = addr.city || '';
-      document.getElementById('state').value = addr.state || '';
-      document.getElementById('zip').value = addr.zip || '';
-      document.getElementById('country').value = addr.country || '';
-      editAddressId = id;
-      const submitBtn = form.querySelector('button[type="submit"]');
+    if (editBtn) {
+      editBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        e.stopPropagation();
+        // load into form
+        document.getElementById('fullName').value = addr.name || '';
+        document.getElementById('mobile').value = addr.mobile || '';
+        document.getElementById('street').value = addr.line1 || '';
+        document.getElementById('city').value = addr.city || '';
+        document.getElementById('state').value = addr.state || '';
+        document.getElementById('zip').value = addr.zip || '';
+        document.getElementById('country').value = addr.country || '';
+        editAddressId = id;
+        const submitBtn = form.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.textContent = 'Update';
+      });
+    }
+
+    savedContainer.appendChild(card);
+  });
       if (submitBtn) submitBtn.textContent = 'Update';
     });
 
