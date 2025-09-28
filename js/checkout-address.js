@@ -1,6 +1,6 @@
 // checkout-address.js - address selection step
 import { auth, db } from './firebase.init.js';
-import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { collection, addDoc, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const savedContainer = document.getElementById('savedAddresses');
 const form = document.getElementById('addressForm');
@@ -18,6 +18,16 @@ async function ensureLogin() {
       }
     });
   });
+}
+
+async function ensureUserDoc(user){
+  try{
+    const uref = doc(db, 'users', user.uid);
+    const usnap = await getDoc(uref);
+    if (!usnap.exists()) {
+      await setDoc(uref, { displayName: user.displayName || 'User', email: user.email || '', createdAt: new Date() });
+    }
+  } catch(e){ console.warn('ensureUserDoc', e); }
 }
 
 async function loadAddresses(user) {
@@ -55,22 +65,28 @@ form.addEventListener('submit', async (e)=>{
   e.preventDefault();
   const user = auth.currentUser;
   if (!user) return;
-  const address = {
-    name: document.getElementById('fullName').value,
-    line1: document.getElementById('street').value,
-    city: document.getElementById('city').value,
-    state: document.getElementById('state').value,
-    zip: document.getElementById('zip').value,
-    country: document.getElementById('country').value,
-    createdAt: new Date()
-  };
-  const docRef = await addDoc(collection(db, 'users', user.uid, 'addresses'), address);
-  // clear form and show on right
-  form.reset();
-  selectedAddressId = docRef.id;
-  sessionStorage.setItem('selectedAddressId', selectedAddressId);
-  await loadAddresses(user);
-  nextBtn.disabled = !selectedAddressId;
+  try{
+    await ensureUserDoc(user);
+    const address = {
+      name: document.getElementById('fullName').value,
+      line1: document.getElementById('street').value,
+      city: document.getElementById('city').value,
+      state: document.getElementById('state').value,
+      zip: document.getElementById('zip').value,
+      country: document.getElementById('country').value,
+      createdAt: new Date()
+    };
+    const docRef = await addDoc(collection(db, 'users', user.uid, 'addresses'), address);
+    // clear form and show on right
+    form.reset();
+    selectedAddressId = docRef.id;
+    sessionStorage.setItem('selectedAddressId', selectedAddressId);
+    await loadAddresses(user);
+    nextBtn.disabled = !selectedAddressId;
+  } catch(err){
+    console.error(err);
+    alert('Could not save address. Please try again.');
+  }
 });
 
 nextBtn.addEventListener('click', ()=>{
@@ -81,6 +97,7 @@ nextBtn.addEventListener('click', ()=>{
 
 (async function init(){
   const user = await ensureLogin();
+  await ensureUserDoc(user);
   // restore previously selected if any
   selectedAddressId = sessionStorage.getItem('selectedAddressId');
   await loadAddresses(user);
