@@ -6,12 +6,13 @@
   <title>CMS — Products</title>
   <link rel="stylesheet" href="css/cms-style.css">
   <script type="module">
-    const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
-    if (!cmsUser || (cmsUser.role !== 'Admin' && cmsUser.role !== 'Manager' && cmsUser.role !== 'Associate')) {
-      alert('Access denied. Login as CMS user.');
-      window.location.href = 'cms-login.html';
-    }
-  </script>
+  const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
+  const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
+  if (!cmsUser || !allowedRoles.includes(cmsUser.role)) {
+    alert('Access denied. Login as CMS user.');
+    window.location.href = 'cms-login.html';
+  }
+</script>
 </head>
 <body>
   <div class="cms-header"><h2>Products Management</h2></div>

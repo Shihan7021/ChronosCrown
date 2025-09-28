@@ -6,12 +6,13 @@
   <title>CMS Orders</title>
   <link rel="stylesheet" href="css/cms-style.css">
   <script type="module">
-    const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser'));
-    if (!cmsUser || cmsUser.role !== 'system') {
-      alert("Access denied. Please login.");
-      window.location.href = 'cms-login.html';
-    }
-  </script>
+  const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
+  const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
+  if (!cmsUser || !allowedRoles.includes(cmsUser.role)) {
+    alert('Access denied. Login as CMS user.');
+    window.location.href = 'cms-login.html';
+  }
+</script>
 </head>
 <body>
   <div class="cms-header"><h2>Orders Management</h2></div>

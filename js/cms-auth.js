@@ -1,3 +1,4 @@
+// cms-auth.js
 import { auth, db } from './firebase-config.js';
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -16,16 +17,20 @@ form.addEventListener('submit', async (e) => {
     const user = userCredential.user;
 
     const userDoc = await getDoc(doc(db, 'users', user.uid));
-    if (!userDoc.exists() || userDoc.data().role !== 'system') {
+
+    // Allow all CMS roles
+    const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
+
+    if (!userDoc.exists() || !allowedRoles.includes(userDoc.data().role)) {
       statusEl.style.color = 'crimson';
-      statusEl.textContent = 'Access denied. Not a system user.';
+      statusEl.textContent = 'Access denied. Not a CMS user.';
       await auth.signOut();
       return;
     }
 
     const userData = userDoc.data();
 
-    // ✅ Save role + full data
+    // Save role + full data in sessionStorage
     sessionStorage.setItem('cmsUser', JSON.stringify({ 
       uid: user.uid, 
       email: user.email,

@@ -6,13 +6,13 @@
   <title>CMS — Users</title>
   <link rel="stylesheet" href="css/cms-style.css">
   <script type="module">
-    // immediate guard
-    const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
-    if (!cmsUser || cmsUser.role !== 'Admin') {
-      alert('Access denied. Only Admins can access Users management.');
-      window.location.href = 'cms-dashboard.html';
-    }
-  </script>
+  const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
+  const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
+  if (!cmsUser || !allowedRoles.includes(cmsUser.role)) {
+    alert('Access denied. Login as CMS user.');
+    window.location.href = 'cms-login.html';
+  }
+</script>
 </head>
 <body>
   <div class="cms-header"><h2>System Users</h2></div>
