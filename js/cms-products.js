@@ -196,8 +196,9 @@ productForm.addEventListener('submit', async (e) => {
       }));
       const finalImages = [...keptImageUrls, ...newUrls];
 
-      await updateDoc(doc(db, 'products', id), {
-        name, model, price, type, strap, color, size, description, quantity,
+    await updateDoc(doc(db, 'products', id), {
+        name, model, price, type, strap, color, size, description,
+        quantity: Number(quantity) || 0,
         featured: markFeatured,
         animated: markAnimated,
         images: finalImages,
