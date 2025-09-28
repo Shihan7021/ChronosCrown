@@ -44,15 +44,7 @@
   </header>
 
   <main class="container checkout-address">
-    <div>
-      <h2>Shipping Address</h2>
-      <p class="meta">Select a saved address or add a new one.</p>
-
-      <div id="savedAddresses" class="address-grid"></div>
-
-      <button id="nextToPayment" class="btn primary" style="margin-top:16px;">Next: Payment</button>
-    </div>
-
+    <!-- Left: Add address form -->
     <div>
       <div class="address-card new-address">
         <h3>Add New Address</h3>
@@ -82,9 +74,17 @@
             </label>
           </div>
 
-          <button type="submit" class="btn primary" style="margin-top:8px; width:100%;">Add Address & Continue</button>
+          <button type="submit" class="btn primary" style="margin-top:8px; width:100%;">Add address</button>
         </form>
       </div>
+    </div>
+
+    <!-- Right: Saved addresses and Next button -->
+    <div>
+      <h2>Shipping Address</h2>
+      <p class="meta">Select a saved address or add a new one.</p>
+      <div id="savedAddresses" class="address-grid"></div>
+      <button id="nextToPayment" class="btn primary" style="margin-top:16px; float:right;" disabled>Next: Payment</button>
     </div>
   </main>
 

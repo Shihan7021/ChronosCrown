@@ -26,6 +26,7 @@ async function loadAddresses(user) {
   const snap = await getDocs(ref);
   if (snap.empty) {
     savedContainer.innerHTML = '<p>No saved addresses.</p>';
+    nextBtn.disabled = true;
     return;
   }
   snap.forEach(docSnap => {
@@ -37,11 +38,17 @@ async function loadAddresses(user) {
       <input type=\"radio\" name=\"selAddress\" value=\"${id}\" style=\"accent-color: var(--luxury-blue);\">
       <div class=\"addr\"><strong>${addr.name}</strong><br>${addr.line1}<br>${addr.city}, ${addr.state || ''} ${addr.zip || ''}<br>${addr.country}</div>
     `;
-    card.querySelector('input').addEventListener('change', e => {
+    const radio = card.querySelector('input');
+    if (selectedAddressId && selectedAddressId === id) {
+      radio.checked = true;
+    }
+    radio.addEventListener('change', e => {
       selectedAddressId = e.target.value;
+      nextBtn.disabled = !selectedAddressId;
     });
     savedContainer.appendChild(card);
   });
+  nextBtn.disabled = !selectedAddressId;
 }
 
 form.addEventListener('submit', async (e)=>{
@@ -58,9 +65,12 @@ form.addEventListener('submit', async (e)=>{
     createdAt: new Date()
   };
   const docRef = await addDoc(collection(db, 'users', user.uid, 'addresses'), address);
-  // proceed immediately with new address
-  sessionStorage.setItem('selectedAddressId', docRef.id);
-  window.location.href = 'checkout-payment.html';
+  // clear form and show on right
+  form.reset();
+  selectedAddressId = docRef.id;
+  sessionStorage.setItem('selectedAddressId', selectedAddressId);
+  await loadAddresses(user);
+  nextBtn.disabled = !selectedAddressId;
 });
 
 nextBtn.addEventListener('click', ()=>{
@@ -71,5 +81,8 @@ nextBtn.addEventListener('click', ()=>{
 
 (async function init(){
   const user = await ensureLogin();
+  // restore previously selected if any
+  selectedAddressId = sessionStorage.getItem('selectedAddressId');
   await loadAddresses(user);
+  nextBtn.disabled = !selectedAddressId;
 })();
