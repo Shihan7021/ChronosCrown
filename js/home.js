@@ -44,6 +44,23 @@ async function loadAnimatedProducts() {
 
 function chunk(arr, size) { const res=[]; for (let i=0;i<arr.length;i+=size) res.push(arr.slice(i,i+size)); return res; }
 
+function createGridProductCard(p){
+  const img = (p.images && p.images[0]) ? p.images[0] : 'https://placehold.co/220x160/EFEFEF/A9A9A9?text=No+Image';
+  const a = document.createElement('a');
+  a.className = 'product-card';
+  a.href = `product.html?id=${p.id}`;
+  a.innerHTML = `
+    <div class="product-card-image">
+      <img src="${img}" alt="${p.name}">
+    </div>
+    <div class="product-card-info">
+      <h3>${p.name}</h3>
+      <p class="meta">${p.type || ''} • ${p.strap || ''}</p>
+    </div>
+  `;
+  return a;
+}
+
 async function loadFeaturedProducts() {
   const container = document.getElementById('featured-carousel');
   const dots = document.getElementById('featured-dots');
@@ -65,7 +82,7 @@ async function loadFeaturedProducts() {
       const slide = document.createElement('div');
       slide.className = 'featured-slide';
       group.forEach(p => {
-        slide.appendChild(createProductCard(p));
+        slide.appendChild(createGridProductCard(p));
       });
       slidesWrap.appendChild(slide);
 

@@ -46,13 +46,13 @@
   </header>
 
   <main class="container product-details">
-    <div id="imagesCarousel" style="display:flex; overflow-x:auto; gap:8px; margin-bottom:16px;"></div>
+    <div id="imagesCarousel"></div>
 
     <div id="product-detail-info">
       <h2 id="productName"></h2>
       <p id="productDescription"></p>
 
-      <p>Price: $<span id="productPrice"></span></p>
+      <p>Price: Rs.<span id="productPrice"></span></p>
 
       <label>Strap:
         <select id="productStrap">
@@ -86,7 +86,26 @@
     </div>
   </main>
 
-  <footer class="footer"> ... </footer>
+  <footer class="footer">
+    <div class="container" style="display:flex; justify-content:space-between; gap:24px;">
+      <div>
+        <h4>ChronosCrown</h4>
+        <p class="meta">Luxury watch ecommerce</p>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="about.html">About Us</a><br>
+        <a href="privacy.html">Privacy Policy</a><br>
+        <a href="contact.html">Contact Us</a><br>
+        <a href="feedback.html">Feedback</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="track-order.html">Track Order</a><br>
+        <a href="404.html">404</a>
+      </div>
+    </div>
+  </footer>
 
   <script type="module" src="js/firebase.init.js"></script>
   <script type="module" src="js/product-details.js"></script>
