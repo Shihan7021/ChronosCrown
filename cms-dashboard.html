@@ -18,6 +18,10 @@
   <!-- Header -->
   <div class="cms-header">
     <h2>Dashboard</h2>
+    <div class="cms-userbox">
+      <span id="cmsGreeting" class="cms-greeting"></span>
+      <button id="cmsLogoutBtn" class="btn btn-danger" type="button">Logout</button>
+    </div>
   </div>
 
   <div class="cms-wrapper">
@@ -77,7 +81,19 @@
     </div>
   </div>
 
-  <script src="js/firebase-config.js"></script>
-  <script src="js/cms-dashboard.js"></script>
+  <script type="module" src="js/cms-dashboard.js"></script>
+  <script type="module">
+    import { auth } from './js/firebase-config.js';
+    const box = document.querySelector('.cms-userbox');
+    const greet = document.getElementById('cmsGreeting');
+    const btn = document.getElementById('cmsLogoutBtn');
+    const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
+    if (cmsUser && greet) greet.textContent = `Hi, ${cmsUser.displayName || 'User'}`;
+    if (btn) btn.addEventListener('click', async ()=>{
+      await auth.signOut();
+      sessionStorage.removeItem('cmsUser');
+      window.location.href = 'cms-login.html';
+    });
+  </script>
 </body>
 </html>

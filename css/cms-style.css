@@ -13,6 +13,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  display:flex; align-items:center; justify-content:space-between;
 }
 
 .cms-wrapper {
@@ -122,6 +123,9 @@ body {
   text-align: center;
 }
 
+
+.cms-userbox{ display:flex; align-items:center; gap:10px; }
+.cms-greeting{ font-weight:600; }
 
 /* Dashboard Cards */
 .dashboard-grid {
