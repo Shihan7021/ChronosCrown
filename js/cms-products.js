@@ -84,8 +84,6 @@ function resetForm(){
   const addBtn = document.getElementById('addProductBtn');
   if (addBtn) addBtn.textContent = 'Save Product';
 }
-  imagePreview.innerHTML = '';
-});
 
 // Submit product
 productForm.addEventListener('submit', async (e) => {
