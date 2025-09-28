@@ -253,10 +253,18 @@ body {
 
 /* Align product form fields */
 #productForm { display:block !important; }
-#productForm .form-row { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; margin-bottom:16px; }
-#productForm .form-group { flex:1 1 260px; min-width:240px; }
+#productForm .form-row { display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; margin-bottom:16px; }
+#productForm .form-group { flex:1 1 280px; min-width:240px; }
 #productDesc { min-height:140px; }
 .toggle-row label { font-weight: 500; }
+
+/* description editor */
+.desc-editor { border:1px solid #cbd5e1; border-radius:8px; background:#fff; }
+.desc-toolbar { border-bottom:1px solid #e2e8f0; padding:6px; display:flex; gap:6px; }
+.desc-toolbar .icon-btn { background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:6px 8px; cursor:pointer; }
+.desc-toolbar .icon-btn:hover { background:#eef2f7; }
+.desc-editor .editor { min-height:160px; padding:10px; outline:none; }
+.desc-editor .editor:empty:before { content: attr(placeholder); color:#94a3b8; }
 
 /* Align product form fields */
 .form-row { display:flex; gap:16px; align-items:flex-start; }

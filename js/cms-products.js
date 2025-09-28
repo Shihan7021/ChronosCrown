@@ -15,6 +15,9 @@ const imagePreview = document.getElementById('imagePreview');
 const clearFormBtn = document.getElementById('clearFormBtn');
 const featuredInput = document.getElementById('productFeatured');
 const animatedInput = document.getElementById('productAnimated');
+const descEditor = document.getElementById('productDescEditor');
+const descHidden = document.getElementById('productDesc');
+const searchModel = document.getElementById('searchModel');
 
 const storage = getStorage();
 let selectedFiles = [];
@@ -76,6 +79,17 @@ clearFormBtn.addEventListener('click', () => {
   resetForm();
 });
 
+// description toolbar
+if (document.querySelector('.desc-toolbar')){
+  document.querySelectorAll('.desc-toolbar [data-cmd]').forEach(btn => {
+    btn.addEventListener('click', ()=> {
+      const cmd = btn.getAttribute('data-cmd');
+      document.execCommand(cmd, false);
+      descEditor && descEditor.focus();
+    });
+  });
+}
+
 function resetForm(){
   productForm.reset();
   selectedFiles = [];
@@ -85,6 +99,7 @@ function resetForm(){
   imagePreview.innerHTML = '';
   const addBtn = document.getElementById('addProductBtn');
   if (addBtn) addBtn.textContent = 'Save Product';
+  if (descEditor) descEditor.innerHTML = '';
 }
 
 function showToast(msg, type='success'){
@@ -102,7 +117,11 @@ function showToast(msg, type='success'){
 productForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
+  // capture rich text html
+  if (descHidden && descEditor) descHidden.value = descEditor.innerHTML.trim();
+
   const name = document.getElementById('productName').value.trim();
+  const model = document.getElementById('productModel').value.trim();
   const price = Number(document.getElementById('productPrice').value) || 0;
   const type = document.getElementById('productType').value;  // new
   const strap = document.getElementById('productStrap').value;
@@ -113,8 +132,8 @@ productForm.addEventListener('submit', async (e) => {
   const markFeatured = !!featuredInput?.checked;
   const markAnimated = !!animatedInput?.checked;
 
-  if (!name || !strap || !color || !size || !type) {
-    alert('Name, type and all dropdowns are required');
+  if (!name || !model || !strap || !color || !size || !type) {
+    alert('Name, model, type and all dropdowns are required');
     return;
   }
 
@@ -145,7 +164,7 @@ productForm.addEventListener('submit', async (e) => {
 
       // Create product doc first
       const pRef = await addDoc(collection(db, 'products'), {
-        name, price, type, strap, color, size, description, quantity,
+        name, model, price, type, strap, color, size, description, quantity,
         featured: canFeature && markFeatured ? true : false,
         animated: canAnimate && markAnimated ? true : false,
         images: [], createdAt: serverTimestamp()
@@ -178,7 +197,7 @@ productForm.addEventListener('submit', async (e) => {
       const finalImages = [...keptImageUrls, ...newUrls];
 
       await updateDoc(doc(db, 'products', id), {
-        name, price, type, strap, color, size, description, quantity,
+        name, model, price, type, strap, color, size, description, quantity,
         featured: markFeatured,
         animated: markAnimated,
         images: finalImages,
@@ -217,7 +236,22 @@ onSnapshot(collection(db, 'products'), snapshot => {
   productList.innerHTML = '<div class="small muted">No products found.</div>';
 });
 
+let latestProducts = [];
+
+function applyFilterAndRender(){
+  const q = (searchModel?.value || '').trim().toLowerCase();
+  const list = !q ? latestProducts : latestProducts.filter(p => (p.model || '').toLowerCase().includes(q));
+  _render(list);
+}
+
+if (searchModel) searchModel.addEventListener('input', applyFilterAndRender);
+
 function renderProductList(products) {
+  latestProducts = products;
+  applyFilterAndRender();
+}
+
+function _render(products) {
   productList.innerHTML = '';
   if (!products.length) {
     productList.innerHTML = '<div class="small muted">No products found.</div>';
@@ -239,7 +273,8 @@ function renderProductList(products) {
         <div class="product-thumb">${img}</div>
         <div class="product-info">
           <h4>${p.name} (${p.type || '-'})</h4>
-          <div class=\"meta\">Price: $${Number(p.price).toFixed(2)}</div>
+          <div class="meta">Model: <span class="mono">${p.model || '-'}</span></div>
+          <div class="meta">Price: $${Number(p.price).toFixed(2)}</div>
           <div class="meta">Strap: ${p.strap} • Color: ${p.color} • Size: ${p.size}</div>
           <p class="small muted">${(p.description||'')}</p>
           <div class="toggle-row" style="margin-top:6px; display:flex; gap:10px;">
@@ -310,11 +345,13 @@ function renderProductList(products) {
     // Fill form fields
     document.getElementById('productName').value = p.name || '';
     document.getElementById('productPrice').value = p.price || 0;
+    document.getElementById('productModel').value = p.model || '';
     document.getElementById('productType').value = p.type || '';
     document.getElementById('productStrap').value = p.strap || '';
     document.getElementById('productColor').value = p.color || '';
     document.getElementById('productSize').value = p.size || '';
     document.getElementById('productDesc').value = p.description || '';
+    if (descEditor) descEditor.innerHTML = p.description || '';
     document.getElementById('productQty').value = p.quantity || 0;
     if (featuredInput) featuredInput.checked = !!p.featured;
     if (animatedInput) animatedInput.checked = !!p.animated;
@@ -325,6 +362,7 @@ function renderProductList(products) {
     keptImageUrls = [...existingImageUrls];
     selectedFiles = [];
     renderPreview();
+    if (descEditor) descEditor.innerHTML = p.description || '';
 
     const addBtn = document.getElementById('addProductBtn');
     if (addBtn) addBtn.textContent = 'Update Product';

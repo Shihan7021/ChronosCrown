@@ -40,6 +40,10 @@
               <input id="productName" type="text" required>
             </div>
             <div class="form-group">
+              <label>Model No.</label>
+              <input id="productModel" type="text" placeholder="e.g., CC-2025-M01" required>
+            </div>
+            <div class="form-group">
               <label>Price ($)</label>
               <input id="productPrice" type="number" step="0.01" required>
             </div>
@@ -94,11 +98,23 @@
           </div>
 
           <div class="form-row">
-            <div class="form-group" style="flex:1;">
+            <div class="form-group" style="flex:1 1 100%; width:100%;">
               <label>Description</label>
-              <textarea id="productDesc" rows="3"></textarea>
+              <div class="desc-editor">
+                <div class="desc-toolbar">
+                  <button type="button" class="icon-btn" data-cmd="bold" title="Bold"><strong>B</strong></button>
+                  <button type="button" class="icon-btn" data-cmd="italic" title="Italic"><em>I</em></button>
+                  <button type="button" class="icon-btn" data-cmd="underline" title="Underline"><u>U</u></button>
+                  <button type="button" class="icon-btn" data-cmd="insertUnorderedList" title="Bulleted List">• List</button>
+                </div>
+                <div id="productDescEditor" class="editor" contenteditable="true" placeholder="Describe the product..."></div>
+                <input type="hidden" id="productDesc" />
+              </div>
             </div>
-            <div class="form-group" style="max-width:180px">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="max-width:220px">
               <label>Quantity (internal)</label>
               <input id="productQty" type="number" min="0" value="0">
             </div>
@@ -128,7 +144,10 @@
         </form>
       </div>
 
-      <h3 style="margin-top:20px;">Products</h3>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:20px; gap:12px;">
+        <h3 style="margin:0;">Products</h3>
+        <input id="searchModel" type="text" placeholder="Search by Model No." style="padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; min-width:260px;">
+      </div>
       <div id="productList" class="product-list"></div>
     </div>
   </div>

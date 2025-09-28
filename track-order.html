@@ -47,7 +47,45 @@
   </form>
   <div id="trackResult"></div>
 </main>
-<footer class="footer"> ... </footer>
+<footer class="footer">
+    <div class="container footer-columns">
+      <div class="footer-col footer-brand">
+        <div class="logo">CC</div>
+        <h4>ChronosCrown</h4>
+        <p class="meta">Timeless watches, modern craft.</p>
+        <div class="socials">
+          <a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="Facebook">📘</a>
+          <a href="#" aria-label="Twitter">🐦</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="him.html">Him</a>
+        <a href="her.html">Her</a>
+        <a href="all-products.html">All Products</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="track-order.html">Track Order</a>
+        <a href="feedback.html">Feedback</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Stay in the loop</h4>
+        <form id="newsletterForm" class="newsletter" onsubmit="event.preventDefault(); alert('Subscribed!');">
+          <input type="email" placeholder="Your email" required>
+          <button class="btn secondary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <div>© 2025 ChronosCrown</div>
+      <div class="meta">Free shipping over $150 • 2-year warranty</div>
+    </div>
+  </footer>
 
 <script type="module">
 import { db } from './js/firebase.init.js';
