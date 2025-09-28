@@ -25,13 +25,14 @@ async function ensureLogin() {
 
 async function loadAddress(user) {
   const addrId = sessionStorage.getItem('selectedAddressId');
-  if (!addrId) { addressDisplay.textContent = 'No address selected.'; return; }
-  const ref = doc(db, 'addresses', addrId);
-  const snap = await getDoc(ref);
-  if (snap.exists() && snap.data().userId !== user.uid) { addressDisplay.textContent = 'Address not found.'; return; }
-  if (!snap.exists()) { addressDisplay.textContent = 'Address not found.'; return; }
-  const a = snap.data();
+  if (!addrId) { addressDisplay.textContent = 'No address selected.'; return null; }
+  const usnap = await getDoc(doc(db, 'users', user.uid));
+  if (!usnap.exists()) { addressDisplay.textContent = 'Address not found.'; return null; }
+  const arr = Array.isArray(usnap.data().addresses) ? usnap.data().addresses : [];
+  const a = arr.find(x => x.id === addrId);
+  if (!a) { addressDisplay.textContent = 'Address not found.'; return null; }
   addressDisplay.textContent = `${a.name}, ${a.line1}, ${a.city}, ${a.state || ''} ${a.zip || ''}, ${a.country}`;
+  return a;
 }
 
 function loadCart() {
@@ -42,7 +43,7 @@ function loadCart() {
   cart.forEach(item => {
     const row = document.createElement('div');
     row.className = 'cart-row';
-    row.innerHTML = `${item.name} × ${item.qty} — Rs.${(item.price||0).toFixed(2)}`;
+    row.innerHTML = `${item.name} × ${item.qty} — $${(item.price||0).toFixed(2)} (${item.color || '-'} • ${item.strap || '-'} • ${item.size || '-'})`;
     cartItemsDiv.appendChild(row);
   });
   totalAmountDiv.textContent = `Total: $${amount.toFixed(2)}`;
@@ -52,16 +53,49 @@ function loadCart() {
 async function createOrder(user, addressId, cart, paymentMethod) {
   orderId = 'ORD' + Date.now();
   const trk = 'TRK' + Date.now() + Math.floor(Math.random() * 1000);
+
+  // build items without images, include options and model
+  const items = cart.map(i => ({
+    productId: i.productId,
+    name: i.name,
+    model: i.model || '',
+    qty: i.qty || 1,
+    price: i.price || 0,
+    color: i.color || '',
+    strap: i.strap || '',
+    size: i.size || ''
+  }));
+  const total = items.reduce((s, i)=> s + (i.price||0)*(i.qty||1), 0);
+
+  // capture address snapshot
+  const addrSnap = await loadAddress(user);
+
   await setDoc(doc(db, 'orders', orderId), {
     userId: user.uid,
     addressId,
-    cart,
+    address: addrSnap || null,
+    items,
+    total,
     paymentMethod,
-    status: paymentMethod === 'ipg' ? 'Payment Pending' : 'Order Accepted',
+    status: 'Dispatch Pending',
     trackingNumber: trk,
     createdAt: serverTimestamp(),
     estimatedDelivery: new Date(Date.now() + 14*24*60*60*1000)
   });
+
+  // decrement inventory
+  for (const it of items){
+    try{
+      const pref = doc(db, 'products', it.productId);
+      const psnap = await getDoc(pref);
+      if (psnap.exists()){
+        const current = psnap.data().quantity || 0;
+        const newQty = Math.max(0, Number(current) - Number(it.qty||1));
+        await setDoc(pref, { quantity: newQty }, { merge: true });
+      }
+    }catch(e){ console.warn('inventory update failed', e); }
+  }
+
   // Persist for thank-you page
   sessionStorage.setItem('lastOrderId', orderId);
   sessionStorage.setItem('lastOrderTrk', trk);

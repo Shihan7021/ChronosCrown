@@ -135,6 +135,7 @@ function addToCart(pid, product) {
         cart.push({ 
             productId: pid, 
             name: product.name,
+            model: product.model || '',
             price: product.price,
             image: (product.images && product.images.length) ? product.images[0] : '',
             qty: 1, 
