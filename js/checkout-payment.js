@@ -26,8 +26,9 @@ async function ensureLogin() {
 async function loadAddress(user) {
   const addrId = sessionStorage.getItem('selectedAddressId');
   if (!addrId) { addressDisplay.textContent = 'No address selected.'; return; }
-  const ref = doc(db, 'users', user.uid, 'addresses', addrId);
+  const ref = doc(db, 'addresses', addrId);
   const snap = await getDoc(ref);
+  if (snap.exists() && snap.data().userId !== user.uid) { addressDisplay.textContent = 'Address not found.'; return; }
   if (!snap.exists()) { addressDisplay.textContent = 'Address not found.'; return; }
   const a = snap.data();
   addressDisplay.textContent = `${a.name}, ${a.line1}, ${a.city}, ${a.state || ''} ${a.zip || ''}, ${a.country}`;

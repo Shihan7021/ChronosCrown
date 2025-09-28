@@ -1,6 +1,6 @@
 // checkout-address.js - address selection step
 import { auth, db } from './firebase.init.js';
-import { collection, addDoc, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { collection, addDoc, getDocs, doc, getDoc, setDoc, query, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const savedContainer = document.getElementById('savedAddresses');
 const form = document.getElementById('addressForm');
@@ -32,8 +32,8 @@ async function ensureUserDoc(user){
 
 async function loadAddresses(user) {
   savedContainer.innerHTML = '';
-  const ref = collection(db, 'users', user.uid, 'addresses');
-  const snap = await getDocs(ref);
+  const ref = collection(db, 'addresses');
+  const snap = await getDocs(query(ref, where('userId', '==', user.uid)));
   if (snap.empty) {
     savedContainer.innerHTML = '<p>No saved addresses.</p>';
     nextBtn.disabled = true;
@@ -77,7 +77,7 @@ form.addEventListener('submit', async (e)=>{
       country: document.getElementById('country').value,
       createdAt: new Date()
     };
-    const docRef = await addDoc(collection(db, 'users', user.uid, 'addresses'), address);
+    const docRef = await addDoc(collection(db, 'addresses'), address);
     // clear form and show on right
     form.reset();
     selectedAddressId = docRef.id;
