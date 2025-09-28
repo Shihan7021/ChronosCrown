@@ -1,6 +1,6 @@
 // checkout-address.js - address selection step
 import { auth, db } from './firebase.init.js';
-import { collection, addDoc, getDocs, doc, getDoc, setDoc, query, where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { collection, addDoc, getDocs, doc, getDoc, setDoc, query, where, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const savedContainer = document.getElementById('savedAddresses');
 const form = document.getElementById('addressForm');
@@ -32,16 +32,21 @@ async function ensureUserDoc(user){
 
 async function loadAddresses(user) {
   savedContainer.innerHTML = '';
-  const ref = collection(db, 'addresses');
-  const snap = await getDocs(query(ref, where('userId', '==', user.uid)));
-  if (snap.empty) {
+  const uref = doc(db, 'users', user.uid);
+  const usnap = await getDoc(uref);
+  if (!usnap.exists()) {
     savedContainer.innerHTML = '<p>No saved addresses.</p>';
     nextBtn.disabled = true;
     return;
   }
-  snap.forEach(docSnap => {
-    const addr = docSnap.data();
-    const id = docSnap.id;
+  const arr = Array.isArray(usnap.data().addresses) ? usnap.data().addresses : [];
+  if (!arr.length) {
+    savedContainer.innerHTML = '<p>No saved addresses.</p>';
+    nextBtn.disabled = true;
+    return;
+  }
+  arr.forEach(addr => {
+    const id = addr.id;
     const card = document.createElement('label');
     card.className = 'address-card selectable';
     card.innerHTML = `
@@ -54,6 +59,7 @@ async function loadAddresses(user) {
     }
     radio.addEventListener('change', e => {
       selectedAddressId = e.target.value;
+      sessionStorage.setItem('selectedAddressId', selectedAddressId);
       nextBtn.disabled = !selectedAddressId;
     });
     savedContainer.appendChild(card);
@@ -68,6 +74,7 @@ form.addEventListener('submit', async (e)=>{
   try{
     await ensureUserDoc(user);
     const address = {
+      id: 'ADDR' + Date.now(),
       userId: user.uid,
       name: document.getElementById('fullName').value,
       line1: document.getElementById('street').value,
@@ -77,10 +84,10 @@ form.addEventListener('submit', async (e)=>{
       country: document.getElementById('country').value,
       createdAt: new Date()
     };
-    const docRef = await addDoc(collection(db, 'addresses'), address);
+    await updateDoc(doc(db, 'users', user.uid), { addresses: arrayUnion(address) });
     // clear form and show on right
     form.reset();
-    selectedAddressId = docRef.id;
+    selectedAddressId = address.id;
     sessionStorage.setItem('selectedAddressId', selectedAddressId);
     await loadAddresses(user);
     nextBtn.disabled = !selectedAddressId;
