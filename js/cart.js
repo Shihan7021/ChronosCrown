@@ -94,6 +94,8 @@ function checkout() {
   }
   window.location.href = 'checkout-address.html';
 }
+// Expose for inline onclick
+window.checkout = checkout;
 
 // Initialize
 loadCart();
