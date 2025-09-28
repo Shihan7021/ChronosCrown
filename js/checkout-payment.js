@@ -31,7 +31,7 @@ async function loadAddress(user) {
   const arr = Array.isArray(usnap.data().addresses) ? usnap.data().addresses : [];
   const a = arr.find(x => x.id === addrId);
   if (!a) { addressDisplay.textContent = 'Address not found.'; return null; }
-  addressDisplay.textContent = `${a.name}, ${a.line1}, ${a.city}, ${a.state || ''} ${a.zip || ''}, ${a.country}`;
+  addressDisplay.textContent = `${a.name} (${a.mobile || '-'})\n${a.line1}, ${a.city}, ${a.state || ''} ${a.zip || ''}, ${a.country}`;
   return a;
 }
 

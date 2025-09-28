@@ -112,6 +112,7 @@ function renderOrders(rows) {
             <div>${addr.line1}</div>
             <div>${addr.city}, ${addr.state || ''} ${addr.zip || ''}</div>
             <div>${addr.country}</div>
+            <div>${addr.mobile ? 'Mobile: ' + addr.mobile : ''}</div>
           </div>
         </div>
       </div>

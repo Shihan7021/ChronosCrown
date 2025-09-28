@@ -77,6 +77,7 @@ form.addEventListener('submit', async (e)=>{
       id: 'ADDR' + Date.now(),
       userId: user.uid,
       name: document.getElementById('fullName').value,
+      mobile: document.getElementById('mobile').value,
       line1: document.getElementById('street').value,
       city: document.getElementById('city').value,
       state: document.getElementById('state').value,
