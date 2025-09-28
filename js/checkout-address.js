@@ -68,6 +68,7 @@ form.addEventListener('submit', async (e)=>{
   try{
     await ensureUserDoc(user);
     const address = {
+      userId: user.uid,
       name: document.getElementById('fullName').value,
       line1: document.getElementById('street').value,
       city: document.getElementById('city').value,
@@ -85,7 +86,7 @@ form.addEventListener('submit', async (e)=>{
     nextBtn.disabled = !selectedAddressId;
   } catch(err){
     console.error(err);
-    alert('Could not save address. Please try again.');
+    alert('Could not save address: ' + (err?.message || err));
   }
 });
 
