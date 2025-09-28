@@ -152,7 +152,8 @@ form.addEventListener('submit', async (e)=>{
     nextBtn.disabled = !selectedAddressId;
   } catch(err){
     console.error(err);
-    alert('Could not save address: ' + (err?.message || err));
+    var msg = (err && err.message) ? err.message : String(err);
+    alert('Could not save address: ' + msg);
   }
 });
 
