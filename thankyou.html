@@ -48,6 +48,7 @@
 <script type="module">
 import { db } from './js/firebase.init.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { formatCurrency } from './js/utils.js';
 
 const urlParams = new URLSearchParams(location.search);
 const orderId = urlParams.get('order') || sessionStorage.getItem('lastOrderId');
@@ -68,7 +69,7 @@ if(!orderId){
     summaryDiv.innerHTML = `
       <div>Order: <strong>${orderId}</strong></div>
       <div>Tracking: <strong>${order.trackingNumber || trk}</strong></div>
-      <div>Amount: <strong>Rs.${amt.toFixed(2)}</strong></div>
+      <div>Amount: <strong>${formatCurrency(Number(amt || 0))}</strong></div>
       <div>Estimated Delivery: <strong>${estDate}</strong></div>
       <div style="margin-top:12px; display:flex; gap:10px;">
         <a href="track-order.html?trk=${order.trackingNumber || trk}" class="btn">Track your order</a>

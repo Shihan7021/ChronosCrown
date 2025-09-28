@@ -16,7 +16,7 @@
     const params = new URLSearchParams(location.search);
     const order = params.get('order');
     const amt = params.get('amt');
-    document.getElementById('summary').textContent = `Pay Rs.${Number(amt||0).toFixed(2)} for order ${order}`;
+    document.getElementById('summary').textContent = `Pay $${Number(amt||0).toFixed(2)} for order ${order}`;
     document.getElementById('completeBtn').addEventListener('click', ()=>{
       // simulate success
       localStorage.removeItem('cart');

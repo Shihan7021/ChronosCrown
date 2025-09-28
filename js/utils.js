@@ -7,11 +7,11 @@
  */
 export function formatCurrency(value) {
   if (typeof value !== 'number') {
-    return 'RS.0.00';
+    return '$0.00';
   }
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'LKR',
+    currency: 'USD',
   }).format(value);
 }
 

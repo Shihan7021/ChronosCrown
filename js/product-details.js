@@ -1,6 +1,7 @@
 // js/product-details.js - Loads and displays details for a single product.
 import { db } from './firebase.init.js';
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { formatCurrency } from './utils.js';
 
 // --- DOM ELEMENTS ---
 const imagesCarousel = document.getElementById("imagesCarousel");
@@ -41,7 +42,7 @@ async function loadProductDetails() {
         document.title = `${product.name} - ChronosCrown`;
         productName.textContent = product.name;
         productDescription.textContent = product.description || '';
-        productPrice.textContent = product.price;
+        productPrice.textContent = formatCurrency(Number(product.price || 0));
         productStock.textContent = product.quantity > 0 ? "In Stock" : "Out of Stock";
         productStock.className = product.quantity > 0 ? 'in-stock' : 'out-of-stock';
 

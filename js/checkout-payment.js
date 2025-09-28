@@ -44,7 +44,7 @@ function loadCart() {
     row.innerHTML = `${item.name} × ${item.qty} — Rs.${(item.price||0).toFixed(2)}`;
     cartItemsDiv.appendChild(row);
   });
-  totalAmountDiv.textContent = `Total: Rs.${amount.toFixed(2)}`;
+  totalAmountDiv.textContent = `Total: $${amount.toFixed(2)}`;
   return cart;
 }
 

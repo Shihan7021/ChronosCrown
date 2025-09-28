@@ -239,7 +239,7 @@ function renderProductList(products) {
         <div class="product-thumb">${img}</div>
         <div class="product-info">
           <h4>${p.name} (${p.type || '-'})</h4>
-          <div class="meta">Price: Rs.${Number(p.price).toFixed(2)}</div>
+          <div class=\"meta\">Price: $${Number(p.price).toFixed(2)}</div>
           <div class="meta">Strap: ${p.strap} • Color: ${p.color} • Size: ${p.size}</div>
           <p class="small muted">${(p.description||'')}</p>
           <div class="toggle-row" style="margin-top:6px; display:flex; gap:10px;">
