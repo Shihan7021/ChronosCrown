@@ -1,5 +1,5 @@
 // cms-orders.js
-import { db } from '../js/firebase-config.js';
+import { db } from './firebase-config.js';
 import { collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const ordersTable = document.getElementById('ordersTable');
@@ -21,11 +21,13 @@ function renderOrders(rows) {
   rows.forEach(o => {
     const tr = document.createElement('tr');
     const addr = o.address ? `${o.address.name}, ${o.address.line1}, ${o.address.city}, ${o.address.state||''} ${o.address.zip||''}, ${o.address.country}` : '-';
-    const itemsHtml = Array.isArray(o.items) ? o.items.map(i=>`${i.name} (${i.model||'-'}) × ${i.qty} — ${i.color||'-'}/${i.strap||'-'}/${i.size||'-'}`).join('<br>') : '-';
+    const itemsArr = Array.isArray(o.items) ? o.items : (Array.isArray(o.cart) ? o.cart.map(c=>({ name:c.name, model:c.model, qty:c.qty, color:c.color, strap:c.strap, size:c.size, price:c.price })) : []);
+    const itemsHtml = itemsArr.length ? itemsArr.map(i=>`${i.name || i.productId || '-'} (${i.model||'-'}) × ${i.qty||1} — ${i.color||'-'}/${i.strap||'-'}/${i.size||'-'}`).join('<br>') : '-';
+    const displayTotal = typeof o.total === 'number' ? o.total : itemsArr.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.qty)||1), 0);
     tr.innerHTML = `
       <td>${o.id}</td>
       <td>${o.customerName || o.userId || 'Guest'}</td>
-      <td>${(o.total||0).toFixed ? o.total.toFixed(2) : Number(o.total||0).toFixed(2)}</td>
+      <td>${displayTotal.toFixed(2)}</td>
       <td>
         <select data-id="${o.id}" class="status-select">
           <option ${o.status==='Dispatch Pending'?'selected':''}>Dispatch Pending</option>

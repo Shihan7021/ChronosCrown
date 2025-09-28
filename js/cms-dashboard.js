@@ -1,5 +1,5 @@
 // cms-dashboard.js
-import { db } from '../js/firebase-config.js';
+import { db } from './firebase-config.js';
 import { collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const totalProductsEl = document.getElementById('totalProducts');
