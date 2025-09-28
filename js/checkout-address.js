@@ -6,6 +6,7 @@ const savedContainer = document.getElementById('savedAddresses');
 const form = document.getElementById('addressForm');
 const nextBtn = document.getElementById('nextToPayment');
 let selectedAddressId = null;
+let editAddressId = null;
 
 async function ensureLogin() {
   return new Promise(resolve => {
@@ -51,7 +52,13 @@ async function loadAddresses(user) {
     card.className = 'address-card selectable';
     card.innerHTML = `
       <input type=\"radio\" name=\"selAddress\" value=\"${id}\" style=\"accent-color: var(--luxury-blue);\">
-      <div class=\"addr\"><strong>${addr.name}</strong><br>${addr.line1}<br>${addr.city}, ${addr.state || ''} ${addr.zip || ''}<br>${addr.country}</div>
+      <div class=\"addr\">
+        <strong>${addr.name}</strong>${addr.mobile ? ` <span class=\"meta\">(${addr.mobile})</span>` : ''}<br>
+        ${addr.line1}<br>
+        ${addr.city}, ${addr.state || ''} ${addr.zip || ''}<br>
+        ${addr.country}
+        <div style=\"margin-top:6px;\"><button class=\"btn small\" data-edit=\"${id}\" type=\"button\">Edit</button></div>
+      </div>
     `;
     const radio = card.querySelector('input');
     if (selectedAddressId && selectedAddressId === id) {
@@ -62,6 +69,24 @@ async function loadAddresses(user) {
       sessionStorage.setItem('selectedAddressId', selectedAddressId);
       nextBtn.disabled = !selectedAddressId;
     });
+    // Edit button
+    const editBtn = card.querySelector('[data-edit]');
+    editBtn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      // load into form
+      document.getElementById('fullName').value = addr.name || '';
+      document.getElementById('mobile').value = addr.mobile || '';
+      document.getElementById('street').value = addr.line1 || '';
+      document.getElementById('city').value = addr.city || '';
+      document.getElementById('state').value = addr.state || '';
+      document.getElementById('zip').value = addr.zip || '';
+      document.getElementById('country').value = addr.country || '';
+      editAddressId = id;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.textContent = 'Update';
+    });
+
     savedContainer.appendChild(card);
   });
   nextBtn.disabled = !selectedAddressId;
@@ -73,22 +98,45 @@ form.addEventListener('submit', async (e)=>{
   if (!user) return;
   try{
     await ensureUserDoc(user);
-    const address = {
-      id: 'ADDR' + Date.now(),
-      userId: user.uid,
-      name: document.getElementById('fullName').value,
-      mobile: document.getElementById('mobile').value,
-      line1: document.getElementById('street').value,
-      city: document.getElementById('city').value,
-      state: document.getElementById('state').value,
-      zip: document.getElementById('zip').value,
-      country: document.getElementById('country').value,
-      createdAt: new Date()
+    const uref = doc(db, 'users', user.uid);
+    const usnap = await getDoc(uref);
+    const arr = Array.isArray(usnap.data()?.addresses) ? [...usnap.data().addresses] : [];
+
+    const payload = {
+      name: document.getElementById('fullName').value.trim(),
+      mobile: document.getElementById('mobile').value.trim(),
+      line1: document.getElementById('street').value.trim(),
+      city: document.getElementById('city').value.trim(),
+      state: document.getElementById('state').value.trim(),
+      zip: document.getElementById('zip').value.trim(),
+      country: document.getElementById('country').value.trim(),
     };
-    await updateDoc(doc(db, 'users', user.uid), { addresses: arrayUnion(address) });
-    // clear form and show on right
+
+    if (editAddressId) {
+      // update existing
+      const idx = arr.findIndex(a => a.id === editAddressId);
+      if (idx !== -1) {
+        arr[idx] = { ...arr[idx], ...payload };
+        await setDoc(uref, { addresses: arr }, { merge: true });
+        selectedAddressId = editAddressId;
+      }
+      editAddressId = null;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.textContent = 'Add address';
+    } else {
+      // add new address
+      const newAddress = {
+        id: 'ADDR' + Date.now(),
+        userId: user.uid,
+        ...payload,
+        createdAt: new Date()
+      };
+      arr.push(newAddress);
+      await setDoc(uref, { addresses: arr }, { merge: true });
+      selectedAddressId = newAddress.id;
+    }
+
     form.reset();
-    selectedAddressId = address.id;
     sessionStorage.setItem('selectedAddressId', selectedAddressId);
     await loadAddresses(user);
     nextBtn.disabled = !selectedAddressId;
