@@ -1,6 +1,6 @@
 // checkout-payment.js - payment step and order creation
 import { auth, db } from './firebase.init.js';
-import { doc, setDoc, getDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { doc, setDoc, getDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const addressDisplay = document.getElementById('addressDisplay');
 const cartItemsDiv = document.getElementById('cartItems');

@@ -1,6 +1,6 @@
 // js/product-details.js - Loads and displays details for a single product.
 import { db } from './firebase.init.js';
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // --- DOM ELEMENTS ---
 const imagesCarousel = document.getElementById("imagesCarousel");

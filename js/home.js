@@ -1,6 +1,6 @@
 // js/home.js - homepage data loading for animated and featured products
 import { db } from './firebase.init.js';
-import { collection, query, where, getDocs, limit as qlimit } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, query, where, getDocs, limit as qlimit } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 function createProductCard(p) {
   const mainImage = (p.images && p.images.length) ? p.images[0] : 'https://placehold.co/320x220/EFEFEF/A9A9A9?text=No+Image';

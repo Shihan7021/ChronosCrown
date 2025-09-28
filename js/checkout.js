@@ -1,6 +1,6 @@
 // checkout.js
 import { db, auth } from './firebase.init.js';
-import { collection, doc, addDoc, setDoc, getDocs, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, doc, addDoc, setDoc, getDocs, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // DOM elements
 const savedAddressesDiv = document.getElementById('saved-addresses');

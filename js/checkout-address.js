@@ -1,6 +1,6 @@
 // checkout-address.js - address selection step
 import { auth, db } from './firebase.init.js';
-import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const savedContainer = document.getElementById('savedAddresses');
 const form = document.getElementById('addressForm');

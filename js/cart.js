@@ -1,6 +1,6 @@
 // cart.js
 import { db } from './firebase.init.js';
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { formatCurrency } from './utils.js';
 
 const cartList = document.getElementById("cart-list");

@@ -1,6 +1,6 @@
 // js/products.js - Handles product listing, filtering, and pagination.
 import { db } from './firebase.init.js';
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { formatCurrency } from './utils.js';
 
 // --- STATE ---
