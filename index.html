@@ -50,61 +50,44 @@
 
 
   <main>
-    <section class="hero">
-      <div class="container">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <h2 id="homepageGreeting"></h2>
-
-            <h2 style="color:var(--luxury-blue-2); font-size:36px;">Timeless Design • Modern Craft</h2>
-            <p class="meta">Discover curated luxury watches — precision, style, and an heirloom feel.</p>
-          </div>
-          <div>
-            <a href="him.html" class="btn">SHOP HIM</a>
-            <a href="her.html" class="btn secondary">SHOP HER</a>
-          </div>
+  <section class="hero">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h2 id="homepageGreeting"></h2>
+          <h2 style="color:var(--luxury-blue-2); font-size:36px;">Timeless Design • Modern Craft</h2>
+          <p class="meta">Discover curated luxury watches — precision, style, and an heirloom feel.</p>
         </div>
-
-        <div style="margin-top:24px;">
-          <div class="parallax-track">
-            <div class="carousel" id="hero-carousel">
-              <!-- carousel cards -->
-              <div class="card">
-                <img src="/assets/hero/watch1.jpg" alt="watch1">
-                <div>
-                  <h3>Mariner Classic</h3>
-                  <div class="meta">Swiss quarz • 40mm</div>
-                </div>
-              </div>
-              <div class="card">
-                <img src="/assets/hero/watch2.jpg" alt="watch2">
-                <div>
-                  <h3>Auric Minimal</h3>
-                  <div class="meta">Polished steel • 36mm</div>
-                </div>
-              </div>
-              <div class="card">
-                <img src="/assets/hero/watch3.jpg" alt="watch3">
-                <div>
-                  <h3>Obsidian Sport</h3>
-                  <div class="meta">Chronograph • 44mm</div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div>
+          <a href="him.html" class="btn">SHOP HIM</a>
+          <a href="her.html" class="btn secondary">SHOP HER</a>
         </div>
-
-        <h3 style="margin-top:22px;">Featured Products</h3>
-        <div id="products-grid"></div>
-
       </div>
-    </section>
 
-    <section class="container" style="margin-top:20px;">
-      <h3>Why ChronosCrown?</h3>
-      <p class="meta">We combine Swiss-inspired design with contemporary craftsmanship. Free shipping over $150. 2-year guarantee.</p>
-    </section>
-  </main>
+      <div style="margin-top:24px;">
+        <div class="parallax-track">
+          <div class="carousel" id="hero-carousel">
+            <!-- Latest 3 products from Firestore will be injected here -->
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:22px;">Featured Products</h3>
+      <div id="products-grid" class="grid-container">
+        <!-- JS will inject featured products (3 per row, 3 rows) here -->
+      </div>
+      <div style="text-align:center; margin-top:16px;">
+        <a href="all-products.html" class="btn secondary">See All Products</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container" style="margin-top:20px;">
+    <h3>Why ChronosCrown?</h3>
+    <p class="meta">We combine Swiss-inspired design with contemporary craftsmanship. Free shipping over $150. 2-year guarantee.</p>
+  </section>
+</main>
+
 
   <footer class="footer">
     <div class="container" style="display:flex; justify-content:space-between; gap:24px;">
@@ -127,13 +110,10 @@
     </div>
   </footer>
 
-  <script type="module" src="js/firebase.init.js"></script>
-  <script type="module" src="js/app.js"></script>
-  <script type="module">
-    import { loadProducts } from './js/products.js';
-    loadProducts({category:'all', page:1});
-  </script>
-  <script type="module" src="js/main-auth.js"></script>
+    <script type="module" src="js/firebase.init.js"></script>
+    <script type="module" src="js/utils.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/main-auth.js"></script>
 
 </body>
 </html>
