@@ -34,10 +34,15 @@ auth.onAuthStateChanged(async (user) => {
   );
 });
 
+let _ordersIndex = {};
+function money(v){ return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(v||0)); }
+
 function renderOrders(rows) {
+  _ordersIndex = {};
   if (!rows.length) { ordersTable.innerHTML = '<tr><td colspan="7">No orders available</td></tr>'; return; }
   ordersTable.innerHTML = '';
   rows.forEach(o => {
+  _ordersIndex[o.id] = o;
     const tr = document.createElement('tr');
     const addr = o.address ? `${o.address.name}, ${o.address.line1}, ${o.address.city}, ${o.address.state||''} ${o.address.zip||''}, ${o.address.country}` : '-';
     const itemsArr = Array.isArray(o.items) ? o.items : (Array.isArray(o.cart) ? o.cart.map(c=>({ name:c.name, model:c.model, qty:c.qty, color:c.color, strap:c.strap, size:c.size, price:c.price })) : []);
@@ -46,7 +51,7 @@ function renderOrders(rows) {
     tr.innerHTML = `
       <td>${o.id}</td>
       <td>${o.customerName || o.userId || 'Guest'}</td>
-      <td>${displayTotal.toFixed(2)}</td>
+      <td>${money(displayTotal)}</td>
       <td>
         <select data-id="${o.id}" class="status-select">
           <option ${o.status==='Dispatch Pending'?'selected':''}>Dispatch Pending</option>
@@ -58,7 +63,11 @@ function renderOrders(rows) {
       </td>
       <td>${o.trackingNumber || '-'}</td>
       <td>${addr}</td>
-      <td>${itemsHtml}</td>`;
+      <td>${itemsHtml}
+        <div style="margin-top:6px;">
+          <button class="btn small" data-print="${o.id}">Print address</button>
+        </div>
+      </td>`;
     ordersTable.appendChild(tr);
   });
 
@@ -68,11 +77,48 @@ function renderOrders(rows) {
     const newStatus = e.target.value;
     try {
       await updateDoc(doc(db, 'orders', id), { status: newStatus, updatedAt: new Date().toISOString() });
-      // dashboard listens to orders and will auto-update counts
       alert('Order updated');
     } catch (err) {
       console.error(err);
       alert('Failed to update order: ' + err.message);
     }
+  }));
+
+  // attach print handlers
+  ordersTable.querySelectorAll('[data-print]').forEach(btn => btn.addEventListener('click', (e)=>{
+    const id = e.currentTarget.getAttribute('data-print');
+    const o = _ordersIndex[id];
+    if (!o || !o.address) { alert('No address found on order.'); return; }
+    const addr = o.address;
+    const win = window.open('', 'PRINT', 'height=700,width=560');
+    const html = `<!doctype html><html><head><title>Shipping Label - ${id}</title>
+      <style>
+        body{ font-family: Arial, sans-serif; padding:20px; }
+        .label{ border:1px solid #ddd; border-radius:8px; padding:16px; max-width:480px; }
+        .row{ display:flex; justify-content:space-between; }
+        .box{ width:48%; border:1px dashed #bbb; border-radius:6px; padding:10px; min-height:120px; }
+        .box h4{ margin:0 0 8px; font-size:14px; text-transform:uppercase; letter-spacing:0.5px; color:#334155; }
+        .company{ font-weight:700; }
+      </style></head><body>
+      <div class="label">
+        <div class="row">
+          <div class="box">
+            <h4>From</h4>
+            <div class="company">ChronosCrown</div>
+          </div>
+          <div class="box">
+            <h4>To</h4>
+            <div><strong>${addr.name}</strong></div>
+            <div>${addr.line1}</div>
+            <div>${addr.city}, ${addr.state || ''} ${addr.zip || ''}</div>
+            <div>${addr.country}</div>
+          </div>
+        </div>
+      </div>
+      <script>window.print(); setTimeout(()=>window.close(), 300);</script>
+    </body></html>`;
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
   }));
 }

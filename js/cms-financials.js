@@ -13,8 +13,10 @@ function filterFinancials() {
       snapshot.forEach(doc => {
         const data = doc.data();
         total += data.total;
-        reportDiv.innerHTML += `<p>${doc.id}: $${data.total}</p>`;
+        const amt = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(data.total||0));
+        reportDiv.innerHTML += `<p>${doc.id}: ${amt}</p>`;
       });
-      reportDiv.innerHTML += `<h4>Total: $${total}</h4>`;
+      const totalFmt = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(total||0));
+      reportDiv.innerHTML += `<h4>Total: ${totalFmt}</h4>`;
     });
 }

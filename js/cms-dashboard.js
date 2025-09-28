@@ -8,7 +8,7 @@ const totalSalesEl = document.getElementById('totalSales');
 const totalUsersEl = document.getElementById('totalUsers');
 const recentOrdersTbody = document.getElementById('recentOrders');
 
-function formatCurrency(v){ return Number(v || 0).toFixed(2); }
+function formatCurrency(v){ return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(v||0)); }
 
 auth.onAuthStateChanged(user => {
   if (!user) return;
