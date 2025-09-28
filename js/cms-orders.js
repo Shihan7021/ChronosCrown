@@ -33,10 +33,6 @@ auth.onAuthStateChanged(async (user) => {
     }
   );
 });
-}, err => {
-  console.error('orders listen', err);
-  ordersTable.innerHTML = '<tr><td colspan="5">Error loading orders</td></tr>';
-});
 
 function renderOrders(rows) {
   if (!rows.length) { ordersTable.innerHTML = '<tr><td colspan="7">No orders available</td></tr>'; return; }

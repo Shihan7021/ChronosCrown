@@ -35,19 +35,20 @@ auth.onAuthStateChanged(user => {
     });
     totalOrdersEl.textContent = orders.length || 0;
     totalSalesEl.textContent = formatCurrency(totalSales);
+
+    // recent 6 orders table
+    recentOrdersTbody.innerHTML = '';
+    const recent = orders.slice(-6).reverse();
+    if (!recent.length) recentOrdersTbody.innerHTML = '<tr><td colspan="4">No recent orders</td></tr>';
+    else {
+      recent.forEach(o => {
+        const total = typeof o.total === 'number' ? o.total : (Array.isArray(o.items) ? o.items.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.qty)||1),0) : 0);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${o.id}</td><td>${o.customerName || o.userId || 'guest'}</td><td>${formatCurrency(total)}</td><td>${o.status || 'Dispatch Pending'}</td>`;
+        recentOrdersTbody.appendChild(tr);
+      });
+    }
   }, err => {
     console.error('orders listen', err);
   });
-});
-  // recent 6 orders
-  recentOrdersTbody.innerHTML = '';
-  const recent = orders.slice(-6).reverse();
-  if (!recent.length) recentOrdersTbody.innerHTML = '<tr><td colspan="4">No recent orders</td></tr>';
-  else {
-    recent.forEach(o => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${o.id}</td><td>${o.customerName || o.userId || 'guest'}</td><td>${formatCurrency(o.total)}</td><td>${o.status || 'pending'}</td>`;
-      recentOrdersTbody.appendChild(tr);
-    });
-  }
 });
