@@ -40,7 +40,8 @@ async function loadAddresses(user) {
     nextBtn.disabled = true;
     return;
   }
-  const arr = Array.isArray(usnap.data().addresses) ? usnap.data().addresses : [];
+  const data = usnap.exists() ? usnap.data() : {};
+  const arr = Array.isArray(data.addresses) ? data.addresses : [];
   if (!arr.length) {
     savedContainer.innerHTML = '<p>No saved addresses.</p>';
     nextBtn.disabled = true;
@@ -108,7 +109,8 @@ form.addEventListener('submit', async (e)=>{
     await ensureUserDoc(user);
     const uref = doc(db, 'users', user.uid);
     const usnap = await getDoc(uref);
-    const arr = Array.isArray(usnap.data()?.addresses) ? [...usnap.data().addresses] : [];
+    const base = usnap.exists() ? usnap.data() : {};
+    const arr = Array.isArray(base.addresses) ? [...base.addresses] : [];
 
     const payload = {
       name: document.getElementById('fullName').value.trim(),
