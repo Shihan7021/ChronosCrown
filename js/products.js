@@ -52,6 +52,7 @@ export async function loadProducts({category = 'all', page = 1, filters = {}, li
             if (filters.strap && p.strap !== filters.strap) return false;
             if (filters.color && p.color !== filters.color) return false;
             if (filters.size && String(p.size) !== String(filters.size)) return false;
+            if (filters.brand && p.brand !== filters.brand) return false;
             return true;
         });
         

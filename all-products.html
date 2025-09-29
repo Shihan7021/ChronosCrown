@@ -74,6 +74,16 @@
           <option value="Blue">Blue</option>
         </select>
       </label>
+      <label>Brand:
+        <select id="brandFilter">
+          <option value="">All</option>
+          <option>ChronosCrown</option>
+          <option>Seiko</option>
+          <option>Citizen</option>
+          <option>Casio</option>
+          <option>Tissot</option>
+        </select>
+      </label>
       <button class="btn" id="applyFilters">Apply</button>
     </div>
 
@@ -131,6 +141,7 @@
         priceMax: Number(document.getElementById('priceMax').value||999999),
         strap: document.getElementById('strapFilter').value,
         color: document.getElementById('colorFilter').value,
+        brand: document.getElementById('brandFilter').value,
       };
       loadProducts({ category, page: 1, filters });
     }
