@@ -100,14 +100,16 @@ function renderProductGrid(container, products, { showDescription }) {
         card.innerHTML = `
             <div class="product-card-image">
                 <img src="${mainImage}" alt="${prod.name}" onerror="this.onerror=null;this.src='https://placehold.co/120x120/EFEFEF/A9A9A9?text=No+Image';">
-                ${prod.quantity <= 0 ? '<div class="out-of-stock-badge">Out of Stock</div>' : ''}
+                ${prod.quantity <= 0 ? '<div class=\"out-of-stock-badge\">Out of Stock</div>' : ''}
             </div>
             <div class="product-card-info">
-                <h3>${prod.name}</h3>
-                <p class="meta">${prod.brand || 'ChronosCrown'}</p>
+                <div class="title-row">
+                    <h3>${(prod.brand || 'ChronosCrown')} ${prod.name}</h3>
+                    <div class="price title-price">${formatCurrency(prod.price)}</div>
+                </div>
+                <p class="meta">${(prod.model || '')} + ${(String(prod.size) || '')}</p>
                 ${descriptionHTML}
                 <div class="product-card-footer">
-                    <div class="price">${formatCurrency(prod.price)}</div>
                     <button class="btn secondary" ${prod.quantity <= 0 ? 'disabled' : ''}>View</button>
                 </div>
             </div>

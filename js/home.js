@@ -10,8 +10,8 @@ function createProductCard(p) {
   a.innerHTML = `
     <img src="${mainImage}" alt="${p.name}" onerror="this.onerror=null;this.src='https://placehold.co/320x220/EFEFEF/A9A9A9?text=No+Image';">
     <div>
-      <h3>${p.name}</h3>
-      <div class="meta">${p.strap || ''} • ${p.size || ''}</div>
+      <h3>${(p.brand || 'ChronosCrown')} ${p.name}</h3>
+      <div class="meta">${p.model || ''} + ${p.size || ''}</div>
     </div>
   `;
   return a;
@@ -54,8 +54,8 @@ function createGridProductCard(p){
       <img src="${img}" alt="${p.name}">
     </div>
     <div class="product-card-info">
-      <h3>${p.name}</h3>
-      <p class="meta">${p.type || ''} • ${p.strap || ''}</p>
+      <h3>${(p.brand || 'ChronosCrown')} ${p.name}</h3>
+      <p class="meta">${p.model || ''} + ${p.size || ''}</p>
     </div>
   `;
   return a;
