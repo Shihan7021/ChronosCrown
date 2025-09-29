@@ -124,6 +124,7 @@ productForm.addEventListener('submit', async (e) => {
   const model = document.getElementById('productModel').value.trim();
   const price = Number(document.getElementById('productPrice').value) || 0;
   const type = document.getElementById('productType').value;  // new
+  const brand = document.getElementById('productBrand').value;
   const strap = document.getElementById('productStrap').value;
   const color = document.getElementById('productColor').value;
   const size = document.getElementById('productSize').value;
@@ -132,8 +133,8 @@ productForm.addEventListener('submit', async (e) => {
   const markFeatured = !!featuredInput?.checked;
   const markAnimated = !!animatedInput?.checked;
 
-  if (!name || !model || !strap || !color || !size || !type) {
-    alert('Name, model, type and all dropdowns are required');
+  if (!name || !model || !strap || !color || !size || !type || !brand) {
+    alert('Name, model, type, brand and all dropdowns are required');
     return;
   }
 
@@ -164,7 +165,7 @@ productForm.addEventListener('submit', async (e) => {
 
       // Create product doc first
       const pRef = await addDoc(collection(db, 'products'), {
-        name, model, price, type, strap, color, size, description, quantity,
+        name, model, price, type, brand, strap, color, size, description, quantity,
         featured: canFeature && markFeatured ? true : false,
         animated: canAnimate && markAnimated ? true : false,
         images: [], createdAt: serverTimestamp()
@@ -197,7 +198,7 @@ productForm.addEventListener('submit', async (e) => {
       const finalImages = [...keptImageUrls, ...newUrls];
 
     await updateDoc(doc(db, 'products', id), {
-        name, model, price, type, strap, color, size, description,
+        name, model, price, type, brand, strap, color, size, description,
         quantity: Number(quantity) || 0,
         featured: markFeatured,
         animated: markAnimated,
@@ -348,6 +349,8 @@ function _render(products) {
     document.getElementById('productPrice').value = p.price || 0;
     document.getElementById('productModel').value = p.model || '';
     document.getElementById('productType').value = p.type || '';
+    const brandEl = document.getElementById('productBrand');
+    if (brandEl) brandEl.value = p.brand || '';
     document.getElementById('productStrap').value = p.strap || '';
     document.getElementById('productColor').value = p.color || '';
     document.getElementById('productSize').value = p.size || '';
