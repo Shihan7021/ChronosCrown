@@ -11,7 +11,7 @@ function createProductCard(p) {
     <img src="${mainImage}" alt="${p.name}" onerror="this.onerror=null;this.src='https://placehold.co/320x220/EFEFEF/A9A9A9?text=No+Image';">
     <div>
       <h3>${(p.brand || 'ChronosCrown')} ${p.name}</h3>
-      <div class="meta">${p.model || ''} + ${p.size || ''}</div>
+      <div class="meta">${p.model || ''}  ${p.size || ''}</div>
     </div>
   `;
   return a;
