@@ -147,10 +147,7 @@ async function loadAddresses(user) {
   nextBtn.disabled = !selectedAddressId;
 }
 
-    savedContainer.appendChild(card);
-  });
-  nextBtn.disabled = !selectedAddressId;
-}
+
 
 form.addEventListener('submit', async (e)=>{
   e.preventDefault();
