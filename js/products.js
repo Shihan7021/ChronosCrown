@@ -107,7 +107,7 @@ function renderProductGrid(container, products, { showDescription }) {
                     <h3>${(prod.brand || 'ChronosCrown')} ${prod.name}</h3>
                     <div class="price title-price">${formatCurrency(prod.price)}</div>
                 </div>
-                <p class="meta">${(prod.model || '')} + ${(String(prod.size) || '')}</p>
+                <p class="meta">${(prod.model || '')}  ${(String(prod.size) || '')}</p>
                 ${descriptionHTML}
                 <div class="product-card-footer">
                     <button class="btn secondary" ${prod.quantity <= 0 ? 'disabled' : ''}>View</button>

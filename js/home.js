@@ -55,7 +55,7 @@ function createGridProductCard(p){
     </div>
     <div class="product-card-info">
       <h3>${(p.brand || 'ChronosCrown')} ${p.name}</h3>
-      <p class="meta">${p.model || ''} + ${p.size || ''}</p>
+      <p class="meta">${p.model || ''}  ${p.size || ''}</p>
     </div>
   `;
   return a;
