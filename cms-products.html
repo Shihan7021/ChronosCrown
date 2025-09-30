@@ -12,13 +12,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="css/cms-theme.css">
   <script type="module">
-  import { getCmsUser } from './js/cms-utils.js';
-  const cmsUser = getCmsUser();
-  const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
-  if (!cmsUser || !allowedRoles.includes(cmsUser.role)) {
-    alert('Access denied. Login as CMS user.');
-    window.location.href = 'cms-login.html';
-  }
+  import { requireCmsAuthAndRole } from './js/cms-utils.js';
+  // Ensure Firebase Auth is active and role is authorized before page usage
+  await requireCmsAuthAndRole();
 </script>
 </head>
 <body>

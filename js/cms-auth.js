@@ -29,22 +29,26 @@ form.addEventListener('submit', async (e) => {
 
     const userDoc = await getDoc(doc(db, 'users', user.uid));
 
-    // Allow all CMS roles
-    const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
+    // Allow all CMS roles (case-insensitive)
+    const data = userDoc.data();
+    const roleRaw = (typeof data.role === 'string' ? data.role : '').trim();
+    const roleNorm = roleRaw.toLowerCase();
+    const allowedRoles = ['system', 'admin', 'manager', 'associate'];
 
-    if (!userDoc.exists() || !allowedRoles.includes(userDoc.data().role)) {
+    if (!userDoc.exists() || !allowedRoles.includes(roleNorm)) {
       showStatus('danger', 'Access denied. Not a CMS user.');
       await auth.signOut();
       return;
     }
 
-    const userData = userDoc.data();
+    const userData = data;
 
-    // Save role + full data in sessionStorage
+    // Save role + full data in sessionStorage (normalize title case for UI, keep "system" lower)
+    const roleForUi = roleNorm === 'system' ? 'system' : (roleNorm.charAt(0).toUpperCase() + roleNorm.slice(1));
     sessionStorage.setItem('cmsUser', JSON.stringify({ 
       uid: user.uid, 
       email: user.email,
-      role: userData.role,
+      role: roleForUi,
       displayName: userData.displayName || "System User"
     }));
 

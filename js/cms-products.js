@@ -355,16 +355,13 @@ function _render(products) {
     const id = e.currentTarget.dataset.feature;
     const checked = e.currentTarget.checked;
     try {
+      await awaitAuthUser();
       await ensureFreshToken();
       if (checked) {
         const qf = query(collection(db, 'products'), where('featured','==',true));
         const snap = await getDocs(qf);
-        // exclude current if already featured
-        const already = (await getDocs(query(collection(db,'products'), where('__name__','==',id))));
-        const was = false; // we don't need exact prev here; UI had it
         if (snap.size >= 9) { alert('Maximum 9 featured products allowed.'); e.currentTarget.checked = false; return; }
       }
-      await ensureFreshToken();
       await updateDoc(doc(db,'products',id), { featured: checked });
     } catch(err){ console.error(err); alert('Failed to update: '+(err.message||err)); e.currentTarget.checked = !checked; }
   }));
