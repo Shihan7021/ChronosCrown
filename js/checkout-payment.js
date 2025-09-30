@@ -117,13 +117,35 @@ payNowBtn.addEventListener('click', async ()=>{
       payNowBtn.disabled = true;
       payNowBtn.textContent = 'Redirecting to bank...';
 
+      // Build PayHere-required context
+      const addr = await loadAddress(user).catch(()=>null);
+      const [firstName, ...restName] = String((addr && addr.name) || (user.displayName || 'Customer')).split(' ');
+      const lastName = restName.join(' ') || 'User';
+      const origin = window.location.origin;
+      const returnUrl = `${origin}/thankyou.html?order=${orderId}`;
+      const cancelUrl = `${origin}/checkout-payment.html?order=${orderId}`;
+      const notifyUrl = `${origin}/api/ipg/notify`;
+
       const res = await fetch('/api/ipg/create-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           orderId,
           amount: Number(amount),
-          currency: 'USD', // adjust if your store uses a different currency
+          currency: 'LKR',
+          returnUrl,
+          cancelUrl,
+          notifyUrl,
+          items: `ChronosCrown Order ${orderId}`,
+          customer: {
+            firstName,
+            lastName,
+            email: (user && user.email) || '',
+            phone: (addr && addr.mobile) || '',
+            address: (addr && addr.line1) || '',
+            city: (addr && addr.city) || '',
+            country: (addr && addr.country) || 'Sri Lanka'
+          }
         })
       });
 
