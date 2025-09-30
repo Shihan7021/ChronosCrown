@@ -5,6 +5,45 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+  <header class="header">
+        <div class="container nav-wrap">
+            <div class="brand">
+            <div class="logo"><img src="assets/hero/logo.png" alt="ChronosCrown logo"></div>
+            <!--<h1>ChronosCrown</h1>-->
+            </div>
+
+            <nav class="navlinks">
+            <a href="index.html">Home</a>
+            <a href="him.html">Him</a>
+            <a href="her.html">Her</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" aria-current="page">Contact</a>
+            </nav>
+
+            <div style="display:flex; gap:12px; align-items:center;">
+
+            <!-- BEFORE login -->
+            <a id="loginLink" href="login.html" class="btn secondary">Sign In</a>
+            <a id="registerLink" href="register.html" class="btn">Register</a>
+
+            <!-- AFTER login -->
+            <div id="userMenu" class="dropdown hidden">
+                <span class="greeting" id="greetingText"></span>
+                <div class="person-icon">👤</div>
+                <div class="dropdown-content">
+                <a href="profile.html">My Profile</a>
+                <a href="#" id="logoutBtn">Logout</a>
+                </div>
+            </div>
+
+            <a href="cart.html" class="icon-btn" aria-label="Cart">
+                <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
+                <div class="badge cart-badge">0</div>
+            </a>
+
+            </div>
+        </div>
+    </header>
   <main style="padding:40px;">
     <div class="form">
       <h3>Sign In</h3>
@@ -16,6 +55,45 @@
       </div>
     </div>
   </main>
+  <footer class="footer">
+    <div class="container footer-columns">
+      <div class="footer-col footer-brand">
+        <div class="logo"><img src="assets/hero/logo.png" alt="ChronosCrown logo"></div>
+        
+        <p class="meta">Timeless watches, modern craft.</p>
+        <div class="socials">
+          <a href="#" aria-label="Instagram">📸</a>
+          <a href="#" aria-label="Facebook">📘</a>
+          <a href="#" aria-label="Twitter">🐦</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="him.html">Him</a>
+        <a href="her.html">Her</a>
+        <a href="all-products.html">All Products</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+        <a href="track-order.html">Track Order</a>
+        <a href="feedback.html">Feedback</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Stay in the loop</h4>
+        <form id="newsletterForm" class="newsletter" onsubmit="event.preventDefault(); alert('Subscribed!');">
+          <input type="email" placeholder="Your email" required>
+          <button class="btn secondary" type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <div>© 2025 ChronosCrown</div>
+      <div class="meta">Free shipping over $150 • 1-year warranty</div>
+    </div>
+  </footer>
 
   <script type="module">
     import { login } from './js/auth.js';
@@ -24,5 +102,6 @@
       try{ const profile = await login(e,p); localStorage.setItem('userDisplayName', profile.displayName || 'User'); location.href = 'index.html'; } catch(err){ alert(err.message); }
     });
   </script>
+  <script type="module" src="js/home.js"></script>
 </body>
 </html>
