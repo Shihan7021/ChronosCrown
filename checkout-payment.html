@@ -5,6 +5,41 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Checkout — Payment</title>
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Payment redirect overlay */
+    .payment-overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10, 10, 10, 0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 9999;
+    }
+    .payment-overlay.show { display: flex; }
+    .payment-overlay .box {
+      width: min(92vw, 440px);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.92);
+      padding: 22px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+    .payment-overlay .spinner {
+      margin: 8px auto 14px;
+      width: 48px; height: 48px;
+      border: 4px solid #e5e7eb; /* gray-200 */
+      border-top-color: #2563eb; /* blue-600 */
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .payment-overlay .title { font-size: 1.1rem; font-weight: 700; color: #111827; margin-bottom: 6px; }
+    .payment-overlay .msg { font-size: 0.95rem; color: #374151; line-height: 1.35; }
+    .payment-overlay .hint { font-size: 0.85rem; color: #6b7280; margin-top: 10px; }
+  </style>
 </head>
 <body>
   <header class="header">
@@ -109,5 +144,15 @@
   <script type="module" src="js/firebase.init.js"></script>
   <script type="module" src="js/checkout-payment.js"></script>
   <script type="module" src="js/main-auth.js"></script>
+
+  <!-- Payment redirect overlay -->
+  <div id="paymentOverlay" class="payment-overlay" aria-live="polite" aria-busy="true">
+    <div class="box" role="alert" aria-labelledby="paymentOverlayTitle" aria-describedby="paymentOverlayMessage">
+      <div class="spinner" aria-hidden="true"></div>
+      <div id="paymentOverlayTitle" class="title">Redirecting to Secure Payment</div>
+      <div id="paymentOverlayMessage" class="msg">Please wait while we connect to the bank. Do not close or refresh this page.</div>
+      <div class="hint">This may take a few seconds…</div>
+    </div>
+  </div>
 </body>
 </html>

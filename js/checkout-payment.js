@@ -6,6 +6,8 @@ const addressDisplay = document.getElementById('addressDisplay');
 const cartItemsDiv = document.getElementById('cartItems');
 const totalAmountDiv = document.getElementById('totalAmount');
 const payNowBtn = document.getElementById('payNowBtn');
+const paymentOverlay = document.getElementById('paymentOverlay');
+const paymentOverlayMsg = document.getElementById('paymentOverlayMessage');
 
 let amount = 0;
 let orderId = '';
@@ -116,6 +118,10 @@ payNowBtn.addEventListener('click', async ()=>{
     try {
       payNowBtn.disabled = true;
       payNowBtn.textContent = 'Redirecting to bank...';
+      if (paymentOverlay) {
+        if (paymentOverlayMsg) paymentOverlayMsg.textContent = 'Please wait while we connect to the bank. Do not close or refresh this page.';
+        paymentOverlay.classList.add('show');
+      }
 
       // Build PayHere-required context
       const addr = await loadAddress(user).catch(()=>null);
@@ -176,6 +182,7 @@ payNowBtn.addEventListener('click', async ()=>{
       alert('Sorry, we could not reach the payment gateway. Please try again or use Cash on Delivery.');
       payNowBtn.disabled = false;
       payNowBtn.textContent = 'Pay Now';
+      if (paymentOverlay) paymentOverlay.classList.remove('show');
       return;
     }
   } else {
