@@ -1,5 +1,5 @@
 // cms-users.js
-import { auth, db } from '../js/firebase-config.js'; // adjust if path differs
+import { auth, db } from './firebase-config.js'; // path is relative to /js
 import {
   collection,
   query,
