@@ -12,9 +12,21 @@ function formatCurrency(v){ return new Intl.NumberFormat('en-US',{style:'currenc
 
 auth.onAuthStateChanged(user => {
   if (!user) return;
-  // products live count
+  // products live count + stock alerts
   onSnapshot(collection(db, 'products'), snap => {
     totalProductsEl.textContent = snap.size || 0;
+    let outOf = 0, low = 0;
+    snap.forEach(d => {
+      const p = d.data();
+      const qty = Number(p.quantity || 0);
+      const lowLimit = Number(p.lowStockLimit || 0);
+      if (qty <= 0) outOf += 1;
+      else if (lowLimit > 0 && qty <= lowLimit) low += 1;
+    });
+    const outEl = document.getElementById('outOfProductCount');
+    const lowEl = document.getElementById('lowStockCount');
+    if (outEl) outEl.textContent = outOf;
+    if (lowEl) lowEl.textContent = low;
   });
 
   // users live count (all user docs)

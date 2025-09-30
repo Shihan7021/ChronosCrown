@@ -130,6 +130,7 @@ productForm.addEventListener('submit', async (e) => {
   const size = document.getElementById('productSize').value;
   const description = document.getElementById('productDesc').value.trim();
   const quantity = Number(document.getElementById('productQty').value) || 0;
+  const lowStockLimit = Number(document.getElementById('lowStockLimit')?.value) || 0;
   const markFeatured = !!featuredInput?.checked;
   const markAnimated = !!animatedInput?.checked;
 
@@ -166,6 +167,7 @@ productForm.addEventListener('submit', async (e) => {
       // Create product doc first
       const pRef = await addDoc(collection(db, 'products'), {
         name, model, price, type, brand, strap, color, size, description, quantity,
+        lowStockLimit: Number(lowStockLimit) || 0,
         featured: canFeature && markFeatured ? true : false,
         animated: canAnimate && markAnimated ? true : false,
         images: [], createdAt: serverTimestamp()
@@ -200,6 +202,7 @@ productForm.addEventListener('submit', async (e) => {
     await updateDoc(doc(db, 'products', id), {
         name, model, price, type, brand, strap, color, size, description,
         quantity: Number(quantity) || 0,
+        lowStockLimit: Number(lowStockLimit) || 0,
         featured: markFeatured,
         animated: markAnimated,
         images: finalImages,
@@ -240,11 +243,49 @@ onSnapshot(collection(db, 'products'), snapshot => {
 
 let latestProducts = [];
 
+// Filters state elements
+const filterBrand = document.getElementById('filterBrand');
+const filterStockMin = document.getElementById('filterStockMin');
+const filterStockMax = document.getElementById('filterStockMax');
+const filterPriceMin = document.getElementById('filterPriceMin');
+const filterPriceMax = document.getElementById('filterPriceMax');
+const applyFiltersBtn = document.getElementById('applyFilters');
+const clearFiltersBtn = document.getElementById('clearFilters');
+
 function applyFilterAndRender(){
   const q = (searchModel?.value || '').trim().toLowerCase();
-  const list = !q ? latestProducts : latestProducts.filter(p => (p.model || '').toLowerCase().includes(q));
+  let list = !q ? latestProducts : latestProducts.filter(p => (p.model || '').toLowerCase().includes(q));
+
+  // Apply extra filters
+  const brand = filterBrand ? filterBrand.value : '';
+  const sMin = Number(filterStockMin?.value || '');
+  const sMax = Number(filterStockMax?.value || '');
+  const pMin = Number(filterPriceMin?.value || '');
+  const pMax = Number(filterPriceMax?.value || '');
+
+  list = list.filter(p => {
+    if (brand && p.brand !== brand) return false;
+    const qty = Number(p.quantity || 0);
+    if (!Number.isNaN(sMin) && filterStockMin?.value !== '' && qty < sMin) return false;
+    if (!Number.isNaN(sMax) && filterStockMax?.value !== '' && qty > sMax) return false;
+    const price = Number(p.price || 0);
+    if (!Number.isNaN(pMin) && filterPriceMin?.value !== '' && price < pMin) return false;
+    if (!Number.isNaN(pMax) && filterPriceMax?.value !== '' && price > pMax) return false;
+    return true;
+  });
+
   _render(list);
 }
+
+if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', applyFilterAndRender);
+if (clearFiltersBtn) clearFiltersBtn.addEventListener('click', ()=>{
+  if (filterBrand) filterBrand.value = '';
+  if (filterStockMin) filterStockMin.value = '';
+  if (filterStockMax) filterStockMax.value = '';
+  if (filterPriceMin) filterPriceMin.value = '';
+  if (filterPriceMax) filterPriceMax.value = '';
+  applyFilterAndRender();
+});
 
 if (searchModel) searchModel.addEventListener('input', applyFilterAndRender);
 
@@ -270,6 +311,9 @@ function _render(products) {
     const img = (p.images && p.images[0]) ? `<img src="${p.images[0]}" alt="${p.name}">` : `<div class="no-image">No image</div>`;
     const featuredChecked = p.featured ? 'checked' : '';
     const animatedChecked = p.animated ? 'checked' : '';
+    const qty = Number(p.quantity || 0);
+    const lowLimit = Number(p.lowStockLimit || 0);
+    const stockLabel = qty <= 0 ? '<span style="color:#dc2626;font-weight:700;">Out of Stock</span>' : (lowLimit>0 && qty <= lowLimit ? '<span style="color:#b45309;font-weight:700;">Low Stock</span>' : '<span style="color:#059669;">In Stock</span>');
     card.innerHTML = `
       <div class="product-card-inner">
         <div class="product-thumb">${img}</div>
@@ -278,6 +322,7 @@ function _render(products) {
           <div class="meta">Model: <span class="mono">${p.model || '-'}</span></div>
           <div class="meta">Price: $${Number(p.price).toFixed(2)}</div>
           <div class="meta">Strap: ${p.strap} • Color: ${p.color} • Size: ${p.size}</div>
+          <div class="meta">Quantity: <strong>${qty}</strong> • ${stockLabel}${lowLimit>0 ? ` • Low limit: ${lowLimit}` : ''}</div>
           <p class="small muted">${(p.description||'')}</p>
           <div class="toggle-row" style="margin-top:6px; display:flex; gap:10px;">
             <label><input type="checkbox" data-feature="${p.id}" ${featuredChecked}> Featured</label>
@@ -357,6 +402,8 @@ function _render(products) {
     document.getElementById('productDesc').value = p.description || '';
     if (descEditor) descEditor.innerHTML = p.description || '';
     document.getElementById('productQty').value = p.quantity || 0;
+    const lowInput = document.getElementById('lowStockLimit');
+    if (lowInput) lowInput.value = (typeof p.lowStockLimit === 'number') ? p.lowStockLimit : 0;
     if (featuredInput) featuredInput.checked = !!p.featured;
     if (animatedInput) animatedInput.checked = !!p.animated;
 

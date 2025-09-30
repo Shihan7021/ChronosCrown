@@ -129,6 +129,10 @@
               <label>Quantity (internal)</label>
               <input id="productQty" type="number" min="0" value="0">
             </div>
+            <div class="form-group" style="max-width:220px">
+              <label>Low stock limit (reorder level)</label>
+              <input id="lowStockLimit" type="number" min="0" value="0" placeholder="e.g., 5">
+            </div>
           </div>
 
           <div class="form-row">
@@ -159,6 +163,42 @@
         <h3 style="margin:0;">Products</h3>
         <input id="searchModel" type="text" placeholder="Search by Model No." style="padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; min-width:260px;">
       </div>
+
+      <!-- Filters -->
+      <div id="productFilters" style="display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.06); margin:10px 0;">
+        <div style="display:flex; flex-direction:column;">
+          <label>Brand</label>
+          <select id="filterBrand" style="min-width:160px;">
+            <option value="">All</option>
+            <option>ChronosCrown</option>
+            <option>Seiko</option>
+            <option>Citizen</option>
+            <option>Casio</option>
+            <option>Tissot</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label>Stock Min</label>
+          <input id="filterStockMin" type="number" min="0" placeholder="0" style="width:120px;">
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label>Stock Max</label>
+          <input id="filterStockMax" type="number" min="0" placeholder="9999" style="width:120px;">
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label>Price Min</label>
+          <input id="filterPriceMin" type="number" min="0" step="0.01" placeholder="0" style="width:120px;">
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label>Price Max</label>
+          <input id="filterPriceMax" type="number" min="0" step="0.01" placeholder="99999" style="width:120px;">
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button id="applyFilters" class="btn" type="button">Apply</button>
+          <button id="clearFilters" class="btn btn-danger" type="button">Clear</button>
+        </div>
+      </div>
+
       <div id="productList" class="product-list"></div>
     </div>
   </div>
