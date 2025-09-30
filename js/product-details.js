@@ -15,6 +15,35 @@ const productStock = document.getElementById("productStock");
 const addToCartBtn = document.getElementById("addToCartBtn");
 const buyNowBtn = document.getElementById("buyNowBtn");
 
+// Buy Now confirmation modal elements
+const buyConfirmModalEl = document.getElementById('buyConfirmModal');
+const buyConfirmCheckoutBtn = document.getElementById('buyConfirmCheckout');
+const buyConfirmShopMoreBtn = document.getElementById('buyConfirmShopMore');
+
+const buyConfirm = {
+    el: buyConfirmModalEl,
+    checkout: buyConfirmCheckoutBtn,
+    shop: buyConfirmShopMoreBtn,
+    open(onCheckout, onShopMore) {
+        if (!this.el || !this.checkout || !this.shop) {
+            // Fallback: go straight to cart if modal isn't present
+            onCheckout();
+            return;
+        }
+        this.el.classList.remove('hidden');
+        const close = () => this.el.classList.add('hidden');
+        const onOk = () => { onCheckout(); cleanup(); };
+        const onShop = () => { onShopMore(); cleanup(); };
+        const cleanup = () => {
+            this.checkout.removeEventListener('click', onOk);
+            this.shop.removeEventListener('click', onShop);
+            close();
+        };
+        this.checkout.addEventListener('click', onOk);
+        this.shop.addEventListener('click', onShop);
+    }
+};
+
 // --- MAIN FUNCTION ---
 
 async function loadProductDetails() {
@@ -113,7 +142,7 @@ function populateSelect(selectEl, optionsArray) {
 
 // --- CART FUNCTIONS ---
 
-function addToCart(pid, product) {
+function addToCart(pid, product, { showAlert = true } = {}) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const selectedOptions = {
         strap: productStrap.value || product.strap || '',
@@ -145,12 +174,17 @@ function addToCart(pid, product) {
 
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartBadge(cart.length);
-    alert('Added to cart');
+    if (showAlert) alert('Added to cart');
 }
 
 function buyNow(pid, product) {
-    addToCart(pid, product); // Ensure item is in the cart
-    window.location.href = 'checkout-address.html'; // Go directly to address selection
+    // Ensure item is in the cart but avoid showing the "Added to cart" alert
+    addToCart(pid, product, { showAlert: false });
+    // Show confirmation modal similar to cart removal confirmation
+    buyConfirm.open(
+        () => { window.location.href = 'cart.html'; },
+        () => { window.location.href = 'all-products.html'; }
+    );
 }
 
 function updateCartBadge(count) {
