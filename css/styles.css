@@ -45,8 +45,8 @@ main { flex:1 0 auto; }
 .hero {
   position:relative; overflow:hidden; min-height:480px; display:flex; align-items:center; justify-content:center; background: linear-gradient(180deg, rgba(14,74,114,0.05), rgba(255,255,255,0));
 }
-.parallax-track { position:relative; width:100%; }
-.carousel { display:flex; gap:12px; padding:28px 10px; transform-style:preserve-3d; }
+.parallax-track { position:relative; width:100%; display:flex; justify-content:center; }
+.carousel { display:flex; gap:12px; padding:28px 10px; transform-style:preserve-3d; justify-content:center; }
 .carousel .card {
   min-width:320px; height:360px; border-radius:16px; background:white; box-shadow: 0 18px 40px rgba(10,20,40,0.06); padding:18px; display:flex; flex-direction:column; justify-content:space-between; transition: transform .35s ease;
 }

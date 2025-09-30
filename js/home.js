@@ -12,6 +12,7 @@ function createProductCard(p) {
     <div>
       <h3>${(p.brand || 'ChronosCrown')} ${p.name}</h3>
       <div class="meta">${p.model || ''}  ${p.size || ''}</div>
+      <div class="price">$${Number(p.price || 0).toFixed(2)}</div>
     </div>
   `;
   return a;
@@ -55,6 +56,7 @@ function createGridProductCard(p){
     </div>
     <div class="product-card-info">
       <h3>${(p.brand || 'ChronosCrown')} ${p.name}</h3>
+      <div class="price">$${Number(p.price || 0).toFixed(2)}</div>
       <p class="meta">${p.model || ''}  ${p.size || ''}</p>
     </div>
   `;
