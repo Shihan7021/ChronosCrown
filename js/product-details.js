@@ -20,6 +20,14 @@ const buyConfirmModalEl = document.getElementById('buyConfirmModal');
 const buyConfirmCheckoutBtn = document.getElementById('buyConfirmCheckout');
 const buyConfirmShopMoreBtn = document.getElementById('buyConfirmShopMore');
 
+// Added to Cart message modal
+const addedCartModalEl = document.getElementById('addedCartModal');
+function showAddedModal(){
+    if(!addedCartModalEl) return;
+    addedCartModalEl.classList.remove('hidden');
+    setTimeout(()=> addedCartModalEl.classList.add('hidden'), 1200);
+}
+
 const buyConfirm = {
     el: buyConfirmModalEl,
     checkout: buyConfirmCheckoutBtn,
@@ -173,8 +181,8 @@ function addToCart(pid, product, { showAlert = true } = {}) {
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartBadge(cart.length);
-    if (showAlert) alert('Added to cart');
+    updateCartBadge();
+    if (showAlert) showAddedModal();
 }
 
 function buyNow(pid, product) {
@@ -187,10 +195,16 @@ function buyNow(pid, product) {
     );
 }
 
-function updateCartBadge(count) {
-    localStorage.setItem('cart_count', count);
-    const badge = document.querySelector('.cart-badge');
-    if (badge) badge.textContent = count;
+function updateCartBadge() {
+    try {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const count = cart.reduce((sum, i) => sum + (Number(i.qty) || 0), 0);
+        localStorage.setItem('cart_count', String(count));
+        const badge = document.querySelector('.cart-badge');
+        if (badge) badge.textContent = count;
+    } catch (e) {
+        console.warn('Failed updating cart badge', e);
+    }
 }
 
 
