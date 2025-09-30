@@ -2,6 +2,16 @@
 import { auth, db } from './firebase-config.js';
 import { collection, onSnapshot, doc, updateDoc, getDocs, query, orderBy, deleteDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
+async function ensureFreshToken(){
+  try { if (auth.currentUser) { await auth.currentUser.getIdToken(true); } } catch(e) {}
+}
+function awaitAuthUser(){
+  return new Promise(resolve => {
+    if (auth.currentUser) return resolve(auth.currentUser);
+    const unsub = auth.onAuthStateChanged(u => { if (u) { unsub(); resolve(u); } });
+  });
+}
+
 const ordersTable = document.getElementById('ordersTable');
 
 // Wait for auth so Firestore rules get request.auth
@@ -79,6 +89,8 @@ function renderOrders(rows) {
     const id = e.target.dataset.id;
     const newStatus = e.target.value;
     try {
+      await awaitAuthUser();
+      await ensureFreshToken();
       await updateDoc(doc(db, 'orders', id), { status: newStatus, updatedAt: new Date().toISOString() });
       alert('Order updated');
     } catch (err) {
@@ -139,6 +151,8 @@ function renderOrders(rows) {
     const itemsArr = Array.isArray(order.items) ? order.items : (Array.isArray(order.cart) ? order.cart.map(c=>({ productId:c.productId, qty:c.qty })) : []);
 
     try {
+      await awaitAuthUser();
+      await ensureFreshToken();
       // Restore stock quantities (atomic increments)
       for (const it of itemsArr) {
         if (!it.productId) continue;
