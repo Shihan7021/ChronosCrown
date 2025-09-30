@@ -2,6 +2,11 @@
   functions = "netlify/functions"
   publish = "."
 
+[build.environment]
+  # Avoid false positives: we don't commit real secrets. PAYHERE_ENV is a non-sensitive mode flag, and PORT literals appear in local-only code.
+  SECRETS_SCAN_OMIT_KEYS = "PAYHERE_ENV,PORT"
+  SECRETS_SCAN_OMIT_PATHS = "server/**"
+
 [[redirects]]
   from = "/api/ipg/create-session"
   to = "/.netlify/functions/ipg-create-session"
