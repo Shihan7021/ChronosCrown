@@ -12,7 +12,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="css/cms-theme.css">
   <script type="module">
-  const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
+  const getCmsUser = () => { try { const raw = sessionStorage.getItem('cmsUser'); return raw ? JSON.parse(raw) : null; } catch { return null; } };
+  const cmsUser = getCmsUser();
   const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
   if (!cmsUser || !allowedRoles.includes(cmsUser.role)) {
     alert('Access denied. Login as CMS user.');
@@ -148,7 +149,8 @@
     import { auth } from './js/firebase-config.js';
     const greet = document.getElementById('cmsGreeting');
     const btn = document.getElementById('cmsLogoutBtn');
-    const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
+    const getCmsUser = () => { try { const raw = sessionStorage.getItem('cmsUser'); return raw ? JSON.parse(raw) : null; } catch { return null; } };
+    const cmsUser = getCmsUser();
     if (cmsUser && greet) greet.textContent = `Hi, ${cmsUser.displayName || 'User'}`;
     if (btn) btn.addEventListener('click', async ()=>{
       await auth.signOut();
