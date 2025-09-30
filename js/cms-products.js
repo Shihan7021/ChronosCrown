@@ -117,6 +117,13 @@ async function ensureFreshToken(){
   try { if (auth.currentUser) { await auth.currentUser.getIdToken(true); } } catch (e) {}
 }
 
+function awaitAuthUser(){
+  return new Promise(resolve => {
+    if (auth.currentUser) return resolve(auth.currentUser);
+    const unsub = auth.onAuthStateChanged(u => { if (u) { unsub(); resolve(u); } });
+  });
+}
+
 // Submit product
 productForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -154,6 +161,7 @@ productForm.addEventListener('submit', async (e) => {
   }
 
   try {
+    await awaitAuthUser();
     if (!editProductId) {
       // Enforce limits before creating if user marked
       let canFeature = true, canAnimate = true;
@@ -365,6 +373,7 @@ function _render(products) {
     const id = e.currentTarget.dataset.animated;
     const checked = e.currentTarget.checked;
     try {
+      await awaitAuthUser();
       if (checked) {
         const qa = query(collection(db, 'products'), where('animated','==',true));
         const snap = await getDocs(qa);
@@ -380,6 +389,7 @@ function _render(products) {
     const id = e.currentTarget.dataset.del;
     if (!confirm('Delete product?')) return;
     try {
+      await awaitAuthUser();
       await ensureFreshToken();
       await deleteDoc(doc(db, 'products', id));
       alert('Deleted');
