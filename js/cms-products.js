@@ -1,5 +1,5 @@
 // cms-products.js
-import { db, auth } from '../js/firebase-config.js';
+import { db, auth } from './firebase-config.js';
 import {
   collection, addDoc, doc, setDoc, getDocs, onSnapshot, deleteDoc, updateDoc, serverTimestamp, query, where
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -111,6 +111,10 @@ function showToast(msg, type='success'){
   el.classList.toggle('success', type !== 'error');
   clearTimeout(showToast._t);
   showToast._t = setTimeout(()=> el.classList.add('hidden'), 2500);
+}
+
+async function ensureFreshToken(){
+  try { if (auth.currentUser) { await auth.currentUser.getIdToken(true); } } catch (e) {}
 }
 
 // Submit product
@@ -343,6 +347,7 @@ function _render(products) {
     const id = e.currentTarget.dataset.feature;
     const checked = e.currentTarget.checked;
     try {
+      await ensureFreshToken();
       if (checked) {
         const qf = query(collection(db, 'products'), where('featured','==',true));
         const snap = await getDocs(qf);
@@ -351,6 +356,7 @@ function _render(products) {
         const was = false; // we don't need exact prev here; UI had it
         if (snap.size >= 9) { alert('Maximum 9 featured products allowed.'); e.currentTarget.checked = false; return; }
       }
+      await ensureFreshToken();
       await updateDoc(doc(db,'products',id), { featured: checked });
     } catch(err){ console.error(err); alert('Failed to update: '+(err.message||err)); e.currentTarget.checked = !checked; }
   }));
@@ -364,6 +370,7 @@ function _render(products) {
         const snap = await getDocs(qa);
         if (snap.size >= 3) { alert('Maximum 3 animated products allowed.'); e.currentTarget.checked = false; return; }
       }
+      await ensureFreshToken();
       await updateDoc(doc(db,'products',id), { animated: checked });
     } catch(err){ console.error(err); alert('Failed to update: '+(err.message||err)); e.currentTarget.checked = !checked; }
   }));
@@ -373,6 +380,7 @@ function _render(products) {
     const id = e.currentTarget.dataset.del;
     if (!confirm('Delete product?')) return;
     try {
+      await ensureFreshToken();
       await deleteDoc(doc(db, 'products', id));
       alert('Deleted');
     } catch (err) {
