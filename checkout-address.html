@@ -10,7 +10,7 @@
   <header class="header">
     <div class="container nav-wrap">
       <div class="brand">
-        <div class="logo"><img src="assets/hero/logo.png" alt="ChronosCrown logo"></div>
+        <div class="logo">CC</div>
         <h1>ChronosCrown</h1>
       </div>
 
@@ -36,7 +36,7 @@
         </div>
 
         <a href="cart.html" class="icon-btn" aria-label="Cart">
-          <img src="/assets/icons/cart.svg" alt="Cart" style="height:22px;">
+          <img src="/assets/icons/cart.png" alt="Cart" style="height:22px;">
           <div class="badge cart-badge">0</div>
         </a>
       </div>
@@ -44,7 +44,15 @@
   </header>
 
   <main class="container checkout-address">
-    <!-- Left: Add address form -->
+    <div>
+      <h2>Shipping Address</h2>
+      <p class="meta">Select a saved address or add a new one.</p>
+
+      <div id="savedAddresses" class="address-grid"></div>
+
+      <button id="nextToPayment" class="btn primary" style="margin-top:16px;">Next: Payment</button>
+    </div>
+
     <div>
       <div class="address-card new-address">
         <h3>Add New Address</h3>
@@ -52,9 +60,6 @@
           <div class="row">
             <label style="flex:1;">Name
               <input type="text" id="fullName" placeholder="Full Name" required class="input">
-            </label>
-            <label style="flex:1;">Mobile
-              <input type="tel" id="mobile" placeholder="e.g., +1 555 123 4567" required class="input">
             </label>
           </div>
           <label>Address line 1
@@ -77,24 +82,16 @@
             </label>
           </div>
 
-          <button type="submit" class="btn primary" style="margin-top:8px; width:100%;">Add address</button>
+          <button type="submit" class="btn primary" style="margin-top:8px; width:100%;">Add Address & Continue</button>
         </form>
       </div>
-    </div>
-
-    <!-- Right: Saved addresses and Next button -->
-    <div>
-      <h2>Shipping Address</h2>
-      <p class="meta">Select a saved address or add a new one.</p>
-      <div id="savedAddresses" class="address-grid"></div>
-      <button id="nextToPayment" class="btn primary" style="margin-top:16px; float:right;" disabled>Next: Payment</button>
     </div>
   </main>
 
   <footer class="footer">
     <div class="container footer-columns">
       <div class="footer-col footer-brand">
-        <div class="logo"><img src="assets/hero/logo.png" alt="ChronosCrown logo"></div>
+        <div class="logo">CC</div>
         <h4>ChronosCrown</h4>
         <p class="meta">Timeless watches, modern craft.</p>
         <div class="socials">
@@ -132,7 +129,6 @@
   </footer>
 
   <script type="module" src="js/firebase.init.js"></script>
-  <script type="module" src="js/app.js"></script>
   <script type="module" src="js/checkout-address.js"></script>
   <script type="module" src="js/main-auth.js"></script>
 </body>

@@ -4,254 +4,80 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CMS Dashboard</title>
-
-  <!-- Typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Existing styles (if any). Bootstrap will override where needed. -->
   <link rel="stylesheet" href="css/cms-style.css">
-
-  <!-- Bootstrap 5.3 and Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/cms-theme.css">
-
-  <style>
-    :root {
-      --cc-primary: #6f47eb;
-      --cc-primary-600: #5b36d6;
-      --cc-surface: #0f1117;
-      --cc-surface-2: #11131a;
-      --cc-border: rgba(255,255,255,0.08);
-    }
-    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background: linear-gradient(180deg, #0a0b10 0%, #0d0f15 100%); color: #e8e8ea; }
-    .navbar-brand .brand-mark { display:grid; place-items:center; width:36px; height:36px; border-radius:10px; background: linear-gradient(135deg, var(--cc-primary), var(--cc-primary-600)); color:#fff; margin-right:.5rem; box-shadow: 0 8px 30px rgba(111,71,235,0.35); }
-    .sidebar { background: var(--cc-surface-2); border-right: 1px solid var(--cc-border); }
-    .sidebar .nav-link { color:#c7c8ce; border-radius: .5rem; }
-    .sidebar .nav-link:hover { color:#fff; background: rgba(255,255,255,0.04); }
-    .sidebar .nav-link.active { color:#fff; background: rgba(111,71,235,0.16); border: 1px solid rgba(111,71,235,0.35); }
-
-    .content-wrap { padding: 24px; }
-    .cc-card { background: rgba(255,255,255,0.04); border: 1px solid var(--cc-border); }
-    .cc-card .card-header { border-bottom: 1px solid var(--cc-border); }
-
-    .metric { position: relative; overflow: hidden; }
-    .metric .icon { width:48px; height:48px; border-radius:12px; display:grid; place-items:center; color:#fff; }
-    .metric .badge-label { position:absolute; top:12px; right:12px; background: rgba(255,255,255,0.08); color:#fff; }
-
-    .table thead th { color:#bfc3ce; font-weight:600; }
-    .table > :not(caption) > * > * { border-bottom-color: var(--cc-border); }
-
-    .btn-ghost { background: rgba(255,255,255,0.06); border: 1px solid var(--cc-border); color:#e8e8ea; }
-    .btn-ghost:hover { background: rgba(255,255,255,0.1); }
-  </style>
-
   <script type="module">
-    import { getCmsUser } from './js/cms-utils.js';
-    const cmsUser = getCmsUser();
-    const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
-    if (!cmsUser || !allowedRoles.includes(cmsUser.role)) {
-      alert('Access denied. Login as CMS user.');
-      window.location.href = 'cms-login.html';
-    }
-  </script>
+  const cmsUser = JSON.parse(sessionStorage.getItem('cmsUser') || 'null');
+  const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
+  if (!cmsUser || !allowedRoles.includes(cmsUser.role)) {
+    alert('Access denied. Login as CMS user.');
+    window.location.href = 'cms-login.html';
+  }
+</script>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark border-bottom" style="background: linear-gradient(135deg, var(--cc-primary), var(--cc-primary-600));">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" href="cms-dashboard.html">
-        <span class="brand-mark"><i class="bi bi-gem"></i></span>
-        <span class="fw-semibold">ChronosCrown CMS</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#cmsSidebar" aria-controls="cmsSidebar" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="d-flex align-items-center gap-3 ms-auto">
-        <span id="cmsGreeting" class="text-white-50 small"></span>
-        <button id="cmsLogoutBtn" class="btn btn-light btn-sm" type="button"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+  <!-- Header -->
+  <div class="cms-header">
+    <h2>Dashboard</h2>
+  </div>
+
+  <div class="cms-wrapper">
+    <!-- Sidebar -->
+    <div class="cms-sidebar">
+      <a href="cms-dashboard.html" class="active">Dashboard</a>
+      <a href="cms-products.html">Products</a>
+      <a href="cms-users.html">Users</a>
+      <a href="cms-content.html">Content</a>
+      <a href="cms-sales.html">Sales</a>
+      <a href="cms-orders.html">Orders</a>
+      <a href="cms-financials.html">Financials</a>
+    </div>
+
+    <!-- Content -->
+    <div class="cms-content">
+      <h3>Welcome to the Admin Dashboard</h3>
+      <p>Here’s a quick overview of your store’s performance.</p>
+
+      <!-- Dashboard Stats -->
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h4>Total Products</h4>
+          <p id="totalProducts">0</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>Total Orders</h4>
+          <p id="totalOrders">0</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>Total Sales ($)</h4>
+          <p id="totalSales">0</p>
+        </div>
+        <div class="dashboard-card">
+          <h4>Registered Users</h4>
+          <p id="totalUsers">0</p>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="table-card">
+        <h4>Recent Orders</h4>
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total ($)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="recentOrders">
+            <tr><td colspan="4">No recent orders</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </nav>
-
-  <div class="offcanvas offcanvas-start sidebar text-bg-dark" tabindex="-1" id="cmsSidebar" aria-labelledby="cmsSidebarLabel" data-bs-scroll="true">
-    <div class="offcanvas-header border-bottom border-secondary-subtle">
-      <h5 class="offcanvas-title" id="cmsSidebarLabel">Navigation</h5>
-      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body p-3">
-      <nav class="nav nav-pills flex-column gap-1 small">
-        <a href="cms-dashboard.html" class="nav-link active"><i class="bi bi-speedometer me-2"></i>Dashboard</a>
-        <a href="cms-products.html" class="nav-link"><i class="bi bi-box-seam me-2"></i>Products</a>
-        <a href="cms-users.html" class="nav-link"><i class="bi bi-people me-2"></i>Users</a>
-        <a href="cms-content.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i>Content</a>
-        <a href="cms-sales.html" class="nav-link"><i class="bi bi-graph-up-arrow me-2"></i>Sales</a>
-        <a href="cms-orders.html" class="nav-link"><i class="bi bi-bag-check me-2"></i>Orders</a>
-        <a href="cms-financials.html" class="nav-link"><i class="bi bi-cash-coin me-2"></i>Financials</a>
-      </nav>
-    </div>
   </div>
 
-  <div class="container-fluid">
-    <div class="row">
-      <!-- Static sidebar for lg+ screens -->
-      <aside class="col-lg-2 d-none d-lg-block sidebar min-vh-100 p-3">
-        <nav class="nav nav-pills flex-column gap-1 small sticky-top" style="top: 24px;">
-          <a href="cms-dashboard.html" class="nav-link active"><i class="bi bi-speedometer me-2"></i>Dashboard</a>
-          <a href="cms-products.html" class="nav-link"><i class="bi bi-box-seam me-2"></i>Products</a>
-          <a href="cms-users.html" class="nav-link"><i class="bi bi-people me-2"></i>Users</a>
-          <a href="cms-content.html" class="nav-link"><i class="bi bi-file-earmark-text me-2"></i>Content</a>
-          <a href="cms-sales.html" class="nav-link"><i class="bi bi-graph-up-arrow me-2"></i>Sales</a>
-          <a href="cms-orders.html" class="nav-link"><i class="bi bi-bag-check me-2"></i>Orders</a>
-          <a href="cms-financials.html" class="nav-link"><i class="bi bi-cash-coin me-2"></i>Financials</a>
-        </nav>
-      </aside>
-
-      <main class="col-lg-10 content-wrap">
-        <div class="d-flex flex-wrap align-items-end justify-content-between gap-2 mb-4">
-          <div>
-            <h1 class="h3 mb-1">Dashboard</h1>
-            <div class="text-secondary">Here’s a quick overview of your store’s performance.</div>
-          </div>
-          <div class="d-flex gap-2">
-            <button class="btn btn-ghost btn-sm"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
-            <a href="cms-products.html" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>New Product</a>
-          </div>
-        </div>
-
-        <!-- Metrics -->
-        <div class="row g-3 g-lg-4 mb-4">
-          <div class="col-12 col-sm-6 col-xxl-3">
-            <div class="card cc-card metric h-100">
-              <div class="card-body d-flex align-items-center gap-3">
-                <div class="icon bg-primary"><i class="bi bi-box-seam"></i></div>
-                <div>
-                  <div class="text-secondary small">Total Products</div>
-                  <div id="totalProducts" class="fs-3 fw-semibold">0</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-xxl-3">
-            <div class="card cc-card metric h-100">
-              <div class="card-body d-flex align-items-center gap-3">
-                <div class="icon bg-success"><i class="bi bi-bag-check"></i></div>
-                <div>
-                  <div class="text-secondary small">Total Orders</div>
-                  <div id="totalOrders" class="fs-3 fw-semibold">0</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-xxl-3">
-            <div class="card cc-card metric h-100">
-              <div class="card-body d-flex align-items-center gap-3">
-                <div class="icon bg-warning"><i class="bi bi-currency-dollar"></i></div>
-                <div>
-                  <div class="text-secondary small">Total Sales ($)</div>
-                  <div id="totalSales" class="fs-3 fw-semibold">0</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 col-sm-6 col-xxl-3">
-            <div class="card cc-card metric h-100">
-              <div class="card-body d-flex align-items-center gap-3">
-                <div class="icon bg-info"><i class="bi bi-people"></i></div>
-                <div>
-                  <div class="text-secondary small">Registered Users</div>
-                  <div id="totalUsers" class="fs-3 fw-semibold">0</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Inventory highlights -->
-        <div class="row g-3 g-lg-4 mb-4">
-          <div class="col-12 col-md-6">
-            <a href="cms-products.html" class="card cc-card h-100 text-decoration-none">
-              <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                  <div class="text-secondary small">Out of Product</div>
-                  <div id="outOfProductCount" class="fs-4 fw-semibold text-white">0</div>
-                </div>
-                <i class="bi bi-exclamation-octagon text-danger fs-2"></i>
-              </div>
-            </a>
-          </div>
-          <div class="col-12 col-md-6">
-            <a href="cms-products.html" class="card cc-card h-100 text-decoration-none">
-              <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                  <div class="text-secondary small">Low Stock</div>
-                  <div id="lowStockCount" class="fs-4 fw-semibold text-white">0</div>
-                </div>
-                <i class="bi bi-activity text-warning fs-2"></i>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- Tabs example placeholder for future sections -->
-        <ul class="nav nav-tabs mb-3" id="dashTabs" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="orders-tab" data-bs-toggle="tab" data-bs-target="#orders-pane" type="button" role="tab" aria-controls="orders-pane" aria-selected="true">Recent Orders</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="analytics-tab" data-bs-toggle="tab" data-bs-target="#analytics-pane" type="button" role="tab" aria-controls="analytics-pane" aria-selected="false">Analytics</button>
-          </li>
-        </ul>
-        <div class="tab-content mb-4" id="dashTabsContent">
-          <div class="tab-pane fade show active" id="orders-pane" role="tabpanel" aria-labelledby="orders-tab" tabindex="0">
-            <div class="card cc-card">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Recent Orders</h5>
-                <div class="btn-group btn-group-sm">
-                  <button class="btn btn-ghost">All</button>
-                  <button class="btn btn-ghost">Pending</button>
-                  <button class="btn btn-ghost">Completed</button>
-                </div>
-              </div>
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                  <table class="table table-dark table-hover align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th>Order ID</th>
-                        <th>Customer</th>
-                        <th>Total ($)</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody id="recentOrders">
-                      <tr>
-                        <td colspan="4" class="text-secondary">No recent orders</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="tab-pane fade" id="analytics-pane" role="tabpanel" aria-labelledby="analytics-tab" tabindex="0">
-            <div class="card cc-card">
-              <div class="card-body">
-                <div class="text-secondary">Analytics widgets can go here (traffic, sales trends, etc.).</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <script type="module" src="js/cms-dashboard.js"></script>
-  <script type="module">
-    import { setupGreetingAndLogout } from './js/cms-utils.js';
-    setupGreetingAndLogout();
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/cms-dashboard.js"></script>
 </body>
 </html>
