@@ -49,6 +49,9 @@ function renderOrders(rows) {
     const itemsHtml = itemsArr.length ? itemsArr.map(i=>`${i.name || i.productId || '-'} (${i.model||'-'}) × ${i.qty||1} — ${i.color||'-'}/${i.strap||'-'}/${i.size||'-'}`).join('<br>') : '-';
     const displayTotal = typeof o.total === 'number' ? o.total : itemsArr.reduce((s,i)=> s + (Number(i.price)||0)*(Number(i.qty)||1), 0);
     tr.innerHTML = `
+      <td>
+        <button class="btn btn-danger small" data-del="${o.id}" style="margin:0;">Delete</button>
+      </td>
       <td>${o.id}</td>
       <td>${o.customerName || o.userId || 'Guest'}</td>
       <td>${money(displayTotal)}</td>
@@ -67,9 +70,6 @@ function renderOrders(rows) {
         <div style="margin-top:6px;">
           <button class="btn small" data-print="${o.id}">Print address</button>
         </div>
-      </td>
-      <td>
-        <button class="btn btn-danger small" data-del="${o.id}">Delete</button>
       </td>`;
     ordersTable.appendChild(tr);
   });
