@@ -1,0 +1,13 @@
+[build]
+  functions = "netlify/functions"
+  publish = "."
+
+[[redirects]]
+  from = "/api/ipg/create-session"
+  to = "/.netlify/functions/ipg-create-session"
+  status = 200
+
+[[redirects]]
+  from = "/api/ipg/notify"
+  to = "/.netlify/functions/ipg-notify"
+  status = 200
