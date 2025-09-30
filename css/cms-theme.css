@@ -1,0 +1,120 @@
+/* ChronosCrown CMS Theme - Dark Professional */
+:root {
+  --cc-primary: #6f47eb;
+  --cc-primary-600: #5b36d6;
+  --cc-surface: #0f1117;
+  --cc-surface-2: #11131a;
+  --cc-border: rgba(255,255,255,0.08);
+  --cc-text: #e8e8ea;
+  --cc-muted: #b9bdc7;
+}
+
+/* Base */
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: linear-gradient(180deg, #0a0b10 0%, #0d0f15 100%);
+  color: var(--cc-text);
+}
+
+/* Header + Sidebar for legacy CMS layout */
+.cms-header {
+  background: linear-gradient(135deg, var(--cc-primary), var(--cc-primary-600));
+  color: #fff;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.16);
+}
+.cms-header h2 { margin: 0; font-weight: 600; }
+
+.cms-wrapper { display: flex; min-height: calc(100vh - 60px); }
+
+.cms-sidebar {
+  width: 240px;
+  background: var(--cc-surface-2);
+  border-right: 1px solid var(--cc-border);
+  padding: 16px;
+}
+.cms-sidebar a {
+  display: block;
+  padding: 10px 12px;
+  color: #c7c8ce;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+.cms-sidebar a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.cms-sidebar a.active { color: #fff; background: rgba(111,71,235,0.18); border: 1px solid rgba(111,71,235,0.35); }
+
+.cms-content { flex: 1; padding: 20px; }
+
+/* Cards and panels */
+.card, .cc-card, .form-card, .table-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--cc-border);
+  color: #fff !important; /* ensure readability on dark bg */
+  border-radius: 12px;
+}
+.card .card-header { border-bottom: 1px solid var(--cc-border); }
+.form-card { padding: 16px; margin-top: 12px; }
+.table-card { padding: 0; overflow: hidden; }
+.table-card > h4 { padding: 16px; margin: 0; border-bottom: 1px solid var(--cc-border); }
+
+/* Tables */
+.styled-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255,255,255,0.02);
+  color: var(--cc-text);
+  border: 1px solid var(--cc-border);
+}
+.styled-table thead th {
+  text-align: left;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.06);
+  color: #cfd3dd;
+  border-bottom: 1px solid var(--cc-border);
+}
+.styled-table tbody td {
+  padding: 12px 14px;
+  border-top: 1px solid var(--cc-border);
+}
+.styled-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+
+/* Buttons */
+.btn:not(.btn-link):not([class*="btn-"]) {
+  background: linear-gradient(135deg, var(--cc-primary), var(--cc-primary-600));
+  color: #fff;
+  border: none;
+}
+.btn:not(.btn-link):not([class*="btn-"]):hover { filter: brightness(1.05); }
+.btn-ghost { background: rgba(255,255,255,0.06); border: 1px solid var(--cc-border); color: var(--cc-text); }
+.btn-ghost:hover { background: rgba(255,255,255,0.1); }
+
+/* Forms - style raw inputs since many pages don't use .form-control */
+.cms-content input[type="text"],
+.cms-content input[type="email"],
+.cms-content input[type="number"],
+.cms-content input[type="date"],
+.cms-content input[type="file"],
+.cms-content select, .cms-content textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+.cms-content input::placeholder, .cms-content textarea::placeholder { color: #b9b9bf; }
+.cms-content input:focus, .cms-content select:focus, .cms-content textarea:focus {
+  outline: none;
+  border-color: rgba(111,71,235,0.5);
+  box-shadow: 0 0 0 .2rem rgba(111,71,235,.18);
+  background: rgba(255,255,255,0.08);
+}
+
+/* Small utilities */
+.text-secondary, .muted { color: var(--cc-muted) !important; }
+.border-soft { border-color: var(--cc-border) !important; }
+.bg-surface { background: var(--cc-surface) !important; }
+.bg-surface-2 { background: var(--cc-surface-2) !important; }

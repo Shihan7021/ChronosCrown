@@ -6,6 +6,14 @@ import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-
 const form = document.getElementById('cmsLoginForm');
 const statusEl = document.getElementById('cmsLoginStatus');
 
+function showStatus(type, msg) {
+  if (!statusEl) return;
+  statusEl.classList.remove('d-none');
+  statusEl.classList.remove('alert-soft', 'alert-danger', 'alert-success');
+  statusEl.classList.add('alert', type === 'success' ? 'alert-success' : 'alert-danger');
+  statusEl.textContent = msg;
+}
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -16,14 +24,16 @@ form.addEventListener('submit', async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // Ensure fresh token (in case rules rely on custom claims)
+    try { await user.getIdToken(true); } catch (e) {}
+
     const userDoc = await getDoc(doc(db, 'users', user.uid));
 
     // Allow all CMS roles
     const allowedRoles = ['system', 'Admin', 'Manager', 'Associate'];
 
     if (!userDoc.exists() || !allowedRoles.includes(userDoc.data().role)) {
-      statusEl.style.color = 'crimson';
-      statusEl.textContent = 'Access denied. Not a CMS user.';
+      showStatus('danger', 'Access denied. Not a CMS user.');
       await auth.signOut();
       return;
     }
@@ -38,13 +48,15 @@ form.addEventListener('submit', async (e) => {
       displayName: userData.displayName || "System User"
     }));
 
-    statusEl.style.color = 'green';
-    statusEl.textContent = 'Login successful! Redirecting...';
+    showStatus('success', 'Login successful! Redirecting...');
     setTimeout(() => window.location.href = 'cms-dashboard.html', 1000);
 
   } catch (err) {
     console.error(err);
-    statusEl.style.color = 'crimson';
-    statusEl.textContent = err.message;
+    if (err && err.code === 'permission-denied') {
+      showStatus('danger', 'Access denied: Missing or insufficient Firestore permissions for your user profile. Ensure a user document exists at users/your-uid with an allowed role (system/Admin/Manager/Associate), and that Firestore rules allow you to read your own user doc.');
+    } else {
+      showStatus('danger', err.message || 'Login failed');
+    }
   }
 });
