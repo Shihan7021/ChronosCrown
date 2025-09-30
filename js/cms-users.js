@@ -1,5 +1,5 @@
 // cms-users.js
-import { db } from '../js/firebase-config.js'; // adjust if path differs
+import { auth, db } from '../js/firebase-config.js'; // adjust if path differs
 import {
   collection,
   query,
@@ -183,5 +183,7 @@ async function deleteUser(id) {
 // helper to getDoc imported lazily
 import { getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-// start listener
-listenUsers();
+// start listener after auth is ready (prevents unauthenticated snapshot errors)
+auth.onAuthStateChanged(user => {
+  if (user) listenUsers();
+});
