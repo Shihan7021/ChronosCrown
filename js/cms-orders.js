@@ -1,6 +1,6 @@
 // cms-orders.js
 import { auth, db } from './firebase-config.js';
-import { collection, onSnapshot, doc, updateDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { collection, onSnapshot, doc, updateDoc, getDocs, query, orderBy, deleteDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const ordersTable = document.getElementById('ordersTable');
 
@@ -67,6 +67,9 @@ function renderOrders(rows) {
         <div style="margin-top:6px;">
           <button class="btn small" data-print="${o.id}">Print address</button>
         </div>
+      </td>
+      <td>
+        <button class="btn btn-danger small" data-del="${o.id}">Delete</button>
       </td>`;
     ordersTable.appendChild(tr);
   });
@@ -121,5 +124,38 @@ function renderOrders(rows) {
     win.document.open();
     win.document.write(html);
     win.document.close();
+  }));
+
+  // attach delete handlers
+  ordersTable.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', async (e) => {
+    const id = e.currentTarget.getAttribute('data-del');
+    const order = _ordersIndex[id];
+    if (!order) { alert('Order not found'); return; }
+
+    const confirmed = confirm('Delete this order? This will restore product stock quantities.');
+    if (!confirmed) return;
+
+    // Build items list from order
+    const itemsArr = Array.isArray(order.items) ? order.items : (Array.isArray(order.cart) ? order.cart.map(c=>({ productId:c.productId, qty:c.qty })) : []);
+
+    try {
+      // Restore stock quantities (atomic increments)
+      for (const it of itemsArr) {
+        if (!it.productId) continue;
+        try {
+          await updateDoc(doc(db, 'products', it.productId), { quantity: increment(Number(it.qty)||1) });
+        } catch (invErr) {
+          // If product doc missing, skip gracefully
+          console.warn('Inventory restore failed for', it.productId, invErr);
+        }
+      }
+      // Delete order
+      await deleteDoc(doc(db, 'orders', id));
+      alert('Order deleted and stock restored.');
+      // Live snapshots on dashboard/products/financials/sales will update automatically.
+    } catch (err) {
+      console.error('Delete order failed', err);
+      alert('Failed to delete order: ' + (err.message || err));
+    }
   }));
 }
