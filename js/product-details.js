@@ -78,10 +78,10 @@ async function loadProductDetails() {
         // Populate product info
         document.title = `${product.name} - ChronosCrown`;
         productName.textContent = product.name;
-        // Render rich-text description (HTML) if present; otherwise show literal null
+        // Render rich-text description (HTML) if present; otherwise empty
         productDescription.innerHTML = (product.description && product.description.trim().length)
             ? product.description
-            : 'null';
+            : '';
         // Show Model just below description
         const modelEl = document.getElementById('productModelLine');
         if (modelEl) {
