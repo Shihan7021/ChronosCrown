@@ -112,9 +112,50 @@ payNowBtn.addEventListener('click', async ()=>{
   await createOrder(user, addrId, cart, method);
 
   if (method === 'ipg') {
-    // Simulated IPG redirect
-    const params = new URLSearchParams({ order: orderId, amt: String(amount) });
-    window.location.href = `payment-gateway.html?${params.toString()}`;
+    // Real IPG flow via backend-created session
+    try {
+      payNowBtn.disabled = true;
+      payNowBtn.textContent = 'Redirecting to bank...';
+
+      const res = await fetch('/api/ipg/create-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          amount: Number(amount),
+          currency: 'USD', // adjust if your store uses a different currency
+        })
+      });
+
+      if (!res.ok) {
+        const txt = await res.text().catch(()=>'');
+        throw new Error(`Failed to create payment session (${res.status}). ${txt}`);
+      }
+      const data = await res.json().catch(() => ({}));
+
+      if (data && typeof data.redirectUrl === 'string' && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+        return;
+      }
+
+      // Optional: if backend returns an HTML form to auto-submit (some IPGs require POST redirect)
+      if (data && typeof data.formHtml === 'string' && data.formHtml) {
+        const wrap = document.createElement('div');
+        wrap.style.display = 'none';
+        wrap.innerHTML = data.formHtml;
+        document.body.appendChild(wrap);
+        const f = wrap.querySelector('form');
+        if (f) { f.submit(); return; }
+      }
+
+      throw new Error('Backend did not return a redirectUrl or formHtml.');
+    } catch (err) {
+      console.error('IPG init error', err);
+      alert('Sorry, we could not reach the payment gateway. Please try again or use Cash on Delivery.');
+      payNowBtn.disabled = false;
+      payNowBtn.textContent = 'Pay Now';
+      return;
+    }
   } else {
     // COD: clear cart and go to thank you
     localStorage.removeItem('cart');
