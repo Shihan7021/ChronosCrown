@@ -108,21 +108,33 @@ payNowBtn.addEventListener('click', async ()=>{
   const addrId = sessionStorage.getItem('selectedAddressId');
   if (!user || !addrId) { alert('Missing user or address.'); return; }
   const method = (document.querySelector('input[name="payment"]:checked') || {}).value || 'ipg';
+
+  // Show overlay immediately for IPG to avoid any perceived delay
+  if (method === 'ipg') {
+    payNowBtn.disabled = true;
+    payNowBtn.textContent = 'Redirecting to bank...';
+    if (paymentOverlay) {
+      if (paymentOverlayMsg) paymentOverlayMsg.textContent = 'Please wait while we connect to the bank. Do not close or refresh this page.';
+      paymentOverlay.classList.add('show');
+    }
+  }
+
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  if (cart.length === 0) { alert('Your cart is empty.'); return; }
+  if (cart.length === 0) {
+    if (method === 'ipg') {
+      if (paymentOverlay) paymentOverlay.classList.remove('show');
+      payNowBtn.disabled = false;
+      payNowBtn.textContent = 'Pay Now';
+    }
+    alert('Your cart is empty.');
+    return;
+  }
 
   await createOrder(user, addrId, cart, method);
 
   if (method === 'ipg') {
     // Real IPG flow via backend-created session
     try {
-      payNowBtn.disabled = true;
-      payNowBtn.textContent = 'Redirecting to bank...';
-      if (paymentOverlay) {
-        if (paymentOverlayMsg) paymentOverlayMsg.textContent = 'Please wait while we connect to the bank. Do not close or refresh this page.';
-        paymentOverlay.classList.add('show');
-      }
-
       // Build PayHere-required context
       const addr = await loadAddress(user).catch(()=>null);
       const [firstName, ...restName] = String((addr && addr.name) || (user.displayName || 'Customer')).split(' ');
