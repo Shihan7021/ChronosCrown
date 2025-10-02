@@ -3,6 +3,10 @@ import { auth, db } from './firebase.init.js';
 import { doc, getDoc, setDoc, increment, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { formatCurrency } from './utils.js';
 
+async function ensureFreshToken(){
+  try { if (auth.currentUser) await auth.currentUser.getIdToken(true); } catch(e) {}
+}
+
 // --- DOM ELEMENTS ---
 const imagesCarousel = document.getElementById("imagesCarousel");
 const productName = document.getElementById("productName");
@@ -175,6 +179,7 @@ async function addToCart(pid, product, { showAlert = true } = {}) {
     const key = `${pid}__${selectedOptions.strap||''}__${selectedOptions.color||''}__${selectedOptions.size||''}`;
 
     // Persist to Firestore: carts/{uid}/items/{key}
+    await ensureFreshToken();
     const itemRef = doc(db, 'carts', user.uid, 'items', key);
     await setDoc(itemRef, {
         productId: pid,

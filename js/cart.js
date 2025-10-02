@@ -5,10 +5,15 @@ import { formatCurrency } from './utils.js';
 
 const cartList = document.getElementById("cart-list");
 
+async function ensureFreshToken(){
+  try { if (auth.currentUser) await auth.currentUser.getIdToken(true); } catch(e) {}
+}
+
 async function loadCart() {
   cartList.innerHTML = '';
 
   const user = auth.currentUser;
+  await ensureFreshToken();
   if (!user) {
     cartList.innerHTML = '<p>Please sign in to view your cart.</p>';
     setBadge(0);
@@ -16,6 +21,7 @@ async function loadCart() {
   }
 
   // Fetch cart items from Firestore: carts/{uid}/items
+  await ensureFreshToken();
   const itemsSnap = await getDocs(collection(db, 'carts', user.uid, 'items'));
   if (itemsSnap.empty) {
     cartList.innerHTML = '<p>Your cart is empty.</p>';
@@ -90,6 +96,7 @@ async function refreshBadgeFromDb(uid){
 // Cart operations mapped to Firestore
 window.increaseQty = async (itemId) => {
   const user = auth.currentUser; if (!user) return;
+  await ensureFreshToken();
   const ref = doc(db, 'carts', user.uid, 'items', itemId);
   await setDoc(ref, { qty: increment(1), updatedAt: new Date().toISOString() }, { merge: true });
   await loadCart();
@@ -97,6 +104,7 @@ window.increaseQty = async (itemId) => {
 
 window.decreaseQty = async (itemId) => {
   const user = auth.currentUser; if (!user) return;
+  await ensureFreshToken();
   const ref = doc(db, 'carts', user.uid, 'items', itemId);
   // Fetch current qty to decide if we delete
   const cur = await getDoc(ref);
@@ -131,6 +139,7 @@ const confirmModal = {
 window.removeFromCart = async (itemId) => {
   confirmModal.open(async ()=>{
     const user = auth.currentUser; if (!user) return;
+    await ensureFreshToken();
     await deleteDoc(doc(db, 'carts', user.uid, 'items', itemId));
     await loadCart();
   });
