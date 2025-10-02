@@ -105,7 +105,7 @@ app.post('/api/ipg/create-session', async (req, res) => {
       .join('');
 
     const formHtml = `<!doctype html><html><head><meta charset="utf-8"></head><body>
-      <form id="payhereForm" action="${action}" method="post">${inputs}</form>
+      <form id="payhereForm" action="${action}" method="post" referrerpolicy="origin">${inputs}</form>
       <script>document.getElementById('payhereForm').submit();</script>
     </body></html>`;
 
