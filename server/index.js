@@ -41,8 +41,8 @@ function buildPayHereHash({ merchantId, orderId, amount, currency, merchantSecre
 
 app.post('/api/ipg/create-session', async (req, res) => {
   try {
-    const merchantId = requireEnv('PAYHERE_MERCHANT_ID');
-    const merchantSecret = requireEnv('PAYHERE_MERCHANT_SECRET');
+    const merchantId = requireEnv('1232226'); // your PayHere merchant ID
+    const merchantSecret = requireEnv('MTM2MjE4MDEyNjY0MzM0MjU5MTUxNDAxOTk1MzE5MzIyNDkwODc='); // your PayHere merchant secret
 
     const {
       orderId,
