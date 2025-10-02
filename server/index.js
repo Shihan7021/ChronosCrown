@@ -35,7 +35,8 @@ function buildPayHereHash({ merchantId, orderId, amount, currency, merchantSecre
   // PayHere signature: md5(merchant_id + order_id + amount + currency + merchant_secret)
   const amt = Number(amount).toFixed(2);
   const sigStr = `${merchantId}${orderId}${amt}${currency}${merchantSecret}`;
-  return crypto.createHash('md5').update(sigStr).digest('hex');
+  // Use uppercase hex to avoid case-sensitivity issues on gateway side
+  return crypto.createHash('md5').update(sigStr).digest('hex').toUpperCase();
 }
 
 app.post('/api/ipg/create-session', async (req, res) => {

@@ -8,7 +8,8 @@ function payhereCheckoutUrl(env) {
 function buildPayHereHash({ merchantId, orderId, amount, currency, merchantSecret }) {
   const amt = Number(amount).toFixed(2);
   const sigStr = `${merchantId}${orderId}${amt}${currency}${merchantSecret}`;
-  return crypto.createHash('md5').update(sigStr).digest('hex');
+  // PayHere often expects uppercase hex for the hash value
+  return crypto.createHash('md5').update(sigStr).digest('hex').toUpperCase();
 }
 
 exports.handler = async (event) => {
