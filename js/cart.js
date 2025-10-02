@@ -1,33 +1,42 @@
 // cart.js
-import { db } from './firebase.init.js';
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { auth, db } from './firebase.init.js';
+import { doc, getDoc, collection, getDocs, updateDoc, setDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { formatCurrency } from './utils.js';
 
 const cartList = document.getElementById("cart-list");
 
-// Load cart from localStorage
-let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
 async function loadCart() {
   cartList.innerHTML = '';
 
-  if (cart.length === 0) {
+  const user = auth.currentUser;
+  if (!user) {
+    cartList.innerHTML = '<p>Please sign in to view your cart.</p>';
+    setBadge(0);
+    return;
+  }
+
+  // Fetch cart items from Firestore: carts/{uid}/items
+  const itemsSnap = await getDocs(collection(db, 'carts', user.uid, 'items'));
+  if (itemsSnap.empty) {
     cartList.innerHTML = '<p>Your cart is empty.</p>';
-    updateBadge();
+    setBadge(0);
     return;
   }
 
   let total = 0;
+  const items = [];
+  itemsSnap.forEach(d => items.push({ id: d.id, ...d.data() }));
 
-  for (const item of cart) {
+  for (const item of items) {
     const docRef = doc(db, 'products', item.productId);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) continue;
 
     const product = docSnap.data();
+    const qty = Number(item.qty)||0;
 
     // Calculate total
-    total += product.price * item.qty;
+    total += Number(product.price||0) * qty;
 
     // Display product in cart
     const cartItem = document.createElement('div');
@@ -38,11 +47,11 @@ async function loadCart() {
         <h3>${product.name}</h3>
         <p>${product.description ? product.description.substring(0,50)+'...' : ''}</p>
         <p>Price: ${formatCurrency(product.price)}</p>
-        <p>Qty: ${item.qty}</p>
+        <p>Qty: ${qty}</p>
         <div class="cart-actions">
-          <button class="btn" onclick="increaseQty('${item.productId}')">+</button>
-          <button class="btn secondary" onclick="decreaseQty('${item.productId}')">-</button>
-          <button class="btn danger" onclick="removeFromCart('${item.productId}')">Remove</button>
+          <button class="btn" onclick="increaseQty('${item.id}')">+</button>
+          <button class="btn secondary" onclick="decreaseQty('${item.id}')">-</button>
+          <button class="btn danger" onclick="removeFromCart('${item.id}')">Remove</button>
         </div>
       </div>
     `;
@@ -61,27 +70,43 @@ async function loadCart() {
     proceedBtn.addEventListener('click', checkout);
   }
 
-  updateBadge();
+  // Update badge from DB
+  await refreshBadgeFromDb(user.uid);
 }
 
-// Cart operations
-function updateBadge() {
-  const count = cart.reduce((sum, i)=> sum + i.qty, 0);
+function setBadge(count){
   localStorage.setItem('cart_count', String(count));
   const badge = document.querySelector('.cart-badge');
   if (badge) badge.textContent = count;
 }
 
-window.increaseQty = (pid) => {
-  const item = cart.find(i => i.productId === pid);
-  if(item) item.qty +=1;
-  saveCart();
+async function refreshBadgeFromDb(uid){
+  const snap = await getDocs(collection(db, 'carts', uid, 'items'));
+  let count = 0;
+  snap.forEach(d => { count += Number(d.data().qty)||0; });
+  setBadge(count);
+}
+
+// Cart operations mapped to Firestore
+window.increaseQty = async (itemId) => {
+  const user = auth.currentUser; if (!user) return;
+  const ref = doc(db, 'carts', user.uid, 'items', itemId);
+  await setDoc(ref, { qty: increment(1), updatedAt: new Date().toISOString() }, { merge: true });
+  await loadCart();
 };
 
-window.decreaseQty = (pid) => {
-  const item = cart.find(i => i.productId === pid);
-  if(item && item.qty >1) item.qty -=1;
-  saveCart();
+window.decreaseQty = async (itemId) => {
+  const user = auth.currentUser; if (!user) return;
+  const ref = doc(db, 'carts', user.uid, 'items', itemId);
+  // Fetch current qty to decide if we delete
+  const cur = await getDoc(ref);
+  const q = cur.exists() ? Number(cur.data().qty)||0 : 0;
+  if (q <= 1) {
+    await deleteDoc(ref);
+  } else {
+    await updateDoc(ref, { qty: increment(-1), updatedAt: new Date().toISOString() });
+  }
+  await loadCart();
 };
 
 const confirmModal = {
@@ -103,21 +128,18 @@ const confirmModal = {
   }
 };
 
-window.removeFromCart = (pid) => {
-  confirmModal.open(()=>{
-    cart = cart.filter(i => i.productId !== pid);
-    saveCart();
+window.removeFromCart = async (itemId) => {
+  confirmModal.open(async ()=>{
+    const user = auth.currentUser; if (!user) return;
+    await deleteDoc(doc(db, 'carts', user.uid, 'items', itemId));
+    await loadCart();
   });
 };
 
-function saveCart() {
-  localStorage.setItem('cart', JSON.stringify(cart));
-  loadCart();
-}
-
-// Proceed to checkout
+// Proceed to checkout requires non-empty cart
 function checkout() {
-  if(cart.length === 0) {
+  const count = Number(localStorage.getItem('cart_count')||'0');
+  if(count === 0) {
     alert('Cart is empty.');
     return;
   }
@@ -126,5 +148,8 @@ function checkout() {
 // Expose for inline onclick
 window.checkout = checkout;
 
-// Initialize
-loadCart();
+// Initialize after auth ready
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+onAuthStateChanged(auth, async (user)=>{
+  await loadCart();
+});

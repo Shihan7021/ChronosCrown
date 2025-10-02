@@ -44,6 +44,10 @@ window.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         await auth.signOut();
         localStorage.removeItem('userDisplayName');
+        // Clear cart badge on logout
+        localStorage.setItem('cart_count', '0');
+        const badge = document.querySelector('.cart-badge');
+        if (badge) badge.textContent = '0';
         showLoggedOut();
         window.location.href = 'index.html';
       });

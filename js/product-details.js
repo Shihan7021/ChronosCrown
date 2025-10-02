@@ -1,6 +1,6 @@
 // js/product-details.js - Loads and displays details for a single product.
-import { db } from './firebase.init.js';
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { auth, db } from './firebase.init.js';
+import { doc, getDoc, setDoc, increment, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { formatCurrency } from './utils.js';
 
 // --- DOM ELEMENTS ---
@@ -158,44 +158,50 @@ function populateSelect(selectEl, optionsArray) {
 
 // --- CART FUNCTIONS ---
 
-function addToCart(pid, product, { showAlert = true } = {}) {
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+async function addToCart(pid, product, { showAlert = true } = {}) {
+    // Require login
+    const user = auth.currentUser;
+    if (!user) {
+        alert('Please sign in to add items to your cart.');
+        window.location.href = 'login.html';
+        return;
+    }
+
     const selectedOptions = {
         strap: productStrap.value || product.strap || '',
         color: productColor.value || product.color || '',
         size: productSize.value || product.size || ''
     };
+    const key = `${pid}__${selectedOptions.strap||''}__${selectedOptions.color||''}__${selectedOptions.size||''}`;
 
-    // Find if an identical item (with same options) already exists
-    const existingItem = cart.find(item =>
-        item.productId === pid &&
-        item.strap === selectedOptions.strap &&
-        item.color === selectedOptions.color &&
-        item.size === selectedOptions.size
-    );
+    // Persist to Firestore: carts/{uid}/items/{key}
+    const itemRef = doc(db, 'carts', user.uid, 'items', key);
+    await setDoc(itemRef, {
+        productId: pid,
+        name: product.name,
+        model: product.model || '',
+        price: Number(product.price || 0),
+        image: (product.images && product.images.length) ? product.images[0] : '',
+        strap: selectedOptions.strap,
+        color: selectedOptions.color,
+        size: selectedOptions.size,
+        qty: increment(1),
+        updatedAt: new Date().toISOString()
+    }, { merge: true });
 
-    if (existingItem) {
-        existingItem.qty += 1;
-    } else {
-        cart.push({ 
-            productId: pid, 
-            name: product.name,
-            model: product.model || '',
-            price: product.price,
-            image: (product.images && product.images.length) ? product.images[0] : '',
-            qty: 1, 
-            ...selectedOptions 
-        });
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartBadge();
+    await refreshCartBadgeFromDb(user.uid);
     if (showAlert) showAddedModal();
 }
 
-function buyNow(pid, product) {
+async function buyNow(pid, product) {
+    // Require login first
+    if (!auth.currentUser) {
+        alert('Please sign in to proceed.');
+        window.location.href = 'login.html';
+        return;
+    }
     // Ensure item is in the cart but avoid showing the "Added to cart" alert
-    addToCart(pid, product, { showAlert: false });
+    await addToCart(pid, product, { showAlert: false });
     // Show confirmation modal similar to cart removal confirmation
     buyConfirm.open(
         () => { window.location.href = 'cart.html'; },
@@ -203,10 +209,11 @@ function buyNow(pid, product) {
     );
 }
 
-function updateCartBadge() {
+async function refreshCartBadgeFromDb(uid) {
     try {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const count = cart.reduce((sum, i) => sum + (Number(i.qty) || 0), 0);
+        const snap = await getDocs(collection(db, 'carts', uid, 'items'));
+        let count = 0;
+        snap.forEach(d => { const q = Number(d.data().qty)||0; count += q; });
         localStorage.setItem('cart_count', String(count));
         const badge = document.querySelector('.cart-badge');
         if (badge) badge.textContent = count;
